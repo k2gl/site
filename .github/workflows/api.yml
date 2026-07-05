@@ -1,0 +1,54 @@
+name: Regenerate API
+
+# The reflected API JSON (src/data/api/*.json) is committed and static. This
+# refreshes it from the live package sources — weekly, or on demand — and commits
+# any change, which in turn triggers a rebuild + deploy.
+on:
+  schedule:
+    - cron: '0 4 * * 1' # Mondays 04:00 UTC
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  regen:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+
+      - name: Clone package sources
+        run: |
+          mkdir -p /tmp/packages
+          for p in sigstore-verify sigstore-sign sigstore-bundle rekor-client dsse \
+                   in-toto-attestation slsa-provenance tuf sshsig signed-note \
+                   composer-attest composer-license-gate array-reader enum \
+                   entity-exist phpunit-fluent-assertions app-env; do
+            git clone --depth 1 "https://github.com/k2gl/$p" "/tmp/packages/$p" || echo "skip $p"
+          done
+
+      - name: Regenerate API
+        run: |
+          php tools/gen-api.php /tmp/packages \
+            sigstore-verify sigstore-sign sigstore-bundle rekor-client dsse \
+            in-toto-attestation slsa-provenance tuf sshsig signed-note \
+            composer-attest composer-license-gate array-reader enum \
+            entity-exist phpunit-fluent-assertions app-env
+
+      - name: Commit if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --quiet -- src/data/api; then
+            echo "No API changes."
+          else
+            git add src/data/api
+            git commit -m "Regenerate package API surface"
+            git push
+          fi
