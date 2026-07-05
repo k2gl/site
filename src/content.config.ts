@@ -1,12 +1,19 @@
 import { defineCollection, z } from 'astro:content';
 import { packagesLoader } from './loaders/packages';
 
-// Vertical slice: the hard triad — sigstore-verify (complex deps),
-// array-reader (worst-case example heuristic), enum (deviant README headings).
-export const SLICE = ['sigstore-verify', 'array-reader', 'enum'];
+// All 17 published Composer packages (composer-attest-action is a GitHub Action,
+// not a Composer package, so it is not in the catalog).
+export const PACKAGES = [
+  // supply-chain
+  'sigstore-verify', 'sigstore-sign', 'sigstore-bundle', 'rekor-client',
+  'dsse', 'in-toto-attestation', 'slsa-provenance', 'tuf',
+  'sshsig', 'signed-note', 'composer-attest', 'composer-license-gate',
+  // utilities
+  'array-reader', 'enum', 'entity-exist', 'phpunit-fluent-assertions', 'app-env',
+];
 
 const packages = defineCollection({
-  loader: packagesLoader(SLICE),
+  loader: packagesLoader(PACKAGES),
   schema: z.object({
     slug: z.string(),
     name: z.string(),
