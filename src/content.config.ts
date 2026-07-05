@@ -23,6 +23,8 @@ const packages = defineCollection({
     family: z.enum(['supply-chain', 'utilities']),
     category: z.enum(['plugins', 'sigstore', 'attestation', 'signatures', 'utilities']),
     hook: z.string(),
+    whenToUse: z.array(z.string()),
+    whenNotToUse: z.array(z.string()),
     keywords: z.array(z.string()),
     php: z.string(),
     requires: z.array(z.object({ name: z.string(), constraint: z.string() })),

@@ -63,6 +63,23 @@ const jsonLd = {
       )}
     </dl>
 
+    {(pkg.whenToUse.length > 0 || pkg.whenNotToUse.length > 0) && (
+      <section class="fit">
+        {pkg.whenToUse.length > 0 && (
+          <div class="fit-col">
+            <h3>Reach for it when</h3>
+            <ul>{pkg.whenToUse.map((x) => <li>{x}</li>)}</ul>
+          </div>
+        )}
+        {pkg.whenNotToUse.length > 0 && (
+          <div class="fit-col">
+            <h3>Look elsewhere when</h3>
+            <ul>{pkg.whenNotToUse.map((x) => <li>{x}</li>)}</ul>
+          </div>
+        )}
+      </section>
+    )}
+
     <div class="readme" set:html={readmeHtml} />
 
     {pkg.api.length > 0 && (
@@ -94,6 +111,11 @@ const jsonLd = {
     .hook { font-size: 1.05rem; }
     .badges { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; margin: 0.5rem 0 1.25rem; }
     .badges img { height: 20px; display: block; }
+    .fit { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; margin: 1.5rem 0; padding: 1.25rem; border: 1px solid var(--border); border-radius: 10px; }
+    .fit-col h3 { margin-top: 0; font-size: 1rem; }
+    .fit-col ul { padding-left: 1.1rem; margin: 0; }
+    .fit-col li { margin: 0.3rem 0; color: var(--muted); }
+    @media (max-width: 600px) { .fit { grid-template-columns: 1fr; } }
     .meta { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; }
     .meta dt { font-weight: 600; color: var(--muted); }
     .meta dd { margin: 0; }

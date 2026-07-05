@@ -38,6 +38,8 @@ export function packagesLoader(slugs: string[]): Loader {
           family: familyOf(enrichment.category),
           category: enrichment.category,
           hook: enrichment.hook,
+          whenToUse: enrichment.whenToUse ?? [],
+          whenNotToUse: enrichment.whenNotToUse ?? [],
           keywords: composer.keywords ?? [],
           php: String(composer.require?.php ?? ''),
           requires,

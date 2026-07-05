@@ -10,6 +10,10 @@ export interface Enrichment {
   category: Category;
   /** The pain this package solves, in a sentence. */
   hook: string;
+  /** Reach for it when… (optional sidecar). */
+  whenToUse?: string[];
+  /** Look elsewhere when… (optional sidecar). */
+  whenNotToUse?: string[];
 }
 
 /** Display order + labels for grouping packages by type. */
@@ -31,6 +35,15 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     tagline: 'Composer plugin: verify GitHub build-provenance attestations at install time.',
     category: 'plugins',
     hook: 'Check that each package you install was really built by its repository’s CI — as Composer downloads it.',
+    whenToUse: [
+      'You want provenance checks on dependencies without a separate CI step.',
+      'You install packages that publish GitHub build-provenance attestations.',
+      'You want to fail an install when an attestation is present but invalid.',
+    ],
+    whenNotToUse: [
+      'Your dependencies don’t attest their dist yet — you’ll mostly see "no attestation" (most of the ecosystem, today).',
+      'You need signature verification of arbitrary blobs — use sigstore-verify directly.',
+    ],
   },
   'composer-license-gate': {
     tagline: 'Composer plugin: gate dependency licenses against an allow/deny policy.',
@@ -43,6 +56,15 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     tagline: 'Verify Sigstore signatures, certificates, and transparency-log inclusion in pure PHP.',
     category: 'sigstore',
     hook: 'Check the provenance of artifacts and GitHub build attestations from PHP — no cosign, no shelling out.',
+    whenToUse: [
+      'You need Sigstore verification inside a PHP process, not via the cosign CLI.',
+      'You verify GitHub attestations, DSSE bundles, or signed artifacts.',
+      'You want conformance-tested verification you can rely on.',
+    ],
+    whenNotToUse: [
+      'You only need to verify dependencies at install — use composer-attest, which builds on this.',
+      'You’re not in PHP — cosign or the other language clients may fit better.',
+    ],
   },
   'sigstore-sign': {
     tagline: 'Produce Sigstore signatures and bundles from PHP — keyful or keyless (Fulcio/OIDC).',
