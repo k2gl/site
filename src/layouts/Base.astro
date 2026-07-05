@@ -93,12 +93,50 @@ const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
         padding: 1rem;
         border-radius: 8px;
         overflow-x: auto;
+        position: relative;
       }
+      .copy-btn {
+        position: absolute;
+        top: 0.5rem;
+        right: 0.5rem;
+        font-size: 0.72rem;
+        padding: 0.2em 0.6em;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--bg);
+        color: var(--muted);
+        cursor: pointer;
+        opacity: 0;
+        transition: opacity 0.15s;
+      }
+      pre:hover .copy-btn { opacity: 1; }
+      .copy-btn:hover { color: var(--accent); border-color: var(--accent); }
       code { background: var(--code-bg); padding: 0.15em 0.4em; border-radius: 4px; }
       pre code { background: none; padding: 0; }
       h1, h2, h3 { line-height: 1.25; }
       table { border-collapse: collapse; width: 100%; }
       th, td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; }
     </style>
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        for (const pre of document.querySelectorAll('pre')) {
+          const codeText = pre.innerText; // capture before appending the button
+          const btn = document.createElement('button');
+          btn.className = 'copy-btn';
+          btn.type = 'button';
+          btn.textContent = 'Copy';
+          btn.addEventListener('click', async () => {
+            try {
+              await navigator.clipboard.writeText(codeText);
+              btn.textContent = 'Copied';
+              setTimeout(() => { btn.textContent = 'Copy'; }, 1500);
+            } catch {
+              btn.textContent = 'Failed';
+            }
+          });
+          pre.appendChild(btn);
+        }
+      });
+    </script>
   </body>
 </html>

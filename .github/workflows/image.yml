@@ -11,6 +11,11 @@ permissions:
   id-token: write
   attestations: write
 
+# Serialize builds/deploys so rapid pushes don't race on the VPS.
+concurrency:
+  group: site-image-deploy
+  cancel-in-progress: false
+
 jobs:
   build:
     name: Build, push & attest the site image
