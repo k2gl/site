@@ -1,0 +1,51 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\ComposerAttest\\AttestationVerifier",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly Closure $fetch, private readonly TrustedRoot $trustedRoot, private readonly Policy $policy, )",
+                "verify(string $owner, string $repo, string $artifactPath): VerificationResult"
+            ]
+        },
+        {
+            "name": "K2gl\\ComposerAttest\\Exception\\AttestationException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\ComposerAttest\\Plugin",
+            "kind": "class",
+            "methods": [
+                "activate(Composer $composer, IOInterface $io): void",
+                "deactivate(Composer $composer, IOInterface $io): void",
+                "uninstall(Composer $composer, IOInterface $io): void",
+                "getSubscribedEvents(): array",
+                "onPostFileDownload(PostFileDownloadEvent $event): void",
+                "(string $url) use ($downloader): ?string"
+            ]
+        },
+        {
+            "name": "K2gl\\ComposerAttest\\Policy",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $mode = self::MODE_WARN, public readonly bool $requireAttestation = false, public readonly string $issuer = 'https://token.actions.githubusercontent.com', )",
+                "fromExtra(array $extra): self",
+                "isOff(): bool",
+                "isEnforcing(): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\ComposerAttest\\VerificationResult",
+            "kind": "class",
+            "methods": [
+                "verified(string $identity): self",
+                "noAttestation(): self",
+                "failed(string $message): self",
+                "isVerified(): bool",
+                "hasAttestation(): bool",
+                "isFailure(): bool"
+            ]
+        }
+    ]
+}

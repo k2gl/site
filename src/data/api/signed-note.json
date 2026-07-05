@@ -1,0 +1,63 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\SignedNote\\Exception\\InvalidNoteException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SignedNote\\Exception\\SignatureVerificationFailed",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SignedNote\\Exception\\SignedNoteException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SignedNote\\Note",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $text, public readonly array $signatures, )",
+                "parse(string $envelope): self",
+                "signedText(): string",
+                "signatures(): array",
+                "__toString(): string"
+            ]
+        },
+        {
+            "name": "K2gl\\SignedNote\\NoteSignature",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $name, public readonly string $keyHash, public readonly string $signature, )"
+            ]
+        },
+        {
+            "name": "K2gl\\SignedNote\\NoteVerifier",
+            "kind": "class",
+            "methods": [
+                "__construct(VerifierKey ...$keys)",
+                "verify(Note $note): array"
+            ]
+        },
+        {
+            "name": "K2gl\\SignedNote\\SignerKey",
+            "kind": "class",
+            "methods": [
+                "fromString(string $encoded): self",
+                "sign(string $text): Note"
+            ]
+        },
+        {
+            "name": "K2gl\\SignedNote\\VerifierKey",
+            "kind": "class",
+            "methods": [
+                "ed25519(string $name, string $publicKey): self",
+                "fromString(string $encoded): self",
+                "fromPem(string $name, string $publicKeyPem): self",
+                "verify(string $signedText, string $signature): bool"
+            ]
+        }
+    ]
+}

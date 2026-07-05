@@ -1,0 +1,187 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\Tuf\\Exception\\BadVersionException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Tuf\\Exception\\DownloadException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Tuf\\Exception\\ExpiredMetadataException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Tuf\\Exception\\LengthOrHashMismatchException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Tuf\\Exception\\RepositoryException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Tuf\\Exception\\TufException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Tuf\\Exception\\UnsignedMetadataException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Tuf\\Fetcher",
+            "kind": "interface",
+            "methods": [
+                "fetch(string $url, int $maxLength): string"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\HttpFetcher",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly int $timeoutSeconds = 30, )",
+                "fetch(string $url, int $maxLength): string"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\DelegatedRole",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $name, array $keyids, int $threshold, public readonly array $paths = [], public readonly bool $terminating = false, public readonly array $pathHashPrefixes = [], )",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\Delegations",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly array $keys, public readonly array $roles, )",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\Key",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $keytype, public readonly string $scheme, public readonly string $public, )",
+                "fromArray(array $data): self",
+                "verifySignature(string $message, string $signatureHex): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\MetaFile",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly int $version, public readonly ?int $length = null, public readonly array $hashes = [], )",
+                "fromArray(array $data): self",
+                "verify(string $bytes): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\Metadata",
+            "kind": "class",
+            "methods": [
+                "fromJson(string $json): self",
+                "verifySignedBy(string $roleName, array $keys, Role $role): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\Role",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly array $keyids, public readonly int $threshold, )",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\Root",
+            "kind": "class",
+            "methods": [
+                "__construct( string $specVersion, int $version, DateTimeImmutable $expires, public readonly bool $consistentSnapshot, public readonly array $keys, public readonly array $roles, )",
+                "fromArray(array $signed): self",
+                "role(string $name): Role",
+                "verifyDelegate(string $roleName, Metadata $metadata): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\Signed",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $type, public readonly string $specVersion, public readonly int $version, public readonly DateTimeImmutable $expires, )",
+                "fromArray(array $signed): self",
+                "isExpired(DateTimeImmutable $reference): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\Snapshot",
+            "kind": "class",
+            "methods": [
+                "__construct( string $specVersion, int $version, DateTimeImmutable $expires, public readonly array $meta, )",
+                "fromArray(array $signed): self",
+                "metaFor(string $filename): ?MetaFile"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\TargetFile",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $path, public readonly int $length, public readonly array $hashes, public readonly array $custom = [], )",
+                "fromArray(string $path, array $data): self",
+                "verifyLengthAndHashes(string $bytes): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\Targets",
+            "kind": "class",
+            "methods": [
+                "__construct( string $specVersion, int $version, DateTimeImmutable $expires, public readonly array $targets, public readonly ?Delegations $delegations = null, )",
+                "fromArray(array $signed): self",
+                "target(string $path): ?TargetFile",
+                "verifyDelegate(string $roleName, Metadata $metadata): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Metadata\\Timestamp",
+            "kind": "class",
+            "methods": [
+                "__construct( string $specVersion, int $version, DateTimeImmutable $expires, public readonly MetaFile $snapshotMeta, )",
+                "fromArray(array $signed): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\TrustedMetadataSet",
+            "kind": "class",
+            "methods": [
+                "__construct(string $rootBytes, ?DateTimeImmutable $referenceTime = null)",
+                "root(): Root",
+                "rootBytes(): string",
+                "timestamp(): ?Timestamp",
+                "snapshot(): ?Snapshot",
+                "targets(string $role = 'targets'): ?Targets",
+                "updateRoot(string $rootBytes): Root",
+                "updateTimestamp(string $timestampBytes): Timestamp",
+                "updateSnapshot(string $snapshotBytes, bool $trusted = false): Snapshot",
+                "updateTargets(string $targetsBytes): Targets",
+                "updateDelegatedTargets(string $targetsBytes, string $roleName, string $delegatorName): Targets"
+            ]
+        },
+        {
+            "name": "K2gl\\Tuf\\Updater",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly string $trustedRoot, string $metadataBaseUrl, string $targetBaseUrl, private readonly Fetcher $fetcher, private readonly ?DateTimeImmutable $referenceTime = null, )",
+                "refresh(): void",
+                "getTrustedRootBytes(): string",
+                "getTargetInfo(string $targetPath): ?TargetFile",
+                "downloadTarget(TargetFile $info): string"
+            ]
+        }
+    ]
+}

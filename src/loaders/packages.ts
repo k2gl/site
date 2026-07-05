@@ -23,6 +23,7 @@ export function packagesLoader(slugs: string[]): Loader {
           readSource(slug, 'composer.json'),
         ]);
         const composer = JSON.parse(composerRaw) as ComposerJson;
+        const api = await readApi(slug);
         const enrichment = ENRICHMENT[slug] ?? FALLBACK;
 
         const requires = Object.entries(composer.require ?? {})
@@ -41,6 +42,7 @@ export function packagesLoader(slugs: string[]): Loader {
           php: String(composer.require?.php ?? ''),
           requires,
           install: `composer require ${composer.name}`,
+          api,
           readme,
           links: {
             github: `https://github.com/${composer.name}`,
@@ -60,6 +62,23 @@ interface ComposerJson {
   description?: string;
   keywords?: string[];
   require?: Record<string, string>;
+}
+
+interface ApiClass {
+  name: string;
+  kind: string;
+  methods: string[];
+}
+
+/** The reflected public API, generated offline by tools/gen-api.php. */
+async function readApi(slug: string): Promise<ApiClass[]> {
+  try {
+    const raw = await readFile(resolve(process.cwd(), 'src/data/api', `${slug}.json`), 'utf-8');
+    const parsed = JSON.parse(raw) as { classes?: ApiClass[] };
+    return parsed.classes ?? [];
+  } catch {
+    return [];
+  }
 }
 
 async function readSource(slug: string, file: string): Promise<string> {

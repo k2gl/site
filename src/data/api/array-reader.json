@@ -1,0 +1,107 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\ArrayReader\\AbstractArrayReader",
+            "kind": "class",
+            "methods": [
+                "__construct(protected readonly array $data)",
+                "of(array $data): static",
+                "fromJson(string $json): static",
+                "has(string|int $key): bool",
+                "require(array $keys): static",
+                "string(string|int $key): string",
+                "stringOr(string|int $key, ?string $default = null): ?string",
+                "int(string|int $key): int",
+                "intOr(string|int $key, ?int $default = null): ?int",
+                "float(string|int $key): float",
+                "floatOr(string|int $key, ?float $default = null): ?float",
+                "bool(string|int $key): bool",
+                "boolOr(string|int $key, ?bool $default = null): ?bool",
+                "ints(string|int $key): array",
+                "intsOr(string|int $key, ?array $default = null): ?array",
+                "strings(string|int $key): array",
+                "stringsOr(string|int $key, ?array $default = null): ?array",
+                "floats(string|int $key): array",
+                "floatsOr(string|int $key, ?array $default = null): ?array",
+                "bools(string|int $key): array",
+                "boolsOr(string|int $key, ?array $default = null): ?array",
+                "stringOrElse(string|int $key, callable $default): string",
+                "intOrElse(string|int $key, callable $default): int",
+                "floatOrElse(string|int $key, callable $default): float",
+                "boolOrElse(string|int $key, callable $default): bool",
+                "enum(string|int $key, string $enum): BackedEnum",
+                "enumOr(string|int $key, string $enum, ?BackedEnum $default = null): ?BackedEnum",
+                "enums(string|int $key, string $enum): array",
+                "enumsOr(string|int $key, string $enum, ?array $default = null): ?array",
+                "dateTime(string|int $key, ?string $format = null): DateTimeImmutable",
+                "dateTimeOr(string|int $key, ?DateTimeImmutable $default = null, ?string $format = null): ?DateTimeImmutable",
+                "dateTimes(string|int $key, ?string $format = null): array",
+                "dateTimesOr(string|int $key, ?array $default = null, ?string $format = null): ?array",
+                "array(string|int $key): array",
+                "arrayOr(string|int $key, ?array $default = null): ?array",
+                "list(string|int $key): array",
+                "listOr(string|int $key, ?array $default = null): ?array",
+                "nested(string|int $key): static",
+                "nestedOr(string|int $key): ?static",
+                "nestedList(string|int $key): array",
+                "nestedListOr(string|int $key): ?array",
+                "listOf(string|int $key, callable $caster): array",
+                "listOfOr(string|int $key, callable $caster, ?array $default = null): ?array",
+                "toArray(): array"
+            ]
+        },
+        {
+            "name": "K2gl\\ArrayReader\\ArrayReader",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\ArrayReader\\CastMode",
+            "kind": "enum",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\ArrayReader\\Exception\\ArrayReaderException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\ArrayReader\\Exception\\InvalidJsonException",
+            "kind": "class",
+            "methods": [
+                "decodeFailed(JsonException $previous): self",
+                "notArray(mixed $decoded): self"
+            ]
+        },
+        {
+            "name": "K2gl\\ArrayReader\\Exception\\MissingKeyException",
+            "kind": "class",
+            "methods": [
+                "forKey(string|int $key): self",
+                "forKeys(array $keys): self"
+            ]
+        },
+        {
+            "name": "K2gl\\ArrayReader\\Exception\\TypeMismatchException",
+            "kind": "class",
+            "methods": [
+                "expected(string $expectedType, string|int $key, mixed $actual): self"
+            ]
+        },
+        {
+            "name": "K2gl\\ArrayReader\\LooseArrayReader",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\ArrayReader\\Miss",
+            "kind": "enum",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\ArrayReader\\StrictArrayReader",
+            "kind": "class",
+            "methods": []
+        }
+    ]
+}

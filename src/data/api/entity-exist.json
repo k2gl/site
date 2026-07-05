@@ -1,0 +1,55 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\Component\\Validator\\Constraint\\EntityExist\\AssertCompositeEntityExist",
+            "kind": "class",
+            "methods": [
+                "__construct( public string $entity, public array $fields, public string $message = 'Entity \"%entity%\" with fields \"%fields%\": \"%values%\" does not exist.', public ?string $errorPath = null, ?array $groups = null, mixed $payload = null, )",
+                "getTargets(): string"
+            ]
+        },
+        {
+            "name": "K2gl\\Component\\Validator\\Constraint\\EntityExist\\AssertCompositeEntityExistValidator",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly EntityManagerInterface $entityManager)",
+                "validate(mixed $value, Constraint $constraint): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Component\\Validator\\Constraint\\EntityExist\\AssertEntityExist",
+            "kind": "class",
+            "methods": [
+                "__construct( public string $entity, public string $property = 'id', public string $message = 'Entity \"%entity%\" with property \"%property%\": \"%value%\" does not exist.', ?array $groups = null, mixed $payload = null, )"
+            ]
+        },
+        {
+            "name": "K2gl\\Component\\Validator\\Constraint\\EntityExist\\AssertEntityExistValidator",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly EntityManagerInterface $entityManager)",
+                "validate(mixed $value, Constraint $constraint): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Component\\Validator\\Constraint\\EntityExist\\AssertEntityNotExist",
+            "kind": "class",
+            "methods": [
+                "__construct( public string $entity, public string $property = 'id', public string $message = 'Entity \"%entity%\" with property \"%property%\": \"%value%\" already exist.', ?array $groups = null, mixed $payload = null, )"
+            ]
+        },
+        {
+            "name": "K2gl\\Component\\Validator\\Constraint\\EntityExist\\AssertEntityNotExistValidator",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly EntityManagerInterface $entityManager)",
+                "validate(mixed $value, Constraint $constraint): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Component\\Validator\\Constraint\\EntityExist\\ViolationCode",
+            "kind": "class",
+            "methods": []
+        }
+    ]
+}

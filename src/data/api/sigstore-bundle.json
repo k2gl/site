@@ -1,0 +1,81 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\SigstoreBundle\\Bundle",
+            "kind": "class",
+            "methods": [
+                "forDsse( Envelope $envelope, SigningIdentity $identity, array $tlogEntries, array $rfc3161Timestamps = [], ): self",
+                "forMessageSignature( MessageSignature $messageSignature, SigningIdentity $identity, array $tlogEntries, array $rfc3161Timestamps = [], ): self",
+                "toArray(): array",
+                "toJson(): string"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreBundle\\BundleBuilder",
+            "kind": "class",
+            "methods": [
+                "forDsse(Envelope $envelope): self",
+                "forMessageSignature(MessageSignature $messageSignature): self",
+                "withCertificate(string $der): self",
+                "withCertificateChain(array $ders): self",
+                "withPublicKey(string $hint): self",
+                "addTransparencyLogEntry(TransparencyLogEntry $entry): self",
+                "addRfc3161Timestamp(string $token): self",
+                "build(): Bundle",
+                "toArray(): array",
+                "toJson(): string"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreBundle\\Exception\\InvalidBundleInputException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SigstoreBundle\\Exception\\SigstoreBundleException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SigstoreBundle\\HashAlgorithm",
+            "kind": "enum",
+            "methods": [
+                "digestLength(): int"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreBundle\\InclusionProof",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly int $logIndex, public readonly string $rootHash, public readonly int $treeSize, public readonly array $hashes, public readonly string $checkpoint, )",
+                "toArray(): array"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreBundle\\MessageSignature",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly HashAlgorithm $algorithm, public readonly string $digest, public readonly string $signature, )",
+                "toArray(): array"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreBundle\\SigningIdentity",
+            "kind": "class",
+            "methods": [
+                "certificate(string $der): self",
+                "certificateChain(array $ders): self",
+                "publicKey(string $hint): self",
+                "toArray(): array"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreBundle\\TransparencyLogEntry",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly int $logIndex, public readonly string $logId, public readonly string $kind, public readonly string $version, public readonly string $canonicalizedBody, public readonly ?int $integratedTime = null, public readonly ?string $inclusionPromise = null, public readonly ?InclusionProof $inclusionProof = null, )",
+                "toArray(): array"
+            ]
+        }
+    ]
+}

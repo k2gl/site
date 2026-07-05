@@ -1,0 +1,48 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\ComposerLicenseGate\\Exception\\LicenseViolationException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\ComposerLicenseGate\\LicenseChecker",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly Policy $policy)",
+                "check(string $package, array $licenses): LicenseResult"
+            ]
+        },
+        {
+            "name": "K2gl\\ComposerLicenseGate\\LicenseResult",
+            "kind": "class",
+            "methods": [
+                "allowed(string $message = ''): self",
+                "exempt(): self",
+                "violation(string $message): self",
+                "isViolation(): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\ComposerLicenseGate\\Plugin",
+            "kind": "class",
+            "methods": [
+                "activate(Composer $composer, IOInterface $io): void",
+                "deactivate(Composer $composer, IOInterface $io): void",
+                "uninstall(Composer $composer, IOInterface $io): void",
+                "getSubscribedEvents(): array",
+                "onPackage(PackageEvent $event): void"
+            ]
+        },
+        {
+            "name": "K2gl\\ComposerLicenseGate\\Policy",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $mode = self::MODE_WARN, public readonly array $allow = [], public readonly array $deny = [], public readonly array $allowPackages = [], public readonly bool $requireLicense = false, )",
+                "fromExtra(array $extra): self",
+                "isOff(): bool",
+                "isEnforcing(): bool"
+            ]
+        }
+    ]
+}

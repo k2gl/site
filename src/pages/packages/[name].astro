@@ -57,6 +57,21 @@ const jsonLd = {
 
     <div class="readme" set:html={readmeHtml} />
 
+    {pkg.api.length > 0 && (
+      <section class="api">
+        <h2>API</h2>
+        <p class="api-note">Public classes and methods, generated from the source.</p>
+        {pkg.api.map((cls) => (
+          <div class="cls">
+            <h3><code>{cls.name}</code> <span class="kind">{cls.kind}</span></h3>
+            {cls.methods.length > 0 && (
+              <ul>{cls.methods.map((m) => <li><code>{m}</code></li>)}</ul>
+            )}
+          </div>
+        ))}
+      </section>
+    )}
+
     <footer class="links">
       <a href={pkg.links.github}>GitHub</a> ·
       <a href={pkg.links.packagist}>Packagist</a> ·
@@ -74,5 +89,12 @@ const jsonLd = {
     .meta dd { margin: 0; }
     .readme { margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
     .links { margin-top: 2rem; color: var(--muted); }
+    .api { margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+    .api-note { color: var(--muted); font-size: 0.9rem; margin-top: 0; }
+    .cls { margin: 1.5rem 0; }
+    .cls h3 { margin-bottom: 0.4rem; word-break: break-word; }
+    .kind { font-size: 0.72rem; color: var(--muted); background: var(--code-bg); padding: 0.12em 0.55em; border-radius: 999px; vertical-align: middle; }
+    .api ul { list-style: none; padding-left: 0; display: grid; gap: 0.35rem; }
+    .api li code { font-size: 0.85rem; }
   </style>
 </Base>

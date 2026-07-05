@@ -1,0 +1,129 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\Sshsig\\AllowedSigner",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $principals, public readonly SshPublicKey $key, public readonly bool $certAuthority = false, public readonly ?string $namespaces = null, public readonly ?DateTimeImmutable $validAfter = null, public readonly ?DateTimeImmutable $validBefore = null, )"
+            ]
+        },
+        {
+            "name": "K2gl\\Sshsig\\AllowedSigners",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly array $signers)",
+                "fromString(string $contents): self",
+                "fromFile(string $path): self",
+                "all(): array",
+                "findMatch(string $identity, string $namespace, SshPublicKey $key, DateTimeImmutable $time): ?AllowedSigner"
+            ]
+        },
+        {
+            "name": "K2gl\\Sshsig\\Ed25519SigningKey",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly string $secretKey)",
+                "publicKey(): SshPublicKey",
+                "signTosign(string $tosign, string $hashAlgorithm): array"
+            ]
+        },
+        {
+            "name": "K2gl\\Sshsig\\Exception\\InvalidSignatureException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sshsig\\Exception\\SignatureVerificationFailed",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sshsig\\Exception\\SignerNotAllowedException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sshsig\\Exception\\SigningException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sshsig\\Exception\\SshsigException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sshsig\\Exception\\UnsupportedAlgorithmException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sshsig\\OpensshPrivateKey",
+            "kind": "class",
+            "methods": [
+                "fromFile(string $path): SigningKey",
+                "fromString(string $armored): SigningKey"
+            ]
+        },
+        {
+            "name": "K2gl\\Sshsig\\OpensslSigningKey",
+            "kind": "class",
+            "methods": [
+                "fromKey(OpenSSLAsymmetricKey $key): self",
+                "fromPem(string $pem, ?string $passphrase = null): self",
+                "publicKey(): SshPublicKey",
+                "signTosign(string $tosign, string $hashAlgorithm): array"
+            ]
+        },
+        {
+            "name": "K2gl\\Sshsig\\SigningKey",
+            "kind": "interface",
+            "methods": [
+                "publicKey(): SshPublicKey",
+                "signTosign(string $tosign, string $hashAlgorithm): array"
+            ]
+        },
+        {
+            "name": "K2gl\\Sshsig\\SshPublicKey",
+            "kind": "class",
+            "methods": [
+                "fromBlob(string $blob): self",
+                "fromOpensshLine(string $line): self",
+                "fingerprint(): string",
+                "equals(self $other): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\Sshsig\\SshSignature",
+            "kind": "class",
+            "methods": [
+                "fromArmored(string $armored): self",
+                "signedData(string $message): string"
+            ]
+        },
+        {
+            "name": "K2gl\\Sshsig\\SshsigSigner",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly SigningKey $key)",
+                "publicKey(): SshPublicKey",
+                "sign(string $message, string $namespace, string $hashAlgorithm = 'sha512'): string"
+            ]
+        },
+        {
+            "name": "K2gl\\Sshsig\\SshsigVerifier",
+            "kind": "class",
+            "methods": [
+                "verify( string $message, string $armoredSignature, AllowedSigners $allowedSigners, string $identity, string $namespace, ?DateTimeImmutable $verifyTime = null, ): VerifiedSignature",
+                "checkNoValidate(string $message, string $armoredSignature, string $namespace): SshSignature"
+            ]
+        },
+        {
+            "name": "K2gl\\Sshsig\\VerifiedSignature",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $identity, public readonly string $namespace, public readonly SshPublicKey $publicKey, public readonly string $principals, )"
+            ]
+        }
+    ]
+}

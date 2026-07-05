@@ -18,6 +18,13 @@ export const GET: APIRoute = ({ props }) => {
     ...pkg.requires.map((r: { name: string; constraint: string }) => `- ${r.name} ${r.constraint}`),
   ].filter(Boolean).join('\n');
 
+  const apiSection = pkg.api.length > 0
+    ? '\n## API\n\n' + pkg.api.map((cls: { name: string; kind: string; methods: string[] }) =>
+        `### ${cls.name} (${cls.kind})\n\n` +
+        (cls.methods.length > 0 ? cls.methods.map((m) => `- \`${m}\``).join('\n') : '_no public methods_'),
+      ).join('\n\n') + '\n'
+    : '';
+
   const md = `# ${pkg.name}
 
 > ${pkg.tagline}
@@ -37,7 +44,7 @@ ${requirements || '- none declared'}
 ## Documentation
 
 ${pkg.readme.trim()}
-
+${apiSection}
 ## Links
 
 - GitHub: ${pkg.links.github}

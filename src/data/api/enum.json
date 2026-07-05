@@ -1,0 +1,53 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\Enum\\ExtendedBackedEnum",
+            "kind": "trait",
+            "methods": [
+                "any(): static",
+                "anyoneExcept(BackedEnum|array $except): static",
+                "fromName(string $name): static",
+                "tryFromName(string $name): ?static",
+                "is(mixed $value): bool",
+                "isNot(mixed $value): bool",
+                "in(mixed ...$values): bool",
+                "notIn(mixed ...$values): bool",
+                "names(): array",
+                "values(): array",
+                "label(): string",
+                "options(): array",
+                "labels(): array",
+                "fromLabel(string $label): static",
+                "tryFromLabel(string $label): ?static"
+            ]
+        },
+        {
+            "name": "K2gl\\Enum\\ExtendedBackedEnumInterface",
+            "kind": "interface",
+            "methods": [
+                "any(): static",
+                "anyoneExcept(BackedEnum|array $except): static",
+                "fromName(string $name): static",
+                "tryFromName(string $name): ?static",
+                "is(mixed $value): bool",
+                "isNot(mixed $value): bool",
+                "in(mixed ...$values): bool",
+                "notIn(mixed ...$values): bool",
+                "names(): array",
+                "values(): array",
+                "label(): string",
+                "options(): array",
+                "labels(): array",
+                "fromLabel(string $label): static",
+                "tryFromLabel(string $label): ?static"
+            ]
+        },
+        {
+            "name": "K2gl\\Enum\\Label",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $text, )"
+            ]
+        }
+    ]
+}

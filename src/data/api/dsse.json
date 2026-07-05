@@ -1,0 +1,168 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\Dsse\\EcdsaP256Signer",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem, ?string $keyId = null): self",
+                "sign(string $message): string",
+                "keyId(): ?string"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\EcdsaP256Verifier",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem): self",
+                "verify(string $message, string $signature): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\EcdsaP384Signer",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem, ?string $keyId = null): self",
+                "sign(string $message): string",
+                "keyId(): ?string"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\EcdsaP384Verifier",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem): self",
+                "verify(string $message, string $signature): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\EcdsaP521Signer",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem, ?string $keyId = null): self",
+                "sign(string $message): string",
+                "keyId(): ?string"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\EcdsaP521Verifier",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem): self",
+                "verify(string $message, string $signature): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\Ed25519Signer",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly string $secretKey, private readonly ?string $keyId = null, )",
+                "sign(string $message): string",
+                "keyId(): ?string"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\Ed25519Verifier",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly string $publicKey)",
+                "verify(string $message, string $signature): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\Envelope",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $payload, public readonly string $payloadType, public readonly array $signatures, )",
+                "pae(): string",
+                "sign(string $payload, string $payloadType, Signer ...$signers): self",
+                "verify(Verifier ...$verifiers): string",
+                "fromJson(string $json): self",
+                "fromArray(array $data): self",
+                "toArray(): array",
+                "toJson(): string"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\Exception\\CryptoException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Dsse\\Exception\\DsseException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Dsse\\Exception\\InvalidEnvelopeException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Dsse\\Exception\\SignatureVerificationFailed",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Dsse\\KeyId",
+            "kind": "class",
+            "methods": [
+                "sha256Spki(string $publicKeyPem): string",
+                "jwkThumbprint(array $jwk): string"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\Pae",
+            "kind": "class",
+            "methods": [
+                "encode(string $payloadType, string $payload): string"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\PublicKey",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem): Verifier",
+                "fromJwk(array $jwk): Verifier"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\RsaSigner",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem, ?string $keyId = null, string $hashAlgorithm = 'sha256'): self",
+                "sign(string $message): string",
+                "keyId(): ?string"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\RsaVerifier",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem, string $hashAlgorithm = 'sha256'): self",
+                "verify(string $message, string $signature): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\Signature",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $sig, public readonly ?string $keyId = null, )"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\Signer",
+            "kind": "interface",
+            "methods": [
+                "sign(string $message): string",
+                "keyId(): ?string"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\Verifier",
+            "kind": "interface",
+            "methods": [
+                "verify(string $message, string $signature): bool"
+            ]
+        }
+    ]
+}

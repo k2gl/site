@@ -22,6 +22,7 @@ export const GET: APIRoute = ({ props }) => {
     requires: pkg.requires,
     install: pkg.install,
     keywords: pkg.keywords,
+    api: pkg.api,
     links: pkg.links,
   };
 

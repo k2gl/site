@@ -1,0 +1,126 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\Slsa\\BuildDefinition",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $buildType, public readonly array $externalParameters = [], public readonly ?array $internalParameters = null, public readonly array $resolvedDependencies = [], )",
+                "toArray(): array",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\BuildMetadata",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly ?string $invocationId = null, public readonly ?string $startedOn = null, public readonly ?string $finishedOn = null, )",
+                "toArray(): array",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\Builder",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $id, public readonly array $builderDependencies = [], public readonly ?array $version = null, )",
+                "toArray(): array",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\Exception\\InvalidProvenanceException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Slsa\\Exception\\SlsaException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Slsa\\Predicates",
+            "kind": "class",
+            "methods": [
+                "register(?PredicateRegistry $registry = null): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\Provenance",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly BuildDefinition $buildDefinition, public readonly RunDetails $runDetails, )",
+                "predicateType(): string",
+                "toArray(): array",
+                "toStatement(array $subject): Statement",
+                "fromStatement(Statement $statement): self",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\RunDetails",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly Builder $builder, public readonly ?BuildMetadata $metadata = null, public readonly array $byproducts = [], )",
+                "toArray(): array",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\V02\\Builder",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $id, )",
+                "toArray(): array",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\V02\\Completeness",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly ?bool $parameters = null, public readonly ?bool $environment = null, public readonly ?bool $materials = null, )",
+                "toArray(): array",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\V02\\ConfigSource",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly ?string $uri = null, public readonly array $digest = [], public readonly ?string $entryPoint = null, )",
+                "toArray(): array",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\V02\\Invocation",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly ?ConfigSource $configSource = null, public readonly ?array $parameters = null, public readonly ?array $environment = null, )",
+                "toArray(): array",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\V02\\Metadata",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly ?string $buildInvocationId = null, public readonly ?string $buildStartedOn = null, public readonly ?string $buildFinishedOn = null, public readonly ?Completeness $completeness = null, public readonly ?bool $reproducible = null, )",
+                "toArray(): array",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\V02\\Provenance",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly Builder $builder, public readonly string $buildType, public readonly ?Invocation $invocation = null, public readonly ?array $buildConfig = null, public readonly ?Metadata $metadata = null, public readonly array $materials = [], )",
+                "predicateType(): string",
+                "toArray(): array",
+                "toStatement(array $subject, StatementVersion $statementVersion = StatementVersion::V0_1): Statement",
+                "fromStatement(Statement $statement): self",
+                "fromArray(array $data): self"
+            ]
+        }
+    ]
+}

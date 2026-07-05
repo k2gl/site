@@ -1,0 +1,152 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\FluentAssertions",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly mixed $variable = null )",
+                "for(mixed $variable = null): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\PHPStan\\FluentAssertionsTypeSpecifyingExtension",
+            "kind": "class",
+            "methods": [
+                "setTypeSpecifier(TypeSpecifier $typeSpecifier): void",
+                "getClass(): string",
+                "isMethodSupported( MethodReflection $methodReflection, MethodCall $node, TypeSpecifierContext $context, ): bool",
+                "specifyTypes( MethodReflection $methodReflection, MethodCall $node, Scope $scope, TypeSpecifierContext $context, ): SpecifiedTypes",
+                "(Expr $s, array $args, Scope $scope): ?Expr",
+                "(Expr $s, array $args, Scope $scope): ?Expr",
+                "(Expr $s, array $args): ?Expr"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Reference\\RegularExpressionPattern",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\ArrayAssertions",
+            "kind": "trait",
+            "methods": [
+                "count(int $expectedCount, string $message = ''): self",
+                "notCount(int $elementsCount, string $message = ''): self",
+                "arrayContainsAssociativeArray(array $values): self",
+                "arrayHasKey(int|string $key, string $message = ''): self",
+                "arrayNotHasKey(int|string $key, string $message = ''): self",
+                "contains(mixed $value, string $message = ''): self",
+                "doesNotContain(mixed $value, string $message = ''): self",
+                "hasSize(int $size, string $message = ''): self",
+                "isEmptyArray(string $message = ''): self",
+                "isNotEmptyArray(string $message = ''): self",
+                "every(callable $callback, string $message = ''): self",
+                "some(callable $callback, string $message = ''): self",
+                "none(callable $callback, string $message = ''): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\BooleanAssertions",
+            "kind": "trait",
+            "methods": [
+                "true(string $message = ''): self",
+                "notTrue(string $message = ''): self",
+                "false(string $message = ''): self",
+                "notFalse(string $message = ''): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\ComparisonAndEqualityAssertions",
+            "kind": "trait",
+            "methods": [
+                "is(mixed $expected, string $message = ''): self",
+                "equals(mixed $expected, string $message = ''): self",
+                "not(mixed $expected, string $message = ''): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\DateTimeAssertions",
+            "kind": "trait",
+            "methods": [
+                "isBefore(DateTimeInterface|string $expected, string $message = ''): self",
+                "isAfter(DateTimeInterface|string $expected, string $message = ''): self",
+                "isSameDate(DateTimeInterface|string $expected, string $message = ''): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\EnumAssertions",
+            "kind": "trait",
+            "methods": [
+                "isEnum(UnitEnum $case, string $message = ''): self",
+                "hasValue(int|string $value, string $message = ''): self",
+                "hasName(string $name, string $message = ''): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\ExceptionAssertions",
+            "kind": "trait",
+            "methods": [
+                "throws(string $exception, string $message = ''): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\NullAssertions",
+            "kind": "trait",
+            "methods": [
+                "null(string $message = ''): self",
+                "notNull(string $message = ''): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\NumericAssertions",
+            "kind": "trait",
+            "methods": [
+                "isLowerThan(int|float $expected, string $message = ''): self",
+                "isGreaterThan(int|float $expected, string $message = ''): self",
+                "isPositive(string $message = ''): self",
+                "isNegative(string $message = ''): self",
+                "isZero(string $message = ''): self",
+                "isBetween(int|float $min, int|float $max, string $message = ''): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\StringAssertions",
+            "kind": "trait",
+            "methods": [
+                "matchesRegularExpression(string $pattern, string $message = ''): self",
+                "notMatchesRegularExpression(string $pattern, string $message = ''): self",
+                "containsString(string $string, string $message = ''): self",
+                "notContainsString(string $string, string $message = ''): self",
+                "containsStringIgnoringCase(string $string, string $message = ''): self",
+                "notContainsStringIgnoringCase(string $string, string $message = ''): self",
+                "startsWith(string $prefix, string $message = ''): self",
+                "endsWith(string $suffix, string $message = ''): self",
+                "hasLength(int $length, string $message = ''): self",
+                "isEmptyString(string $message = ''): self",
+                "isNotEmptyString(string $message = ''): self",
+                "isJson(string $message = ''): self",
+                "matchesJson(string $expectedJson, string $message = ''): self",
+                "notMatchesJson(string $expectedJson, string $message = ''): self",
+                "isValidEmail(string $message = ''): self",
+                "ulid(): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\TypeCheckingAssertions",
+            "kind": "trait",
+            "methods": [
+                "instanceOf(string $expected, string $message = ''): self",
+                "notInstanceOf(string $expected, string $message = ''): self",
+                "isInt(string $message = ''): self",
+                "isString(string $message = ''): self",
+                "hasProperty(string $property, string $message = ''): self",
+                "hasMethod(string $method, string $message = ''): self",
+                "isFloat(string $message = ''): self",
+                "isBool(string $message = ''): self",
+                "isArray(string $message = ''): self",
+                "isResource(string $message = ''): self",
+                "isCallable(string $message = ''): self"
+            ]
+        }
+    ]
+}

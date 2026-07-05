@@ -27,6 +27,11 @@ const packages = defineCollection({
     php: z.string(),
     requires: z.array(z.object({ name: z.string(), constraint: z.string() })),
     install: z.string(),
+    api: z.array(z.object({
+      name: z.string(),
+      kind: z.string(),
+      methods: z.array(z.string()),
+    })),
     readme: z.string(),
     links: z.object({ github: z.string().url(), packagist: z.string().url() }),
   }),

@@ -1,0 +1,48 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\RekorClient\\Exception\\InvalidArgumentException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\RekorClient\\Exception\\RekorClientException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\RekorClient\\Exception\\RekorRequestException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\RekorClient\\Exception\\RekorResponseException",
+            "kind": "class",
+            "methods": [
+                "__construct(string $message, public readonly ?int $statusCode = null)"
+            ]
+        },
+        {
+            "name": "K2gl\\RekorClient\\KeyDetails",
+            "kind": "enum",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\RekorClient\\RekorClient",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly StreamFactoryInterface $streamFactory, string $baseUrl, )",
+                "submitHashedRekord(string $digest, string $signature, Verifier $verifier): TransparencyLogEntry"
+            ]
+        },
+        {
+            "name": "K2gl\\RekorClient\\Verifier",
+            "kind": "class",
+            "methods": [
+                "publicKey(string $der, KeyDetails $keyDetails): self",
+                "certificate(string $der, KeyDetails $keyDetails): self",
+                "toArray(): array"
+            ]
+        }
+    ]
+}

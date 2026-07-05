@@ -1,0 +1,15 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\Component\\AppEnv\\Services\\AppEnv",
+            "kind": "class",
+            "methods": [
+                "__construct( protected readonly string $env )",
+                "is(BackedEnum|string $env): bool",
+                "not(BackedEnum|string $env): bool",
+                "in(array $envs): bool",
+                "notIn(array $envs): bool"
+            ]
+        }
+    ]
+}

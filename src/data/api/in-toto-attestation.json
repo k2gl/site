@@ -1,0 +1,62 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\InToto\\Exception\\InTotoException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\InToto\\Exception\\InvalidStatementException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\InToto\\Predicate",
+            "kind": "interface",
+            "methods": [
+                "predicateType(): string",
+                "toArray(): array"
+            ]
+        },
+        {
+            "name": "K2gl\\InToto\\PredicateRegistry",
+            "kind": "class",
+            "methods": [
+                "register(string $predicateType, callable $factory): void",
+                "has(string $predicateType): bool",
+                "resolve(string $predicateType, array $predicate): ?Predicate",
+                "default(): self"
+            ]
+        },
+        {
+            "name": "K2gl\\InToto\\ResourceDescriptor",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly ?string $name = null, public readonly ?string $uri = null, public readonly array $digest = [], public readonly ?string $mediaType = null, public readonly ?string $downloadLocation = null, public readonly ?array $annotations = null, public readonly ?string $content = null, )",
+                "toArray(): array",
+                "digestFor(string $algorithm): ?string",
+                "hasDigest(string $algorithm, string $hexValue): bool",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\InToto\\Statement",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly array $subject, public readonly string $predicateType, public readonly array $predicate = [], public readonly StatementVersion $version = StatementVersion::V1, )",
+                "sign(Signer ...$signers): Envelope",
+                "predicate(?PredicateRegistry $registry = null): Predicate|array",
+                "fromEnvelope(Envelope $envelope): self",
+                "toArray(): array",
+                "toJson(): string",
+                "fromJson(string $json): self",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\InToto\\StatementVersion",
+            "kind": "enum",
+            "methods": []
+        }
+    ]
+}

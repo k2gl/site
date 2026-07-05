@@ -1,0 +1,76 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\SigstoreSign\\AmbientCredentials",
+            "kind": "class",
+            "methods": [
+                "githubActions( ClientInterface $httpClient, RequestFactoryInterface $requestFactory, string $audience = 'sigstore', ): string",
+                "gitlabCi(string $variable = 'SIGSTORE_ID_TOKEN'): string"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\Exception\\FulcioException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\Exception\\SigningException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\Exception\\SigstoreSignException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\Exception\\TimestampException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\FulcioClient",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly StreamFactoryInterface $streamFactory, string $baseUrl, )",
+                "requestCertificate( string $oidcToken, string $publicKeyPem, string $proofOfPossession, string $algorithm = 'ECDSA', ): string"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\FulcioSigningKey",
+            "kind": "class",
+            "methods": [
+                "create(FulcioClient $fulcio, string $oidcToken): SigningKey"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\SigningKey",
+            "kind": "class",
+            "methods": [
+                "publicKey(Signer $signer, string $publicKeyDer, KeyDetails $keyDetails, string $hint): self",
+                "certificate(Signer $signer, string $certificateDer, KeyDetails $keyDetails): self",
+                "sign(string $message): string",
+                "keyId(): ?string",
+                "rekorVerifier(): Verifier",
+                "bundleIdentity(): SigningIdentity"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\SigstoreSigner",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly RekorClient $rekor, private readonly ?TsaClient $tsa = null, )",
+                "signArtifact(string $artifact, SigningKey $key): Bundle",
+                "signAttestation(string $payload, string $payloadType, SigningKey $key): Bundle"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\TsaClient",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly StreamFactoryInterface $streamFactory, string $url, )",
+                "timestamp(string $signature): string"
+            ]
+        }
+    ]
+}

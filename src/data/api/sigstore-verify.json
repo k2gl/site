@@ -1,0 +1,179 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\Sigstore\\Bundle",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $mediaType, public readonly ?string $leafCertificate, public readonly array $tlogEntries, public readonly ?Envelope $dsseEnvelope = null, public readonly ?MessageSignature $messageSignature = null, public readonly array $rfc3161Timestamps = [], public readonly ?string $publicKeyHint = null, )",
+                "isDsse(): bool",
+                "isMessageSignature(): bool",
+                "hasCertificate(): bool",
+                "isPublicKey(): bool",
+                "requiresInclusionProof(): bool",
+                "fromJson(string $json): self",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\CertificateAuthority",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly array $certChainDer, public readonly ?DateTimeImmutable $validForStart, public readonly ?DateTimeImmutable $validForEnd, )",
+                "fromArray(array $data): self",
+                "isValidAt(DateTimeImmutable $moment): bool",
+                "certificates(): array"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\Checkpoint",
+            "kind": "class",
+            "methods": [
+                "__construct(public readonly string $envelope)",
+                "signedBody(): string",
+                "treeSize(): int",
+                "rootHash(): string",
+                "signatures(): array"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\CheckpointSignature",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $keyHint, public readonly string $signature, )"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\Cli\\Command",
+            "kind": "class",
+            "methods": [
+                "__construct($stdout = null, $stderr = null)",
+                "run(array $argv): int"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\Cli\\Options",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $artifact, public readonly string $bundle, public readonly ?string $repository, public readonly ?string $workflow, public readonly ?string $ref, public readonly ?string $san, public readonly ?string $issuer, public readonly ?string $trustedRoot, public readonly string $digestAlgorithm, public readonly bool $help, )",
+                "parse(array $arguments): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\Exception\\InvalidBundleException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sigstore\\Exception\\SigstoreException",
+            "kind": "interface",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sigstore\\Exception\\TrustRootException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sigstore\\Exception\\UnsupportedBundleException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sigstore\\Exception\\VerificationFailedException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Sigstore\\IdentityPolicy",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $san, public readonly string $issuer, private readonly bool $sanIsRegex = false, )",
+                "sanRegex(string $pattern, string $issuer): self",
+                "githubActions(string $repository, ?string $workflow = null, ?string $ref = null): self",
+                "gitlabCi( string $projectPath, ?string $ciConfigPath = null, ?string $ref = null, string $host = 'gitlab.com', ): self",
+                "verify(array $subjectAlternativeNames, ?string $issuer): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\InclusionProof",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly int $logIndex, public readonly int $treeSize, public readonly string $rootHash, public readonly array $hashes, public readonly Checkpoint $checkpoint, )",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\MessageSignature",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $hashAlgorithm, public readonly string $messageDigest, public readonly string $signature, )",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\Rfc3161Timestamp",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $signedTimestamp, )",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\SigstoreVerifier",
+            "kind": "class",
+            "methods": [
+                "__construct()",
+                "verifyFromJson( string $bundleJson, string $trustedRootJson, IdentityPolicy $identityPolicy, ?SubjectPolicy $subjectPolicy = null, ): Envelope",
+                "verify( Bundle $bundle, TrustedRoot $trustedRoot, IdentityPolicy $identityPolicy, ?SubjectPolicy $subjectPolicy = null, ): Envelope",
+                "verifyArtifactFromJson( string $bundleJson, string $artifact, string $trustedRootJson, IdentityPolicy $identityPolicy, ): void",
+                "verifyArtifact( Bundle $bundle, string $artifact, TrustedRoot $trustedRoot, IdentityPolicy $identityPolicy, ): void",
+                "verifyWithPublicKeyFromJson( string $bundleJson, string $publicKeyPem, string $trustedRootJson, ?string $expectedHint = null, ?SubjectPolicy $subjectPolicy = null, ): Envelope",
+                "verifyWithPublicKey( Bundle $bundle, string $publicKeyPem, TrustedRoot $trustedRoot, ?string $expectedHint = null, ?SubjectPolicy $subjectPolicy = null, ): Envelope",
+                "verifyArtifactWithPublicKeyFromJson( string $bundleJson, string $artifact, string $publicKeyPem, string $trustedRootJson, ?string $expectedHint = null, ): void",
+                "verifyArtifactWithPublicKey( Bundle $bundle, string $artifact, string $publicKeyPem, TrustedRoot $trustedRoot, ?string $expectedHint = null, ): void",
+                "verifyArtifactDigestFromJson( string $bundleJson, string $algorithm, string $hexDigest, string $trustedRootJson, IdentityPolicy $identityPolicy, ): void",
+                "verifyArtifactDigest( Bundle $bundle, string $algorithm, string $hexDigest, TrustedRoot $trustedRoot, IdentityPolicy $identityPolicy, ): void",
+                "verifyArtifactDigestWithPublicKeyFromJson( string $bundleJson, string $algorithm, string $hexDigest, string $publicKeyPem, string $trustedRootJson, ?string $expectedHint = null, ): void",
+                "verifyArtifactDigestWithPublicKey( Bundle $bundle, string $algorithm, string $hexDigest, string $publicKeyPem, TrustedRoot $trustedRoot, ?string $expectedHint = null, ): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\SubjectPolicy",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $algorithm, public readonly string $hexDigest, )",
+                "verify(Statement $statement): void"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\TlogEntry",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly int $logIndex, public readonly string $logId, public readonly string $kind, public readonly ?int $integratedTime, public readonly ?string $signedEntryTimestamp, public readonly ?InclusionProof $inclusionProof, public readonly string $canonicalizedBody, )",
+                "fromArray(array $data): self",
+                "isHashedRekordV2(): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\TransparencyLogInstance",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $logId, public readonly string $publicKeyPem, public readonly ?DateTimeImmutable $validForStart = null, public readonly ?DateTimeImmutable $validForEnd = null, )",
+                "fromArray(array $data): self",
+                "isValidAt(DateTimeImmutable $moment): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\Sigstore\\TrustedRoot",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly array $certificateAuthorities, public readonly array $transparencyLogs, public readonly array $timestampAuthorities = [], public readonly array $ctLogs = [], )",
+                "fromJson(string $json): self",
+                "fromTuf(Updater $updater, string $targetPath = self::TRUSTED_ROOT_TARGET): self",
+                "fromSigstorePublicGood( ?Fetcher $fetcher = null, ?DateTimeImmutable $referenceTime = null, ): self",
+                "findTransparencyLog(string $logId): ?TransparencyLogInstance",
+                "findCtLog(string $logId): ?TransparencyLogInstance"
+            ]
+        }
+    ]
+}
