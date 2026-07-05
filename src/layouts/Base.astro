@@ -1,0 +1,103 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  canonical?: string;
+}
+
+const { title, description, canonical } = Astro.props;
+const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
+---
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    {description && <meta name="description" content={description} />}
+    <link rel="canonical" href={canonicalURL} />
+    <slot name="head" />
+  </head>
+  <body>
+    <header class="site-header">
+      <a href="/" class="brand">k2gl</a>
+      <nav>
+        <a href="/packages">Packages</a>
+        <a href="/guides">Guides</a>
+        <a href="/blog">Blog</a>
+        <a href="https://github.com/k2gl">GitHub</a>
+      </nav>
+    </header>
+    <main class="site-main">
+      <slot />
+    </main>
+    <footer class="site-footer">
+      <p>Open-source PHP packages by Nick Harin · MIT · <a href="/llms.txt">llms.txt</a></p>
+    </footer>
+    <style is:global>
+      :root {
+        --fg: #1a1a2e;
+        --muted: #55566a;
+        --bg: #ffffff;
+        --accent: #3b5bdb;
+        --border: #e4e4ef;
+        --code-bg: #f5f5fa;
+        --maxw: 52rem;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      }
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e6e6f0;
+          --muted: #9a9ab0;
+          --bg: #14141f;
+          --accent: #7a90ff;
+          --border: #2a2a3d;
+          --code-bg: #1e1e2d;
+        }
+      }
+      * { box-sizing: border-box; }
+      body {
+        margin: 0;
+        color: var(--fg);
+        background: var(--bg);
+        line-height: 1.65;
+      }
+      a { color: var(--accent); }
+      .site-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        flex-wrap: wrap;
+      }
+      .brand { font-weight: 700; font-size: 1.2rem; text-decoration: none; }
+      .site-header nav { display: flex; gap: 1.25rem; }
+      .site-header nav a { text-decoration: none; color: var(--muted); }
+      .site-header nav a:hover { color: var(--accent); }
+      .site-main { max-width: var(--maxw); margin: 0 auto; padding: 2rem 1.5rem; }
+      .site-footer {
+        max-width: var(--maxw);
+        margin: 0 auto;
+        padding: 2rem 1.5rem;
+        color: var(--muted);
+        border-top: 1px solid var(--border);
+        font-size: 0.9rem;
+      }
+      pre {
+        background: var(--code-bg);
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+      }
+      code { background: var(--code-bg); padding: 0.15em 0.4em; border-radius: 4px; }
+      pre code { background: none; padding: 0; }
+      h1, h2, h3 { line-height: 1.25; }
+      table { border-collapse: collapse; width: 100%; }
+      th, td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; }
+    </style>
+  </body>
+</html>

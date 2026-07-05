@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --no-frozen-lockfile
+
+      - name: Build (astro + pagefind)
+        run: pnpm build
+
+      - name: Smoke — key routes exist
+        run: |
+          set -e
+          for f in \
+            dist/index.html \
+            dist/packages/index.html \
+            dist/packages/sigstore-verify/index.html \
+            dist/packages/array-reader/index.html \
+            dist/packages/enum/index.html \
+            dist/packages/sigstore-verify.md \
+            dist/packages/sigstore-verify.json \
+            dist/llms.txt \
+            dist/llms-full.txt \
+            dist/sitemap-index.xml
+          do
+            test -s "$f" || { echo "MISSING: $f"; exit 1; }
+          done
+          echo "all key routes present"
+
+      - name: Upload site artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: site-dist
+          path: dist
+          if-no-files-found: error

@@ -1,0 +1,56 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const pkgs = (await getCollection('packages')).map((p) => p.data);
+const supply = pkgs.filter((p) => p.family === 'supply-chain');
+const utils = pkgs.filter((p) => p.family === 'utilities');
+---
+
+<Base
+  title="k2gl — PHP supply-chain security & developer utilities"
+  description="Open-source PHP packages for Sigstore verification, build provenance, and everyday developer ergonomics."
+>
+  <section class="hero">
+    <h1>PHP packages for supply-chain security — and the ergonomics you actually use.</h1>
+    <p>
+      A family of focused, well-tested PHP libraries: a pure-PHP Sigstore verifier that
+      passes the official conformance suite, Composer plugins that check build provenance
+      at install, and small utilities that make everyday code cleaner.
+    </p>
+    <p><a href="/packages">Browse all packages →</a></p>
+  </section>
+
+  <section>
+    <h2>Supply-chain security</h2>
+    <ul class="cards">
+      {supply.map((p) => (
+        <li>
+          <a href={`/packages/${p.slug}`}><strong>{p.name}</strong></a>
+          <span>{p.tagline}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <section>
+    <h2>Utilities</h2>
+    <ul class="cards">
+      {utils.map((p) => (
+        <li>
+          <a href={`/packages/${p.slug}`}><strong>{p.name}</strong></a>
+          <span>{p.tagline}</span>
+        </li>
+      ))}
+    </ul>
+  </section>
+
+  <style>
+    .hero h1 { font-size: 2rem; }
+    .hero p { font-size: 1.1rem; color: var(--muted); }
+    .cards { list-style: none; padding: 0; display: grid; gap: 0.75rem; }
+    .cards li { padding: 1rem; border: 1px solid var(--border); border-radius: 8px; }
+    .cards li a { text-decoration: none; }
+    .cards li span { display: block; color: var(--muted); margin-top: 0.25rem; }
+  </style>
+</Base>

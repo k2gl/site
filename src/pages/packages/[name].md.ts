@@ -1,0 +1,53 @@
+import type { APIRoute, GetStaticPaths } from 'astro';
+import { getCollection } from 'astro:content';
+
+// Clean markdown twin of each package page, for agents/LLMs (append-.md per
+// llmstxt.org). Served noindex (Caddy adds X-Robots-Tag in production) and kept
+// out of the sitemap, but linked from llms.txt and rel=alternate.
+
+export const getStaticPaths: GetStaticPaths = async () => {
+  const pkgs = await getCollection('packages');
+  return pkgs.map((p) => ({ params: { name: p.data.slug }, props: { pkg: p.data } }));
+};
+
+export const GET: APIRoute = ({ props }) => {
+  const pkg = props.pkg;
+
+  const requirements = [
+    pkg.php ? `- PHP ${pkg.php}` : null,
+    ...pkg.requires.map((r: { name: string; constraint: string }) => `- ${r.name} ${r.constraint}`),
+  ].filter(Boolean).join('\n');
+
+  const md = `# ${pkg.name}
+
+> ${pkg.tagline}
+
+${pkg.hook}
+
+## Install
+
+\`\`\`bash
+${pkg.install}
+\`\`\`
+
+## Requirements
+
+${requirements || '- none declared'}
+
+## Documentation
+
+${pkg.readme.trim()}
+
+## Links
+
+- GitHub: ${pkg.links.github}
+- Packagist: ${pkg.links.packagist}
+`;
+
+  return new Response(md, {
+    headers: {
+      'Content-Type': 'text/markdown; charset=utf-8',
+      'X-Robots-Tag': 'noindex',
+    },
+  });
+};

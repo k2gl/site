@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const pkgs = (await getCollection('packages')).map((p) => p.data);
+const families: Array<{ key: 'supply-chain' | 'utilities'; label: string }> = [
+  { key: 'supply-chain', label: 'Supply-chain security' },
+  { key: 'utilities', label: 'Utilities' },
+];
+---
+
+<Base
+  title="Packages — k2gl"
+  description="All k2gl PHP packages: Sigstore/supply-chain tooling and developer utilities."
+>
+  <h1>Packages</h1>
+  {families.map((f) => (
+    <section>
+      <h2>{f.label}</h2>
+      <ul class="catalog">
+        {pkgs.filter((p) => p.family === f.key).map((p) => (
+          <li>
+            <a href={`/packages/${p.slug}`}>{p.name}</a>
+            <p>{p.tagline}</p>
+            <code>{p.install}</code>
+          </li>
+        ))}
+      </ul>
+    </section>
+  ))}
+
+  <style>
+    .catalog { list-style: none; padding: 0; display: grid; gap: 1rem; }
+    .catalog li { padding: 1rem 1.25rem; border: 1px solid var(--border); border-radius: 8px; }
+    .catalog li a { font-weight: 600; font-size: 1.1rem; text-decoration: none; }
+    .catalog li p { color: var(--muted); margin: 0.25rem 0 0.5rem; }
+  </style>
+</Base>

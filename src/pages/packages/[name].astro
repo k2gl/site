@@ -1,0 +1,78 @@
+---
+import { getCollection } from 'astro:content';
+import { marked } from 'marked';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const pkgs = await getCollection('packages');
+  return pkgs.map((p) => ({ params: { name: p.data.slug }, props: { pkg: p.data } }));
+}
+
+const { pkg } = Astro.props;
+const readmeHtml = await marked.parse(pkg.readme);
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareSourceCode',
+  name: pkg.name,
+  description: pkg.tagline,
+  codeRepository: pkg.links.github,
+  programmingLanguage: 'PHP',
+  license: 'https://opensource.org/licenses/MIT',
+  author: { '@type': 'Person', name: 'Nick Harin' },
+};
+---
+
+<Base title={`${pkg.name} — ${pkg.tagline}`} description={pkg.tagline}>
+  <Fragment slot="head">
+    <link rel="alternate" type="text/markdown" href={`/packages/${pkg.slug}.md`} />
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
+
+  <article>
+    <p class="crumb"><a href="/packages">Packages</a> · {pkg.family}</p>
+    <h1>{pkg.name}</h1>
+    <p class="tagline">{pkg.tagline}</p>
+    {pkg.hook && <p class="hook">{pkg.hook}</p>}
+
+    <h2>Install</h2>
+    <pre><code>{pkg.install}</code></pre>
+
+    <dl class="meta">
+      {pkg.php && (<><dt>PHP</dt><dd>{pkg.php}</dd></>)}
+      {pkg.requires.length > 0 && (
+        <>
+          <dt>k2gl dependencies</dt>
+          <dd>
+            {pkg.requires.map((r, i) => (
+              <>
+                {i > 0 ? ', ' : ''}
+                <a href={`/packages/${r.name.replace('k2gl/', '')}`}>{r.name}</a>
+              </>
+            ))}
+          </dd>
+        </>
+      )}
+    </dl>
+
+    <div class="readme" set:html={readmeHtml} />
+
+    <footer class="links">
+      <a href={pkg.links.github}>GitHub</a> ·
+      <a href={pkg.links.packagist}>Packagist</a> ·
+      <a href={`/packages/${pkg.slug}.md`}>Markdown (for agents)</a>
+    </footer>
+  </article>
+
+  <style>
+    .crumb { color: var(--muted); font-size: 0.9rem; }
+    h1 { margin-bottom: 0.25rem; }
+    .tagline { font-size: 1.25rem; color: var(--muted); margin-top: 0; }
+    .hook { font-size: 1.05rem; }
+    .meta { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; }
+    .meta dt { font-weight: 600; color: var(--muted); }
+    .meta dd { margin: 0; }
+    .readme { margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+    .links { margin-top: 2rem; color: var(--muted); }
+  </style>
+</Base>
