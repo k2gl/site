@@ -1,7 +1,8 @@
 # syntax=docker/dockerfile:1
 
 # ── Builder: SSG stage lives ONLY here, so the runtime is stack-agnostic ──
-FROM node:22-alpine AS builder
+# glibc (not alpine/musl) so pagefind's prebuilt binary installs cleanly.
+FROM node:22-slim AS builder
 RUN corepack enable
 WORKDIR /app
 
