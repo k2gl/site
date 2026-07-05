@@ -1,7 +1,0 @@
-# pnpm 10.15+ reads build-script allowlist from here, not package.json.
-# esbuild/sharp/pagefind ship prebuilt binaries; allow their install scripts so
-# pnpm doesn't hard-error on "ignored builds".
-onlyBuiltDependencies:
-  - esbuild
-  - sharp
-  - pagefind
