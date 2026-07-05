@@ -14,10 +14,13 @@ services:
       - caddy_data:/data # persisted TLS certs — keep this to avoid LE rate limits
       - caddy_config:/config
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:80/llms.txt"]
+      # Caddy's admin API (localhost:2019) is up iff Caddy is serving; hitting the
+      # public port would follow the 80->443 redirect and report unhealthy.
+      test: ["CMD", "wget", "-q", "--spider", "http://127.0.0.1:2019/config/"]
       interval: 30s
       timeout: 5s
       retries: 3
+      start_period: 15s
 
 volumes:
   caddy_data:

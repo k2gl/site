@@ -3,8 +3,8 @@
 	encode zstd gzip
 
 	# Machine endpoints must never be indexed (near-duplicates of the HTML).
-	# path_regexp matches at any depth, unlike a bare *.md glob.
-	@machine path_regexp \.(md|json)$
+	# Char-class [.] avoids Caddyfile backslash-escaping surprises.
+	@machine path_regexp "[.](md|json)$"
 	header @machine X-Robots-Tag "noindex"
 	@llms path /llms.txt /llms-full.txt
 	header @llms X-Robots-Tag "noindex"

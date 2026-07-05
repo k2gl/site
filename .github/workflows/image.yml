@@ -70,8 +70,13 @@ jobs:
           VPS_HOST: ${{ secrets.VPS_HOST }}
         run: |
           install -m 600 /dev/stdin deploy_key <<< "$SSH_KEY"
-          ssh -i deploy_key -o StrictHostKeyChecking=accept-new "root@${VPS_HOST}" \
-            'cd /opt/k2gl && docker compose pull && docker compose up -d && sleep 5 && docker compose ps'
+          ssh -i deploy_key -o StrictHostKeyChecking=accept-new "root@${VPS_HOST}" '
+            cd /opt/k2gl
+            curl -fsSL https://raw.githubusercontent.com/k2gl/site/main/deploy/docker-compose.yml -o docker-compose.yml
+            docker compose pull
+            docker compose up -d
+            sleep 5
+            docker compose ps'
 
       - name: Smoke the live site
         run: |
