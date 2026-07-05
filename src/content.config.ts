@@ -54,4 +54,13 @@ const compare = defineCollection({
   }),
 });
 
-export const collections = { packages, blog, compare };
+const guides = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/guides' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    order: z.number().default(100),
+  }),
+});
+
+export const collections = { packages, blog, compare, guides };

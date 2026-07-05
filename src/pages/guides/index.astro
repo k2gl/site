@@ -1,12 +1,23 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../../layouts/Base.astro';
+
+const guides = (await getCollection('guides')).sort((a, b) => a.data.order - b.data.order);
 ---
 
-<Base title="Guides — k2gl" description="Cross-package how-to guides for the k2gl PHP packages.">
+<Base title="Guides — k2gl" description="Cross-package how-tos for the k2gl PHP packages.">
   <h1>Guides</h1>
-  <p>
-    Cross-package how-tos (verify build provenance at install, sign and verify a blob end to end,
-    build a Sigstore bundle) are in progress.
-  </p>
-  <p>Until then, each <a href="/packages">package page</a> has install and usage.</p>
+  <ul class="list">
+    {guides.map((g) => (
+      <li>
+        <a href={`/guides/${g.id}`}>{g.data.title}</a>
+        <p>{g.data.description}</p>
+      </li>
+    ))}
+  </ul>
+  <style>
+    .list { list-style: none; padding: 0; display: grid; gap: 1.25rem; }
+    .list li a { font-size: 1.1rem; font-weight: 600; text-decoration: none; }
+    .list li p { color: var(--muted); margin: 0.2rem 0 0; }
+  </style>
 </Base>
