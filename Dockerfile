@@ -7,7 +7,10 @@ RUN corepack enable
 WORKDIR /app
 
 COPY package.json pnpm-lock.yaml ./
-RUN pnpm install --frozen-lockfile
+# --no-frozen here: pnpm 10 treats ignored build scripts as a hard error under
+# --frozen, but esbuild/sharp binaries come from platform optional-deps and don't
+# need their postinstall. CI runs --frozen and gates lockfile validity.
+RUN pnpm install --no-frozen-lockfile
 
 COPY . .
 # Loader raw-fetches each package README + composer.json from GitHub (no sibling
