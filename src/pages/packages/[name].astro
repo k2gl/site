@@ -35,6 +35,14 @@ const jsonLd = {
     <p class="tagline">{pkg.tagline}</p>
     {pkg.hook && <p class="hook">{pkg.hook}</p>}
 
+    <p class="badges">
+      <a href={pkg.links.packagist}>
+        <img src={`https://img.shields.io/packagist/v/${pkg.name}?label=Packagist`} alt={`${pkg.name} version on Packagist`} height="20" loading="lazy" />
+      </a>
+      <img src={`https://img.shields.io/packagist/dt/${pkg.name}?label=downloads`} alt={`${pkg.name} total downloads`} height="20" loading="lazy" />
+      <img src={`https://img.shields.io/packagist/l/${pkg.name}?label=license`} alt={`${pkg.name} license`} height="20" loading="lazy" />
+    </p>
+
     <h2>Install</h2>
     <pre><code>{pkg.install}</code></pre>
 
@@ -84,6 +92,8 @@ const jsonLd = {
     h1 { margin-bottom: 0.25rem; }
     .tagline { font-size: 1.25rem; color: var(--muted); margin-top: 0; }
     .hook { font-size: 1.05rem; }
+    .badges { display: flex; gap: 0.4rem; flex-wrap: wrap; align-items: center; margin: 0.5rem 0 1.25rem; }
+    .badges img { height: 20px; display: block; }
     .meta { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; }
     .meta dt { font-weight: 600; color: var(--muted); }
     .meta dd { margin: 0; }
