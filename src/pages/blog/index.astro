@@ -1,0 +1,29 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const posts = (await getCollection('blog')).sort(
+  (a, b) => b.data.date.getTime() - a.data.date.getTime(),
+);
+---
+
+<Base title="Blog — k2gl" description="Notes on PHP supply-chain security, Sigstore, and the k2gl packages.">
+  <h1>Blog</h1>
+  {posts.length === 0 && <p>No posts yet.</p>}
+  <ul class="posts">
+    {posts.map((p) => (
+      <li>
+        <a href={`/blog/${p.id}`}>{p.data.title}</a>
+        <time datetime={p.data.date.toISOString()}>{p.data.date.toISOString().slice(0, 10)}</time>
+        <p>{p.data.description}</p>
+      </li>
+    ))}
+  </ul>
+
+  <style>
+    .posts { list-style: none; padding: 0; display: grid; gap: 1.5rem; }
+    .posts li a { font-size: 1.2rem; font-weight: 600; text-decoration: none; }
+    .posts time { display: block; color: var(--muted); font-size: 0.85rem; margin: 0.15rem 0; }
+    .posts p { color: var(--muted); margin: 0; }
+  </style>
+</Base>

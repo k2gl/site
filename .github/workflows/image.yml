@@ -58,3 +58,26 @@ jobs:
           subject-name: ghcr.io/k2gl/site
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
+
+  deploy:
+    name: Deploy to VPS
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Pull & restart on the VPS over SSH
+        env:
+          SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+        run: |
+          install -m 600 /dev/stdin deploy_key <<< "$SSH_KEY"
+          ssh -i deploy_key -o StrictHostKeyChecking=accept-new "root@${VPS_HOST}" \
+            'cd /opt/k2gl && docker compose pull && docker compose up -d && sleep 5 && docker compose ps'
+
+      - name: Smoke the live site
+        run: |
+          set -e
+          for p in / /llms.txt /packages/sigstore-verify.md /packages/array-reader.json; do
+            code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "https://k2gl.com$p")
+            echo "$p -> $code"
+            [ "$code" = 200 ] || { echo "smoke failed on $p"; exit 1; }
+          done

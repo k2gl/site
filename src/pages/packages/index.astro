@@ -1,38 +1,58 @@
 ---
 import { getCollection } from 'astro:content';
+import { CATEGORIES } from '../../data/enrichment';
 import Base from '../../layouts/Base.astro';
 
 const pkgs = (await getCollection('packages')).map((p) => p.data);
-const families: Array<{ key: 'supply-chain' | 'utilities'; label: string }> = [
-  { key: 'supply-chain', label: 'Supply-chain security' },
-  { key: 'utilities', label: 'Utilities' },
-];
+const groups = CATEGORIES.map((c) => ({
+  ...c,
+  items: pkgs.filter((p) => p.category === c.key).sort((a, b) => a.name.localeCompare(b.name)),
+})).filter((g) => g.items.length > 0);
 ---
 
 <Base
   title="Packages — k2gl"
-  description="All k2gl PHP packages: Sigstore/supply-chain tooling and developer utilities."
+  description="All k2gl PHP packages, grouped by type: Composer plugins, Sigstore & signing, attestation formats, and developer utilities."
 >
   <h1>Packages</h1>
-  {families.map((f) => (
-    <section>
-      <h2>{f.label}</h2>
-      <ul class="catalog">
-        {pkgs.filter((p) => p.family === f.key).map((p) => (
-          <li>
-            <a href={`/packages/${p.slug}`}>{p.name}</a>
-            <p>{p.tagline}</p>
+  <p class="lead">{pkgs.length} packages, grouped by type.</p>
+
+  {groups.map((g) => (
+    <section class="group">
+      <div class="group-head">
+        <h2>{g.label} <span class="count">{g.items.length}</span></h2>
+        <p class="blurb">{g.blurb}</p>
+      </div>
+      <div class="grid">
+        {g.items.map((p) => (
+          <a class="card" href={`/packages/${p.slug}`}>
+            <strong>{p.name}</strong>
+            <span class="tag">{p.tagline}</span>
             <code>{p.install}</code>
-          </li>
+          </a>
         ))}
-      </ul>
+      </div>
     </section>
   ))}
 
   <style>
-    .catalog { list-style: none; padding: 0; display: grid; gap: 1rem; }
-    .catalog li { padding: 1rem 1.25rem; border: 1px solid var(--border); border-radius: 8px; }
-    .catalog li a { font-weight: 600; font-size: 1.1rem; text-decoration: none; }
-    .catalog li p { color: var(--muted); margin: 0.25rem 0 0.5rem; }
+    .lead { color: var(--muted); font-size: 1.1rem; }
+    .group { margin: 2.5rem 0; }
+    .group-head h2 { margin-bottom: 0.2rem; }
+    .count {
+      font-size: 0.8rem; font-weight: 600; color: var(--muted);
+      background: var(--code-bg); padding: 0.1em 0.5em; border-radius: 999px; vertical-align: middle;
+    }
+    .blurb { color: var(--muted); margin-top: 0; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 1rem; }
+    .card {
+      display: flex; flex-direction: column; gap: 0.4rem;
+      padding: 1rem 1.1rem; border: 1px solid var(--border); border-radius: 10px;
+      text-decoration: none; color: inherit; transition: border-color 0.15s;
+    }
+    .card:hover { border-color: var(--accent); }
+    .card strong { color: var(--accent); }
+    .card .tag { color: var(--muted); font-size: 0.92rem; flex: 1; }
+    .card code { font-size: 0.82rem; background: var(--code-bg); padding: 0.3em 0.5em; border-radius: 6px; }
   </style>
 </Base>

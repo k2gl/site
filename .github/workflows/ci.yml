@@ -35,10 +35,12 @@ jobs:
           set -e
           for f in \
             dist/index.html \
-            dist/packages/index.html \
-            dist/packages/sigstore-verify/index.html \
-            dist/packages/array-reader/index.html \
-            dist/packages/enum/index.html \
+            dist/packages.html \
+            dist/packages/sigstore-verify.html \
+            dist/packages/composer-attest.html \
+            dist/blog.html \
+            dist/blog/verify-composer-provenance.html \
+            dist/guides.html \
             dist/packages/sigstore-verify.md \
             dist/packages/sigstore-verify.json \
             dist/llms.txt \

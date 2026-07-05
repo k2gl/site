@@ -1,7 +1,7 @@
 import type { Loader, LoaderContext } from 'astro/loaders';
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
-import { ENRICHMENT, FALLBACK } from '../data/enrichment';
+import { ENRICHMENT, FALLBACK, familyOf } from '../data/enrichment';
 
 /**
  * The single content substrate. Each package page, its .md twin, its .json feed,
@@ -34,7 +34,8 @@ export function packagesLoader(slugs: string[]): Loader {
           name: composer.name,
           description: composer.description ?? '',
           tagline: enrichment.tagline || (composer.description ?? ''),
-          family: enrichment.family,
+          family: familyOf(enrichment.category),
+          category: enrichment.category,
           hook: enrichment.hook,
           keywords: composer.keywords ?? [],
           php: String(composer.require?.php ?? ''),

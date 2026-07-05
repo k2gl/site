@@ -1,4 +1,5 @@
 import { defineCollection, z } from 'astro:content';
+import { glob } from 'astro/loaders';
 import { packagesLoader } from './loaders/packages';
 
 // All 17 published Composer packages (composer-attest-action is a GitHub Action,
@@ -20,6 +21,7 @@ const packages = defineCollection({
     description: z.string(),
     tagline: z.string(),
     family: z.enum(['supply-chain', 'utilities']),
+    category: z.enum(['plugins', 'sigstore', 'attestation', 'signatures', 'utilities']),
     hook: z.string(),
     keywords: z.array(z.string()),
     php: z.string(),
@@ -30,4 +32,13 @@ const packages = defineCollection({
   }),
 });
 
-export const collections = { packages };
+const blog = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/blog' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+    date: z.coerce.date(),
+  }),
+});
+
+export const collections = { packages, blog };

@@ -1,56 +1,88 @@
 ---
 import { getCollection } from 'astro:content';
+import { CATEGORIES } from '../data/enrichment';
 import Base from '../layouts/Base.astro';
 
 const pkgs = (await getCollection('packages')).map((p) => p.data);
-const supply = pkgs.filter((p) => p.family === 'supply-chain');
-const utils = pkgs.filter((p) => p.family === 'utilities');
+const count = (c: string) => pkgs.filter((p) => p.category === c).length;
+const flagship = ['sigstore-verify', 'composer-attest']
+  .map((s) => pkgs.find((p) => p.slug === s))
+  .filter((p): p is NonNullable<typeof p> => Boolean(p));
 ---
 
 <Base
-  title="k2gl — PHP supply-chain security & developer utilities"
-  description="Open-source PHP packages for Sigstore verification, build provenance, and everyday developer ergonomics."
+  title="k2gl — supply-chain security & developer utilities for PHP"
+  description="A family of PHP libraries: a conformance-passing pure-PHP Sigstore verifier, Composer plugins that check build provenance at install, and small everyday utilities."
 >
   <section class="hero">
-    <h1>PHP packages for supply-chain security — and the ergonomics you actually use.</h1>
+    <h1>Software supply-chain security for PHP.</h1>
     <p>
-      A family of focused, well-tested PHP libraries: a pure-PHP Sigstore verifier that
-      passes the official conformance suite, Composer plugins that check build provenance
-      at install, and small utilities that make everyday code cleaner.
+      A pure-PHP <strong>Sigstore</strong> verifier that passes the official conformance suite, the
+      attestation formats it builds on (DSSE, in-toto, SLSA, TUF), <strong>Composer plugins</strong>
+      that check provenance and licenses at install, and a few general-purpose utilities.
     </p>
-    <p><a href="/packages">Browse all packages →</a></p>
   </section>
 
   <section>
-    <h2>Supply-chain security</h2>
-    <ul class="cards">
-      {supply.map((p) => (
-        <li>
-          <a href={`/packages/${p.slug}`}><strong>{p.name}</strong></a>
-          <span>{p.tagline}</span>
-        </li>
+    <div class="flagship">
+      {flagship.map((p) => (
+        <a class="fcard" href={`/packages/${p.slug}`}>
+          <strong>{p.name}</strong>
+          <span class="tag">{p.tagline}</span>
+          <span class="hook">{p.hook}</span>
+          <code>{p.install}</code>
+        </a>
       ))}
-    </ul>
+    </div>
   </section>
 
   <section>
-    <h2>Utilities</h2>
-    <ul class="cards">
-      {utils.map((p) => (
-        <li>
-          <a href={`/packages/${p.slug}`}><strong>{p.name}</strong></a>
-          <span>{p.tagline}</span>
-        </li>
+    <h2>By type</h2>
+    <div class="cats">
+      {CATEGORIES.map((c) => (
+        <a class="cat" href="/packages">
+          <strong>{c.label} <span class="count">{count(c.key)}</span></strong>
+          <span>{c.blurb}</span>
+        </a>
       ))}
-    </ul>
+    </div>
+  </section>
+
+  <section class="agents">
+    <h2>Machine-readable docs</h2>
+    <p>
+      Every package has a markdown twin and a <a href="/llms.txt">/llms.txt</a> index, so an AI
+      agent can learn to use any of these without reading the source.
+    </p>
   </section>
 
   <style>
-    .hero h1 { font-size: 2rem; }
-    .hero p { font-size: 1.1rem; color: var(--muted); }
-    .cards { list-style: none; padding: 0; display: grid; gap: 0.75rem; }
-    .cards li { padding: 1rem; border: 1px solid var(--border); border-radius: 8px; }
-    .cards li a { text-decoration: none; }
-    .cards li span { display: block; color: var(--muted); margin-top: 0.25rem; }
+    .hero h1 { font-size: 2.1rem; line-height: 1.2; }
+    .hero p { font-size: 1.12rem; color: var(--muted); }
+    .flagship { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
+    .fcard {
+      display: flex; flex-direction: column; gap: 0.5rem;
+      padding: 1.25rem; border: 1px solid var(--border); border-radius: 12px;
+      text-decoration: none; color: inherit; transition: border-color 0.15s;
+    }
+    .fcard:hover { border-color: var(--accent); }
+    .fcard strong { color: var(--accent); font-size: 1.15rem; }
+    .fcard .tag { color: var(--fg); }
+    .fcard .hook { color: var(--muted); font-size: 0.95rem; }
+    .fcard code { font-size: 0.82rem; background: var(--code-bg); padding: 0.3em 0.5em; border-radius: 6px; }
+    .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.85rem; }
+    .cat {
+      display: flex; flex-direction: column; gap: 0.3rem;
+      padding: 0.9rem 1.1rem; border: 1px solid var(--border); border-radius: 10px;
+      text-decoration: none; color: inherit;
+    }
+    .cat:hover { border-color: var(--accent); }
+    .cat span { color: var(--muted); font-size: 0.9rem; }
+    .count {
+      font-size: 0.75rem; color: var(--muted); background: var(--code-bg);
+      padding: 0.1em 0.5em; border-radius: 999px;
+    }
+    .agents { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .agents p { color: var(--muted); }
   </style>
 </Base>
