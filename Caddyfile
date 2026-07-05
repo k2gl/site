@@ -1,0 +1,26 @@
+{$SITE_DOMAIN:k2gl.com} {
+	root * /srv
+	encode zstd gzip
+
+	# Agent/machine endpoints must never be indexed (near-duplicates of the HTML)
+	# and must never be stale — agents need a fresh API description.
+	@machine path *.md *.json /llms.txt /llms-full.txt
+	header @machine {
+		X-Robots-Tag "noindex"
+		Cache-Control "public, max-age=0, must-revalidate"
+	}
+
+	# Fingerprinted assets are immutable; HTML revalidates so content stays fresh.
+	@assets path /_astro/*
+	header @assets Cache-Control "public, max-age=31536000, immutable"
+	header Cache-Control "public, max-age=0, must-revalidate"
+
+	# Baseline security headers (static site, so this is most of the surface).
+	header {
+		X-Content-Type-Options "nosniff"
+		Referrer-Policy "strict-origin-when-cross-origin"
+		-Server
+	}
+
+	file_server
+}

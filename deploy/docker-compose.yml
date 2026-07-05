@@ -1,0 +1,24 @@
+# Portable deploy — works on any VPS with Docker. No vendor lock-in.
+# Pulls the prebuilt, provenance-attested image from GHCR.
+services:
+  site:
+    image: ghcr.io/k2gl/site:${SITE_TAG:-latest}
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp" # HTTP/3
+    environment:
+      SITE_DOMAIN: ${SITE_DOMAIN:-k2gl.com}
+    volumes:
+      - caddy_data:/data # persisted TLS certs — keep this to avoid LE rate limits
+      - caddy_config:/config
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:80/llms.txt"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+
+volumes:
+  caddy_data:
+  caddy_config:
