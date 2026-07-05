@@ -19,6 +19,8 @@ const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
     {description && <meta name="description" content={description} />}
     <link rel="canonical" href={canonicalURL} />
     <link rel="alternate" type="application/rss+xml" title="k2gl blog" href="/rss.xml" />
+    <link rel="stylesheet" href="/hljs/github.min.css" media="(prefers-color-scheme: light)" />
+    <link rel="stylesheet" href="/hljs/github-dark.min.css" media="(prefers-color-scheme: dark)" />
     <slot name="head" />
   </head>
   <body>
@@ -118,6 +120,12 @@ const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
       table { border-collapse: collapse; width: 100%; }
       th, td { border: 1px solid var(--border); padding: 0.4rem 0.6rem; text-align: left; }
     </style>
+    <script is:inline src="/hljs/highlight.min.js"></script>
+    <script is:inline>
+      document.addEventListener('DOMContentLoaded', () => {
+        if (window.hljs) window.hljs.highlightAll();
+      });
+    </script>
     <script is:inline>
       document.addEventListener('DOMContentLoaded', () => {
         for (const pre of document.querySelectorAll('pre')) {

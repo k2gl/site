@@ -10,6 +10,9 @@ export default defineConfig({
   // serves sigstore-verify.html (Caddy try_files), no 308.
   trailingSlash: 'never',
   build: { format: 'file' },
+  // Highlight client-side with highlight.js (bundled in public/hljs) so package
+  // READMEs (rendered via marked) and collection content share one highlighter.
+  markdown: { syntaxHighlight: false },
   integrations: [
     mdx(),
     // The machine .md/.json/llms.txt endpoints are excluded from the sitemap so
