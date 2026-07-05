@@ -1,0 +1,28 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const items = (await getCollection('compare')).sort((a, b) =>
+  a.data.title.localeCompare(b.data.title),
+);
+---
+
+<Base
+  title="Comparisons — k2gl"
+  description="Straight answers: is there a Sigstore client for PHP, a cosign alternative, and more."
+>
+  <h1>Comparisons</h1>
+  <ul class="list">
+    {items.map((c) => (
+      <li>
+        <a href={`/compare/${c.id}`}>{c.data.title}</a>
+        <p>{c.data.description}</p>
+      </li>
+    ))}
+  </ul>
+  <style>
+    .list { list-style: none; padding: 0; display: grid; gap: 1.25rem; }
+    .list li a { font-size: 1.1rem; font-weight: 600; text-decoration: none; }
+    .list li p { color: var(--muted); margin: 0.2rem 0 0; }
+  </style>
+</Base>

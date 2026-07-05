@@ -46,4 +46,12 @@ const blog = defineCollection({
   }),
 });
 
-export const collections = { packages, blog };
+const compare = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './content/compare' }),
+  schema: z.object({
+    title: z.string(),
+    description: z.string(),
+  }),
+});
+
+export const collections = { packages, blog, compare };
