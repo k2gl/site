@@ -9,7 +9,16 @@ export async function getStaticPaths() {
 }
 
 const { pkg } = Astro.props;
-const readmeHtml = await marked.parse(pkg.readme);
+
+// READMEs often lead with their own shields/poser badges; the page already shows a
+// consistent set, so strip badge images (and now-empty wrappers) to avoid duplicates.
+const stripBadges = (html: string): string =>
+  html
+    .replace(/<a\b[^>]*>\s*<img\b[^>]*src="[^"]*(?:shields\.io|poser\.pugx|badgen\.net|\/badge\.svg|\/workflows\/[^"]*badge|actions\/workflow)[^"]*"[^>]*>\s*<\/a>/gi, '')
+    .replace(/<img\b[^>]*src="[^"]*(?:shields\.io|poser\.pugx|badgen\.net|\/badge\.svg)[^"]*"[^>]*>/gi, '')
+    .replace(/<p>(?:\s|<br\s*\/?>)*<\/p>/gi, '');
+
+const readmeHtml = stripBadges(await marked.parse(pkg.readme));
 
 const jsonLd = {
   '@context': 'https://schema.org',
