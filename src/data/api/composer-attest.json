@@ -1,11 +1,25 @@
 {
     "classes": [
         {
+            "name": "K2gl\\ComposerAttest\\AttestCommand",
+            "kind": "class",
+            "methods": [
+                "(string $url) use ($downloader): ?string"
+            ]
+        },
+        {
             "name": "K2gl\\ComposerAttest\\AttestationVerifier",
             "kind": "class",
             "methods": [
                 "__construct( private readonly Closure $fetch, private readonly TrustedRoot $trustedRoot, private readonly Policy $policy, )",
                 "verify(string $owner, string $repo, string $artifactPath): VerificationResult"
+            ]
+        },
+        {
+            "name": "K2gl\\ComposerAttest\\CommandProvider",
+            "kind": "class",
+            "methods": [
+                "getCommands(): array"
             ]
         },
         {
@@ -20,6 +34,7 @@
                 "activate(Composer $composer, IOInterface $io): void",
                 "deactivate(Composer $composer, IOInterface $io): void",
                 "uninstall(Composer $composer, IOInterface $io): void",
+                "getCapabilities(): array",
                 "getSubscribedEvents(): array",
                 "onPostFileDownload(PostFileDownloadEvent $event): void",
                 "(string $url) use ($downloader): ?string"
