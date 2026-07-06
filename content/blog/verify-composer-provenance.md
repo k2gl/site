@@ -1,5 +1,5 @@
 ---
-title: "Verify your Composer dependencies' provenance"
+title: "Verify the provenance of your Composer dependencies"
 description: "Sign and verify PHP package provenance with Sigstore and GitHub build attestations, end to end."
 date: 2026-07-05
 ---
