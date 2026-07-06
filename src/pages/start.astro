@@ -1,0 +1,46 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base
+  title="Start here — k2gl"
+  description="Get started with the k2gl PHP packages: verify your dependencies' provenance, sign your own releases, or reach for a single library."
+>
+  <h1>Start here</h1>
+  <p>
+    k2gl is a family of PHP packages for software supply-chain security — a
+    pure-PHP Sigstore verifier and signer, the attestation formats underneath, and
+    Composer plugins — plus a few general-purpose utilities. Pick the path that
+    matches what you need.
+  </p>
+
+  <h2>Verify what you install</h2>
+  <p>
+    Check that your dependencies were really built by their repositories' CI, at
+    <code>composer install</code> time:
+  </p>
+  <pre><code class="language-bash">composer require --dev k2gl/composer-attest</code></pre>
+  <p><a href="/guides/verify-provenance-at-install">Guide: verify provenance at install →</a></p>
+
+  <h2>Sign your own releases</h2>
+  <p>
+    If you publish a package, attest its provenance so others can verify it — one
+    line in a release workflow:
+  </p>
+  <pre><code class="language-yaml">- uses: k2gl/composer-attest-action@v1</code></pre>
+  <p><a href="/guides/attest-your-package">Guide: attest your package →</a></p>
+
+  <h2>Reach for a single library</h2>
+  <p>
+    Every layer is its own package — verification, signing, DSSE, in-toto, SLSA,
+    TUF, Rekor. Browse them by type:
+  </p>
+  <p><a href="/packages">All packages →</a> · <a href="/supply-chain">How they fit together →</a></p>
+
+  <h2>Reading with an agent?</h2>
+  <p>
+    Every package has a machine-readable twin. Start from
+    <a href="/llms.txt">llms.txt</a>, or append <code>.md</code> / <code>.json</code>
+    to any package URL for the same content without the HTML.
+  </p>
+</Base>
