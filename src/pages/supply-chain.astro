@@ -7,6 +7,10 @@ const link = (slug: string) => {
   const p = pkgs.find((x) => x.slug === slug);
   return p ? `<a href="/packages/${p.slug}">${p.name}</a>` : slug;
 };
+
+const withDeps = pkgs
+  .filter((p) => p.family === 'supply-chain' && p.requires.length > 0)
+  .sort((a, b) => a.requires.length - b.requires.length);
 ---
 
 <Base
@@ -50,7 +54,28 @@ const link = (slug: string) => {
     against an allow/deny policy in the same install step.
   </p>
 
+  <h2>How they build on each other</h2>
+  <p>
+    Each package depends only on the layers it needs — nothing pulls in the whole
+    family. The k2gl dependencies of each supply-chain package:
+  </p>
+  <ul class="deps">
+    {withDeps.map((p) => (
+      <li>
+        <a href={`/packages/${p.slug}`}>{p.name}</a> →{' '}
+        {p.requires.map((r, i) => (
+          <>{i > 0 ? ', ' : ''}<a href={`/packages/${r.name.replace('k2gl/', '')}`}>{r.name}</a></>
+        ))}
+      </li>
+    ))}
+  </ul>
+
   <h2>Conformance</h2>
+
+  <style>
+    .deps { line-height: 2; }
+    .deps li { margin: 0.15rem 0; }
+  </style>
   <p>
     The verifier and signer pass the official
     <a href="https://github.com/sigstore/sigstore-conformance">sigstore-conformance</a>
