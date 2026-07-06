@@ -1,0 +1,125 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\SdJwt\\Disclosure",
+            "kind": "class",
+            "methods": [
+                "fromEncoded(string $encoded): self",
+                "forProperty(string $salt, string $claimName, mixed $value): self",
+                "forArrayElement(string $salt, mixed $value): self",
+                "isArrayElement(): bool",
+                "digest(string $hashAlgorithm = HashAlgorithm::DEFAULT): string"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwt\\Exception\\InvalidSdJwtException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SdJwt\\Exception\\KeyBindingVerificationFailed",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SdJwt\\Exception\\SdJwtException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SdJwt\\Exception\\SelectionException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SdJwt\\Exception\\SignatureVerificationFailed",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SdJwt\\Jws\\JwsSigner",
+            "kind": "class",
+            "methods": [
+                "es256FromPem(string $pem): self",
+                "es384FromPem(string $pem): self",
+                "es512FromPem(string $pem): self",
+                "ed25519(string $secretKey): self",
+                "rs256FromPem(string $pem): self",
+                "withAlgorithm(Signer $signer, string $algorithm): self",
+                "algorithm(): string",
+                "sign(array|stdClass $payload, array $header = []): string"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwt\\KeyBinding",
+            "kind": "class",
+            "methods": [
+                "required(string $audience, string $nonce, int $maxAgeSeconds = 600): self",
+                "notRequired(): self"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwt\\Presentation",
+            "kind": "class",
+            "methods": [
+                "of(SdJwt|string $sdJwt): self",
+                "payload(): stdClass",
+                "claims(): array",
+                "disclosablePaths(): array",
+                "disclose(string ...$paths): self",
+                "discloseAll(): self",
+                "toSdJwt(): SdJwt",
+                "toCompact(): string",
+                "withKeyBinding( JwsSigner $signer, string $audience, string $nonce, ?int $issuedAt = null, ): string"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwt\\Sd",
+            "kind": "class",
+            "methods": [
+                "hide(mixed $value): self",
+                "decoy(): self"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwt\\SdJwt",
+            "kind": "class",
+            "methods": [
+                "parse(string $compact): self",
+                "create(string $issuerSignedJwt, array $disclosures, ?string $keyBindingJwt = null): self",
+                "hasKeyBinding(): bool",
+                "withoutKeyBinding(): self",
+                "header(): stdClass",
+                "payload(): stdClass",
+                "toCompact(): string"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwt\\SdJwtIssuer",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly JwsSigner $signer, private readonly string $hashAlgorithm = HashAlgorithm::DEFAULT, ?Closure $saltGenerator = null, )",
+                "issue(array|stdClass $claims, array $header = []): SdJwt"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwt\\SdJwtVerifier",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly array $allowedAlgorithms = self::DEFAULT_ALGORITHMS, private readonly array $allowedHashAlgorithms = self::DEFAULT_HASH_ALGORITHMS, private readonly ?int $clock = null, private readonly int $clockLeewaySeconds = 0, )",
+                "verify(SdJwt|string $sdJwt, Verifier $issuerKey): VerifiedSdJwt",
+                "verifyPresentation( SdJwt|string $presentation, Verifier $issuerKey, KeyBinding $keyBinding, ): VerifiedSdJwt"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwt\\VerifiedSdJwt",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly stdClass $payload, private readonly ?stdClass $keyBindingPayload, )",
+                "payload(): stdClass",
+                "claims(): array",
+                "keyBindingPayload(): ?stdClass"
+            ]
+        }
+    ]
+}

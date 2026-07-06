@@ -176,6 +176,18 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You want Sigstore/transparency-log-backed signing — use sigstore-sign / sigstore-verify.',
     ],
   },
+  'sd-jwt': {
+    tagline: 'Selective Disclosure for JWTs (RFC 9901): issue, present, verify.',
+    category: 'signatures',
+    hook: 'Issue and verify SD-JWTs — the credential format behind OpenID4VC and the EU Digital Identity Wallet.',
+    whenToUse: [
+      'You issue credentials where the holder decides which claims to reveal (SD-JWT, RFC 9901).',
+      'You verify SD-JWT presentations, with or without Key Binding, e.g. as an EUDI relying party.',
+    ],
+    whenNotToUse: [
+      'You want plain JWTs with all claims visible — any JWT library covers that.',
+    ],
+  },
   'signed-note': {
     tagline: 'Read and write signed notes (Go sumdb / Rekor checkpoint format).',
     category: 'signatures',
