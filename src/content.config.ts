@@ -2,13 +2,13 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { packagesLoader } from './loaders/packages';
 
-// All 18 published Composer packages (composer-attest-action is a GitHub Action,
+// All 19 published Composer packages (composer-attest-action is a GitHub Action,
 // not a Composer package, so it is not in the catalog).
 export const PACKAGES = [
   // supply-chain
   'sigstore-verify', 'sigstore-sign', 'sigstore-bundle', 'rekor-client',
   'dsse', 'in-toto-attestation', 'slsa-provenance', 'tuf',
-  'sshsig', 'signed-note', 'sd-jwt', 'composer-attest', 'composer-license-gate',
+  'sshsig', 'signed-note', 'sd-jwt', 'sd-jwt-vc', 'composer-attest', 'composer-license-gate',
   // utilities
   'array-reader', 'enum', 'entity-exist', 'phpunit-fluent-assertions', 'app-env',
 ];

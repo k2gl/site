@@ -188,6 +188,18 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You want plain JWTs with all claims visible — any JWT library covers that.',
     ],
   },
+  'sd-jwt-vc': {
+    tagline: 'SD-JWT Verifiable Credentials (dc+sd-jwt): issue and verify.',
+    category: 'signatures',
+    hook: 'The credential layer over SD-JWT — vct rules and issuer key discovery for EUDI-style relying parties.',
+    whenToUse: [
+      'You verify dc+sd-jwt credentials as a relying party (issuer metadata, x5c, or pinned keys).',
+      'You issue SD-JWT VCs and want the vct/protected-claims rules enforced.',
+    ],
+    whenNotToUse: [
+      'You need the raw SD-JWT format without the credential rules — use sd-jwt directly.',
+    ],
+  },
   'signed-note': {
     tagline: 'Read and write signed notes (Go sumdb / Rekor checkpoint format).',
     category: 'signatures',

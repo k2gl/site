@@ -1,0 +1,82 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\SdJwtVc\\Exception\\InvalidSdJwtVcException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\Exception\\IssuerKeyResolutionFailed",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\Exception\\SdJwtVcException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\IssuerKeyResolver",
+            "kind": "interface",
+            "methods": [
+                "resolve(?string $issuer, stdClass $header): Verifier"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\JwtVcIssuerMetadata",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, )",
+                "resolve(?string $issuer, stdClass $header): Verifier",
+                "wellKnownUrl(string $issuer): string"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\SdJwtVcIssuer",
+            "kind": "class",
+            "methods": [
+                "__construct( JwsSigner $signer, string $hashAlgorithm = HashAlgorithm::DEFAULT, ?Closure $saltGenerator = null, )",
+                "issue(array|stdClass $claims, array $header = []): SdJwt"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\SdJwtVcVerifier",
+            "kind": "class",
+            "methods": [
+                "__construct( array $allowedAlgorithms = SdJwtVerifier::DEFAULT_ALGORITHMS, array $allowedHashAlgorithms = SdJwtVerifier::DEFAULT_HASH_ALGORITHMS, ?int $clock = null, int $clockLeewaySeconds = 0, private readonly bool $acceptLegacyType = true, )",
+                "verify(SdJwt|string $sdJwtVc, IssuerKeyResolver|Verifier $issuerKeys): VerifiedSdJwtVc",
+                "verifyPresentation( SdJwt|string $presentation, IssuerKeyResolver|Verifier $issuerKeys, KeyBinding $keyBinding, ): VerifiedSdJwtVc"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\StaticIssuerKeys",
+            "kind": "class",
+            "methods": [
+                "add(string $issuer, Verifier $verifier): self",
+                "addJwks(string $issuer, array $jwks): self",
+                "resolve(?string $issuer, stdClass $header): Verifier"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\VerifiedSdJwtVc",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly VerifiedSdJwt $inner)",
+                "vct(): string",
+                "issuer(): ?string",
+                "status(): ?stdClass",
+                "payload(): stdClass",
+                "claims(): array",
+                "keyBindingPayload(): ?stdClass"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\X5cIssuerKeys",
+            "kind": "class",
+            "methods": [
+                "__construct(array $trustedCertificates, private readonly ?int $clock = null)",
+                "resolve(?string $issuer, stdClass $header): Verifier"
+            ]
+        }
+    ]
+}
