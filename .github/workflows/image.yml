@@ -114,15 +114,24 @@ jobs:
     needs: [build, goaccess]
     runs-on: ubuntu-latest
     steps:
-      - name: Pull & restart on the VPS over SSH
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Ship compose & restart on the VPS over SSH
         env:
           SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           VPS_HOST: ${{ secrets.VPS_HOST }}
         run: |
           install -m 600 /dev/stdin deploy_key <<< "$SSH_KEY"
-          ssh -i deploy_key -o StrictHostKeyChecking=accept-new "root@${VPS_HOST}" '
+          # Copy the compose straight from the runner. The VPS fetching it from
+          # raw.githubusercontent was flaky (curl TLS eof) and, with no set -e,
+          # silently left a stale file while the deploy still went green.
+          scp -i deploy_key -o StrictHostKeyChecking=accept-new \
+            deploy/docker-compose.yml "root@${VPS_HOST}:/opt/k2gl/docker-compose.yml"
+          ssh -i deploy_key -o StrictHostKeyChecking=accept-new "root@${VPS_HOST}" 'set -e
             cd /opt/k2gl
-            curl -fsSL https://raw.githubusercontent.com/k2gl/site/main/deploy/docker-compose.yml -o docker-compose.yml
             docker compose pull
             docker compose up -d
             sleep 5
