@@ -133,7 +133,7 @@ jobs:
           ssh -i deploy_key -o StrictHostKeyChecking=accept-new "root@${VPS_HOST}" 'set -e
             cd /opt/k2gl
             docker compose pull
-            docker compose up -d
+            docker compose up -d --remove-orphans
             sleep 5
             docker compose ps'
 
