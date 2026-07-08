@@ -40,11 +40,12 @@
 	handle {
 		root * /srv
 
-		# CSP for the site only (not /_stats — the GoAccess report has its own inline
-		# scripts/charts). Everything the site loads is same-origin; 'unsafe-inline'
-		# covers the first-party inline theme/highlight/copy scripts and 'wasm-unsafe-eval'
-		# is required by Pagefind's WebAssembly search.
-		header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'wasm-unsafe-eval'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; worker-src 'self'; manifest-src 'self'; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'; upgrade-insecure-requests"
+		# A deliberately loose CSP. The site is static with no user input, so a strict
+		# source allowlist is mostly ceremony — and it breaks legitimate off-site assets
+		# (Packagist badges from img.shields.io). Keep only the free, non-fragile wins —
+		# no plugins, no framing, no base-tag or off-site form hijack — and don't restrict
+		# where assets load from.
+		header Content-Security-Policy "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
 
 		# Machine endpoints must never be indexed (near-duplicates of the HTML).
 		# Char-class [.] avoids Caddyfile backslash-escaping surprises.
