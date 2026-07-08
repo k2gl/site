@@ -48,6 +48,14 @@ services:
     volumes:
       - caddy_logs:/logs:ro
       - stats_report:/report
+    healthcheck:
+      # Unhealthy if the report is missing or hasn't refreshed in 10 min — surfaces a
+      # dead or stuck goaccess loop in `docker compose ps` (and to a Kuma monitor).
+      test: ["CMD-SHELL", "test -f /report/index.html && [ $$(( $$(date +%s) - $$(stat -c %Y /report/index.html) )) -lt 600 ]"]
+      interval: 60s
+      timeout: 5s
+      retries: 3
+      start_period: 180s
 
   # Self-hosted uptime monitoring. Kuma has its own auth — set the admin password
   # on the first visit to http://<host>:3001. Add HTTP/keyword/TLS-expiry monitors
