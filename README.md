@@ -42,4 +42,5 @@ No vendor lock-in — the image deploys to any VPS.
 
 ## Status
 
-Vertical slice: `sigstore-verify`, `array-reader`, `enum`. Scaling to all packages.
+All 19 published Composer packages are in the catalog, each with a markdown twin and
+structured feed. Ongoing work is content: guides, `/compare` long-tail and the blog.
