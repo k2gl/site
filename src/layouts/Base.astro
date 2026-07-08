@@ -22,6 +22,9 @@ const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     <link rel="canonical" href={canonicalURL} />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="alternate" type="application/rss+xml" title="k2gl blog" href="/rss.xml" />
     <link rel="stylesheet" href="/hljs/github.min.css" media="(prefers-color-scheme: light)" />
     <link rel="stylesheet" href="/hljs/github-dark.min.css" media="(prefers-color-scheme: dark)" />
