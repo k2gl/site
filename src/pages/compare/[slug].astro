@@ -19,11 +19,22 @@ const jsonLd = {
     acceptedAnswer: { '@type': 'Answer', text: item.data.description },
   },
 };
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: Astro.site!.href },
+    { '@type': 'ListItem', position: 2, name: 'Comparisons', item: new URL('/compare', Astro.site).href },
+    { '@type': 'ListItem', position: 3, name: item.data.title },
+  ],
+};
 ---
 
 <Base title={`${item.data.title} — k2gl`} description={item.data.description}>
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
   </Fragment>
   <article>
     <p class="crumb"><a href="/compare">Comparisons</a></p>

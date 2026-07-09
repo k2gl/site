@@ -30,12 +30,23 @@ const jsonLd = {
   license: 'https://opensource.org/licenses/MIT',
   author: { '@type': 'Person', name: 'Nick Harin' },
 };
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: Astro.site!.href },
+    { '@type': 'ListItem', position: 2, name: 'Packages', item: new URL('/packages', Astro.site).href },
+    { '@type': 'ListItem', position: 3, name: pkg.name },
+  ],
+};
 ---
 
 <Base title={`${pkg.name} — ${pkg.tagline}`} description={pkg.tagline}>
   <Fragment slot="head">
     <link rel="alternate" type="text/markdown" href={`/packages/${pkg.slug}.md`} />
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
   </Fragment>
 
   <article>

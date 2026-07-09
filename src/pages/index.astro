@@ -8,12 +8,38 @@ const count = (c: string) => pkgs.filter((p) => p.category === c).length;
 const flagship = ['sigstore-verify', 'composer-attest']
   .map((s) => pkgs.find((p) => p.slug === s))
   .filter((p): p is NonNullable<typeof p> => Boolean(p));
+
+const site = Astro.site!.href;
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      '@id': `${site}#website`,
+      url: site,
+      name: 'k2gl',
+      description: 'Supply-chain security & developer utilities for PHP.',
+      publisher: { '@id': `${site}#org` },
+    },
+    {
+      '@type': 'Organization',
+      '@id': `${site}#org`,
+      name: 'k2gl',
+      url: site,
+      logo: { '@type': 'ImageObject', url: new URL('/apple-touch-icon.png', Astro.site).href },
+      sameAs: ['https://github.com/k2gl'],
+    },
+  ],
+};
 ---
 
 <Base
   title="k2gl — supply-chain security & developer utilities for PHP"
   description="A family of PHP libraries: a conformance-passing pure-PHP Sigstore verifier, Composer plugins that check build provenance at install, and small everyday utilities."
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  </Fragment>
   <section class="hero">
     <h1>Software supply-chain security for PHP.</h1>
     <p>
