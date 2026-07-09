@@ -203,5 +203,13 @@ jobs:
           # One real inspection end to end: decode + verify a signed DSSE fixture.
           curl -fsS --max-time 30 -X POST https://k2gl.com/api/v1/dsse/inspect \
             -H 'content-type: application/json' \
-            --data @.github/smoke/dsse-inspect.json | tee /tmp/dsse.json | grep -q '"verified":true'
-          echo "tools API verified a fixture envelope"
+            --data @.github/smoke/dsse-inspect.json | grep -q '"verified":true'
+          # SD-JWT: the RFC 9901 issuance example decodes with all disclosures intact.
+          curl -fsS --max-time 30 -X POST https://k2gl.com/api/v1/sd-jwt/inspect \
+            -H 'content-type: application/json' \
+            --data @.github/smoke/sd-jwt-inspect.json | grep -q '"given_name":"John"'
+          # Attestation checker: dogfood on one of our own attested packages. Any
+          # verdict is acceptable (rate limits), but the endpoint must answer.
+          curl -fsS --max-time 60 'https://k2gl.com/api/v1/composer/attestations?package=k2gl/dsse' \
+            | grep -q '"ok":true'
+          echo "tools API smoke passed"
