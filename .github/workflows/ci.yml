@@ -52,7 +52,9 @@ jobs:
             dist/.well-known/security.txt \
             dist/tools.html \
             dist/tools/dsse.html \
-            dist/tools/sigstore-bundle.html
+            dist/tools/sigstore-bundle.html \
+            dist/tools/sd-jwt.html \
+            dist/tools/composer-attestations.html
           do
             test -s "$f" || { echo "MISSING: $f"; exit 1; }
           done
