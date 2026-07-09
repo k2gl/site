@@ -109,9 +109,54 @@ jobs:
           subject-digest: ${{ steps.push.outputs.digest }}
           push-to-registry: true
 
+  api:
+    name: Build, push & attest the tools API image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Set up Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.token }}
+
+      - name: Image metadata
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/k2gl/api
+          tags: |
+            type=raw,value=latest
+            type=sha,prefix=sha-
+
+      - name: Build and push
+        id: push
+        uses: docker/build-push-action@v6
+        with:
+          context: api
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          cache-from: type=gha,scope=api
+          cache-to: type=gha,scope=api,mode=max
+
+      - name: Attest image provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-name: ghcr.io/k2gl/api
+          subject-digest: ${{ steps.push.outputs.digest }}
+          push-to-registry: true
+
   deploy:
     name: Deploy to VPS
-    needs: [build, goaccess]
+    needs: [build, goaccess, api]
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -150,3 +195,13 @@ jobs:
           code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "https://k2gl.com/definitely-missing-page")
           echo "/definitely-missing-page -> $code"
           [ "$code" = 404 ] || { echo "expected 404, got $code"; exit 1; }
+
+      - name: Smoke the tools API
+        run: |
+          set -e
+          curl -fsS --max-time 20 https://k2gl.com/api/health | grep -q '"ok":true'
+          # One real inspection end to end: decode + verify a signed DSSE fixture.
+          curl -fsS --max-time 30 -X POST https://k2gl.com/api/v1/dsse/inspect \
+            -H 'content-type: application/json' \
+            --data @.github/smoke/dsse-inspect.json | tee /tmp/dsse.json | grep -q '"verified":true'
+          echo "tools API verified a fixture envelope"

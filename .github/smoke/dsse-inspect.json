@@ -1,0 +1,4 @@
+{
+  "envelope": "{\"payload\":\"eyJfdHlwZSI6Imh0dHBzOi8vaW4tdG90by5pby9TdGF0ZW1lbnQvdjEiLCJub3RlIjoiazJnbC5jb20gdG9vbHMgZml4dHVyZSJ9\",\"payloadType\":\"application/vnd.in-toto+json\",\"signatures\":[{\"keyid\":\"2b42a97ab259f7bed580c21e1b204cf614add212c0034097887ac8371879349c\",\"sig\":\"YNYwHnQBcsgdKX9Tx4Q6Uqbeg14ri8wJHtHcAfNQDFPd3KhVPUKG9p4tOgph4lEie7oapMSh8J47V+8ucxojDg==\"}]}\n",
+  "publicKeyPem": "-----BEGIN PUBLIC KEY-----\nMFkwEwYHKoZIzj0CAQYIKoZIzj0DAQcDQgAEbEy8QwGyci8LOwf8Lc5vVNnG31TM\nsj6EVs952JVcTTnaCfJIK7GdexHuUPDluAZoJwE5N5ofu7K72Fpsm4ZH6A==\n-----END PUBLIC KEY-----\n"
+}
