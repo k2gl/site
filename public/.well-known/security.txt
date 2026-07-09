@@ -1,0 +1,6 @@
+# Reminder: bump Expires before it lapses (RFC 9116 caps it at ~1 year out).
+Contact: https://github.com/k2gl/site/security/advisories/new
+Expires: 2027-07-01T00:00:00.000Z
+Canonical: https://k2gl.com/.well-known/security.txt
+Policy: https://github.com/k2gl/site/security/policy
+Preferred-Languages: en
