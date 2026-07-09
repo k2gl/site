@@ -1,0 +1,14 @@
+{
+	frankenphp
+	auto_https off
+	servers {
+		# Only our own Caddy fronts this container, so its forwarded client IP
+		# (used by the rate limiter) can be trusted.
+		trusted_proxies static private_ranges
+	}
+}
+
+:8080 {
+	root * /app/public
+	php_server
+}
