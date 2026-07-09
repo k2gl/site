@@ -28,6 +28,21 @@ services:
       retries: 3
       start_period: 15s
 
+  # The tools API (k2gl.com/tools): FrankenPHP running the k2gl packages. Only
+  # reachable through the site container's /api/* proxy — no published ports.
+  api:
+    image: ghcr.io/k2gl/api:${SITE_TAG:-latest}
+    restart: unless-stopped
+    environment:
+      # Optional: raises GitHub API rate limits for the attestation checker.
+      GITHUB_TOKEN: ${GITHUB_TOKEN:-}
+    healthcheck:
+      test: ["CMD", "php", "-r", "exit(str_contains((string) @file_get_contents('http://127.0.0.1:8080/api/health'), '\"ok\":true') ? 0 : 1);"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
   # Renders the private GoAccess dashboard from Caddy's access logs. Reparses the
   # whole log (current + rolled .gz) every 60s and writes a self-contained report to
   # the stats_report volume, which the site container serves under /_stats. No ports,
