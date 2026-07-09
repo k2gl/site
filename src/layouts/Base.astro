@@ -3,10 +3,13 @@ interface Props {
   title: string;
   description?: string;
   canonical?: string;
+  ogType?: 'website' | 'article';
+  ogImage?: string;
 }
 
-const { title, description, canonical } = Astro.props;
+const { title, description, canonical, ogType = 'website', ogImage = '/og.png' } = Astro.props;
 const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
+const ogImageURL = new URL(ogImage, Astro.site).href;
 ---
 
 <!doctype html>
@@ -22,6 +25,21 @@ const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
     <title>{title}</title>
     {description && <meta name="description" content={description} />}
     <link rel="canonical" href={canonicalURL} />
+    <meta property="og:site_name" content="k2gl" />
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={title} />
+    {description && <meta property="og:description" content={description} />}
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:image" content={ogImageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="k2gl — supply-chain security & developer utilities for PHP" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    {description && <meta name="twitter:description" content={description} />}
+    <meta name="twitter:image" content={ogImageURL} />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#ffffff" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#14141f" />
     <link rel="icon" href="/favicon.ico" sizes="32x32" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
@@ -173,6 +191,13 @@ const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
     </script>
     <script is:inline>
       document.addEventListener('DOMContentLoaded', () => {
+        // Once a theme is chosen explicitly, the media-query theme-color metas no
+        // longer match reality — pin both to the chosen theme's color.
+        const syncThemeColor = (theme) => {
+          const color = theme === 'dark' ? '#14141f' : '#ffffff';
+          for (const m of document.querySelectorAll('meta[name="theme-color"]')) m.setAttribute('content', color);
+        };
+        if (document.documentElement.dataset.theme) syncThemeColor(document.documentElement.dataset.theme);
         const btn = document.querySelector('.theme-toggle');
         if (!btn) return;
         btn.addEventListener('click', () => {
@@ -181,6 +206,7 @@ const canonicalURL = canonical ?? new URL(Astro.url.pathname, Astro.site).href;
             || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
           const next = current === 'dark' ? 'light' : 'dark';
           root.dataset.theme = next;
+          syncThemeColor(next);
           try { localStorage.setItem('theme', next); } catch {}
         });
       });
