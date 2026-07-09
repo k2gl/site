@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /_stats
+Disallow: /api/
+
+Sitemap: https://k2gl.com/sitemap-index.xml
