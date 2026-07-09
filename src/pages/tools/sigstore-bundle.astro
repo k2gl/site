@@ -1,0 +1,308 @@
+---
+import Base from '../../layouts/Base.astro';
+import ToolPrivacy from '../../components/ToolPrivacy.astro';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Sigstore bundle inspector',
+  url: new URL('/tools/sigstore-bundle', Astro.site).href,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Web',
+  offers: { '@type': 'Offer', price: '0' },
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: Astro.site!.href },
+    { '@type': 'ListItem', position: 2, name: 'Tools', item: new URL('/tools', Astro.site).href },
+    { '@type': 'ListItem', position: 3, name: 'Sigstore bundle inspector' },
+  ],
+};
+
+const phpSnippet = `use K2gl\\Sigstore\\Bundle;
+use K2gl\\Sigstore\\IdentityPolicy;
+use K2gl\\Sigstore\\SigstoreVerifier;
+use K2gl\\Sigstore\\SubjectPolicy;
+use K2gl\\Sigstore\\TrustedRoot;
+
+$envelope = new SigstoreVerifier()->verify(
+    bundle: Bundle::fromJson($bundleJson),
+    trustedRoot: TrustedRoot::fromSigstorePublicGood(),
+    identityPolicy: IdentityPolicy::githubActions(
+        repository: 'your/repo',
+        workflow: 'release.yml',
+        ref: 'refs/heads/main',
+    ),
+    subjectPolicy: new SubjectPolicy('sha256', hash_file('sha256', $artifact)),
+);`;
+---
+
+<Base
+  title="Sigstore bundle inspector — decode & verify .sigstore.json online"
+  description="Paste a Sigstore bundle to decode the signing certificate with its Fulcio extensions, the transparency log entry and the DSSE payload — then verify it against the Sigstore trust root."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  </Fragment>
+
+  <article>
+    <p class="crumb"><a href="/tools">Tools</a></p>
+    <h1>Sigstore bundle inspector</h1>
+    <p class="lead">
+      Decode a <a href="https://docs.sigstore.dev/about/bundle/">Sigstore bundle</a>
+      (<code>.sigstore.json</code>, cosign output, a GitHub attestation) and verify it — certificate
+      chain, transparency log and signature — against the Sigstore public-good trust root.
+    </p>
+    <ToolPrivacy />
+
+    <form id="tool-form">
+      <label>
+        Bundle (JSON)
+        <textarea name="bundle" rows="8" required spellcheck="false"
+          placeholder='&#123;"mediaType":"application/vnd.dev.sigstore.bundle.v0.3+json","verificationMaterial":&#123;...&#125;,...&#125;'></textarea>
+      </label>
+      <label>
+        Artifact SHA-256 (optional — required for messageSignature bundles)
+        <input type="text" name="artifactSha256" pattern="[0-9a-fA-F]{64}" spellcheck="false"
+          placeholder="e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855" />
+      </label>
+      <label class="filepick">
+        …or hash a local file <strong>in your browser</strong> (it is never uploaded)
+        <input type="file" id="artifact-file" />
+      </label>
+      <details>
+        <summary>Expected identity (optional — pins who must have signed)</summary>
+        <label>
+          Certificate SAN (the signing identity URI)
+          <input type="text" name="expectedSan" spellcheck="false"
+            placeholder="https://github.com/owner/repo/.github/workflows/release.yml@refs/heads/main" />
+        </label>
+        <label>
+          OIDC issuer
+          <input type="text" name="expectedIssuer" spellcheck="false"
+            placeholder="https://token.actions.githubusercontent.com" />
+        </label>
+      </details>
+      <button type="submit">Inspect</button>
+    </form>
+
+    <section id="out" hidden>
+      <h2>Result <span id="badge"></span></h2>
+      <div id="result"></div>
+    </section>
+
+    <section class="explain">
+      <h2>Observed vs expected identity</h2>
+      <p>
+        Without an expected identity the tool verifies the bundle against the identity
+        <em>observed in its own certificate</em>: the chain to Fulcio, the transparency-log proof
+        and the signature are all checked for real, which proves the bundle is authentic and
+        logged — but not <em>who</em> signed it. To prove authorship, pin the SAN and issuer you
+        expect (in CI you'd pin your repository and workflow). Supplying the artifact digest
+        additionally proves the signature covers <em>your</em> file.
+      </p>
+
+      <h2>What's inside a bundle</h2>
+      <p>
+        A Sigstore bundle carries everything verification needs: the short-lived signing
+        certificate (whose <a href="https://github.com/sigstore/fulcio/blob/main/docs/oid-info.md">Fulcio
+        extensions</a> record the OIDC identity, repository, workflow and commit), the
+        <a href="/packages/rekor-client">Rekor</a> transparency-log entry proving the signature was
+        published, and the signature itself — either a DSSE envelope (attestations, provenance) or
+        a raw <code>messageSignature</code> over an artifact digest.
+      </p>
+
+      <h2>Do it in PHP</h2>
+      <pre><code class="language-php">{phpSnippet}</code></pre>
+      <p>
+        Powered by <a href="/packages/sigstore-verify">k2gl/sigstore-verify</a> — a pure-PHP
+        verifier that passes the official Sigstore conformance suite. To build bundles, see
+        <a href="/packages/sigstore-sign">k2gl/sigstore-sign</a> and
+        <a href="/packages/sigstore-bundle">k2gl/sigstore-bundle</a>.
+      </p>
+    </section>
+  </article>
+
+  <style>
+    .crumb { color: var(--muted); font-size: 0.9rem; }
+    .lead { color: var(--muted); font-size: 1.05rem; }
+    form { display: grid; gap: 1rem; margin: 1.5rem 0; }
+    label { display: grid; gap: 0.35rem; font-weight: 600; font-size: 0.92rem; }
+    .filepick { font-weight: 400; color: var(--muted); font-size: 0.88rem; }
+    textarea, input[type='text'] {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem;
+      width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--code-bg); color: var(--fg); resize: vertical;
+    }
+    details { border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.9rem; }
+    details[open] { display: grid; gap: 1rem; }
+    summary { cursor: pointer; color: var(--muted); font-size: 0.92rem; }
+    button {
+      justify-self: start; padding: 0.5em 1.4em; border: none; border-radius: 8px;
+      background: var(--accent); color: #fff; font-size: 1rem; cursor: pointer;
+    }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    #badge { font-size: 0.7em; padding: 0.25em 0.7em; border-radius: 999px; vertical-align: middle; }
+    #badge.ok { background: #2f9e44; color: #fff; }
+    #badge.fail { background: #d6336c; color: #fff; }
+    #badge.skip { background: var(--code-bg); color: var(--muted); }
+    #result h3 { margin: 1.4rem 0 0.5rem; font-size: 1.02rem; }
+    #result dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.3rem 1rem; }
+    #result dt { font-weight: 600; color: var(--muted); }
+    #result dd { margin: 0; overflow-wrap: anywhere; }
+    #result pre { max-height: 22rem; overflow: auto; }
+    #result table { font-size: 0.9rem; }
+    .err { color: #d6336c; }
+    .explain { margin-top: 2.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+  </style>
+
+  <script is:inline>
+    (() => {
+      const form = document.getElementById('tool-form');
+      const out = document.getElementById('out');
+      const badge = document.getElementById('badge');
+      const result = document.getElementById('result');
+      const filePick = document.getElementById('artifact-file');
+
+      const el = (tag, text, cls) => {
+        const node = document.createElement(tag);
+        if (text !== undefined && text !== null) node.textContent = text;
+        if (cls) node.className = cls;
+        return node;
+      };
+      const row = (dl, term, value) => {
+        if (value === undefined || value === null || value === '') return;
+        dl.append(el('dt', term), typeof value === 'string' ? el('dd', value) : value);
+      };
+      const section = (title) => {
+        const h = el('h3', title);
+        result.append(h);
+        const dl = el('dl');
+        result.append(dl);
+        return dl;
+      };
+
+      // Hash the chosen file locally — WebCrypto, nothing leaves the tab.
+      filePick.addEventListener('change', async () => {
+        const file = filePick.files[0];
+        if (!file) return;
+        const digest = await crypto.subtle.digest('SHA-256', await file.arrayBuffer());
+        form.artifactSha256.value = [...new Uint8Array(digest)].map((b) => b.toString(16).padStart(2, '0')).join('');
+      });
+
+      const setBadge = (verification) => {
+        if (!verification || !verification.attempted) {
+          badge.textContent = 'decoded';
+          badge.className = 'skip';
+        } else if (verification.verified) {
+          badge.textContent = 'verified';
+          badge.className = 'ok';
+        } else {
+          badge.textContent = 'verification failed';
+          badge.className = 'fail';
+        }
+      };
+
+      const render = (r, meta) => {
+        result.replaceChildren();
+
+        const v = r.verification || {};
+        const vdl = section('Verification');
+        row(vdl, 'status', !v.attempted ? 'not attempted' : v.verified ? 'verified' : 'FAILED');
+        if (v.identity) {
+          row(vdl, 'identity mode', v.identity.mode);
+          row(vdl, 'SAN', v.identity.san || v.identity.sanRegex);
+          row(vdl, 'issuer', v.identity.issuer);
+        }
+        if (v.subjectChecked !== undefined) row(vdl, 'artifact checked', v.subjectChecked ? 'yes' : 'no — supply the artifact digest to bind it');
+        row(vdl, 'reason', v.reason);
+        if (meta && meta.trustedRoot) row(vdl, 'trusted root', meta.trustedRoot);
+
+        if (r.certificate) {
+          const c = r.certificate;
+          const cdl = section('Signing certificate');
+          (c.san || []).forEach((s) => row(cdl, 'SAN (' + s.type + ')', s.value));
+          row(cdl, 'OIDC issuer', c.oidcIssuer);
+          row(cdl, 'valid', (c.notBefore || '?') + ' → ' + (c.notAfter || '?'));
+          const f = c.fulcio || {};
+          Object.keys(f).sort().forEach((k) => {
+            if (k === 'issuer' || k === 'issuerV2') return;
+            row(cdl, k, f[k]);
+          });
+        }
+
+        (r.tlog || []).forEach((t, i) => {
+          const tdl = section('Transparency log entry #' + (i + 1));
+          row(tdl, 'kind', t.kind);
+          row(tdl, 'log index', String(t.logIndex));
+          row(tdl, 'log ID', t.logId);
+          row(tdl, 'integrated', t.integratedTime);
+          row(tdl, 'inclusion', [t.hasInclusionProof ? 'proof' : null, t.hasInclusionPromise ? 'promise (SET)' : null].filter(Boolean).join(' + ') || 'none');
+        });
+
+        if (r.dsse) {
+          const ddl = section('DSSE payload');
+          row(ddl, 'payloadType', r.dsse.payloadType);
+          if (r.dsse.statement) {
+            row(ddl, 'predicateType', r.dsse.statement.predicateType);
+            r.dsse.statement.subjects.forEach((s) => {
+              row(ddl, 'subject', s.name + ' — ' + Object.entries(s.digest).map(([a, d]) => a + ':' + d).join(', '));
+            });
+          } else if (r.dsse.payloadJson) {
+            const dd = el('dd');
+            const p = el('pre');
+            p.append(el('code', JSON.stringify(r.dsse.payloadJson, null, 2)));
+            dd.append(p);
+            row(ddl, 'payload', dd);
+          }
+        }
+
+        if (r.messageSignature) {
+          const mdl = section('Message signature');
+          row(mdl, 'hash', r.messageSignature.hashAlgorithm);
+          row(mdl, 'artifact digest', r.messageSignature.digest);
+        }
+      };
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const button = form.querySelector('button');
+        button.disabled = true;
+        out.hidden = false;
+        result.replaceChildren(el('p', 'Inspecting — the first request may take a few seconds while the trust root refreshes…'));
+
+        const body = { bundle: form.bundle.value };
+        if (form.artifactSha256.value.trim()) body.artifactSha256 = form.artifactSha256.value.trim();
+        if (form.expectedSan.value.trim()) body.expectedSan = form.expectedSan.value.trim();
+        if (form.expectedIssuer.value.trim()) body.expectedIssuer = form.expectedIssuer.value.trim();
+
+        try {
+          const res = await fetch('/api/v1/sigstore/inspect', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          if (!data.ok) {
+            badge.className = 'fail';
+            badge.textContent = 'error';
+            result.replaceChildren(el('p', data.error.message + ' (' + data.error.code + ')', 'err'));
+          } else {
+            setBadge(data.result.verification);
+            render(data.result, data.meta);
+          }
+        } catch {
+          badge.className = 'fail';
+          badge.textContent = 'error';
+          result.replaceChildren(el('p', 'The tools API is unreachable — try again shortly.', 'err'));
+        } finally {
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+</Base>

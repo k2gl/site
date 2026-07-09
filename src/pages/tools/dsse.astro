@@ -1,0 +1,228 @@
+---
+import Base from '../../layouts/Base.astro';
+import ToolPrivacy from '../../components/ToolPrivacy.astro';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'DSSE envelope debugger',
+  url: new URL('/tools/dsse', Astro.site).href,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Web',
+  offers: { '@type': 'Offer', price: '0' },
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: Astro.site!.href },
+    { '@type': 'ListItem', position: 2, name: 'Tools', item: new URL('/tools', Astro.site).href },
+    { '@type': 'ListItem', position: 3, name: 'DSSE envelope debugger' },
+  ],
+};
+
+const phpSnippet = `use K2gl\\Dsse\\Envelope;
+use K2gl\\Dsse\\PublicKey;
+
+// Throws SignatureVerificationFailed unless a signature checks out;
+// returns the authenticated payload.
+$payload = Envelope::fromJson($envelopeJson)
+    ->verify(PublicKey::fromPem($publicKeyPem));`;
+---
+
+<Base
+  title="DSSE envelope debugger — decode & verify online"
+  description="Paste a DSSE envelope to decode its payload, preview the PAE pre-authentication encoding, and verify signatures against a PEM or JWK public key."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  </Fragment>
+
+  <article>
+    <p class="crumb"><a href="/tools">Tools</a></p>
+    <h1>DSSE envelope debugger</h1>
+    <p class="lead">
+      Decode a <a href="https://github.com/secure-systems-lab/dsse">DSSE</a> envelope — payload,
+      signatures, the exact PAE bytes that get signed — and optionally verify it against a public key.
+    </p>
+    <ToolPrivacy />
+
+    <form id="tool-form">
+      <label>
+        Envelope (JSON)
+        <textarea name="envelope" rows="8" required spellcheck="false"
+          placeholder='&#123;"payload":"aGVsbG8gd29ybGQ=","payloadType":"http://example.com/HelloWorld","signatures":[&#123;"sig":"..."&#125;]&#125;'></textarea>
+      </label>
+      <details>
+        <summary>Public key (optional — enables signature verification)</summary>
+        <label>
+          PEM (SPKI)
+          <textarea name="publicKeyPem" rows="4" spellcheck="false" placeholder="-----BEGIN PUBLIC KEY-----"></textarea>
+        </label>
+        <label>
+          or JWK (JSON)
+          <textarea name="publicKeyJwk" rows="4" spellcheck="false" placeholder='&#123;"kty":"EC","crv":"P-256","x":"...","y":"..."&#125;'></textarea>
+        </label>
+      </details>
+      <button type="submit">Inspect</button>
+    </form>
+
+    <section id="out" hidden>
+      <h2>Result <span id="badge"></span></h2>
+      <div id="result"></div>
+    </section>
+
+    <section class="explain">
+      <h2>What this shows</h2>
+      <p>
+        DSSE (Dead Simple Signing Envelope) is the signature wrapper used by in-toto attestations,
+        SLSA provenance and Sigstore. The signature never covers the raw payload: it covers
+        <strong>PAE</strong> — <code>DSSEv1 &lt;len&gt; &lt;payloadType&gt; &lt;len&gt; &lt;payload&gt;</code> —
+        which binds the payload type and kills confusion attacks. The tool prints the exact PAE
+        preimage so you can see what your verifier must feed the crypto.
+      </p>
+      <p>
+        A failed check is a <em>result</em>, not an error: the envelope decodes fine, the signature
+        just doesn't match your key. The computed key ID (RFC-style SHA-256 over the SPKI, or the
+        JWK thumbprint) is compared with the envelope's <code>keyid</code> hints.
+      </p>
+
+      <h2>Do it in PHP</h2>
+      <pre><code class="language-php">{phpSnippet}</code></pre>
+      <p>
+        Powered by <a href="/packages/dsse">k2gl/dsse</a> — the same code that just processed your
+        envelope. See also <a href="/packages/in-toto-attestation">k2gl/in-toto-attestation</a> for
+        typed statements.
+      </p>
+    </section>
+  </article>
+
+  <style>
+    .crumb { color: var(--muted); font-size: 0.9rem; }
+    .lead { color: var(--muted); font-size: 1.05rem; }
+    form { display: grid; gap: 1rem; margin: 1.5rem 0; }
+    label { display: grid; gap: 0.35rem; font-weight: 600; font-size: 0.92rem; }
+    textarea, input[type='text'] {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem;
+      width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--code-bg); color: var(--fg); resize: vertical;
+    }
+    details { border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.9rem; }
+    details[open] { display: grid; gap: 1rem; }
+    summary { cursor: pointer; color: var(--muted); font-size: 0.92rem; }
+    button {
+      justify-self: start; padding: 0.5em 1.4em; border: none; border-radius: 8px;
+      background: var(--accent); color: #fff; font-size: 1rem; cursor: pointer;
+    }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    #badge { font-size: 0.7em; padding: 0.25em 0.7em; border-radius: 999px; vertical-align: middle; }
+    #badge.ok { background: #2f9e44; color: #fff; }
+    #badge.fail { background: #d6336c; color: #fff; }
+    #badge.skip { background: var(--code-bg); color: var(--muted); }
+    #result dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.3rem 1rem; }
+    #result dt { font-weight: 600; color: var(--muted); }
+    #result dd { margin: 0; overflow-wrap: anywhere; }
+    #result pre { max-height: 22rem; overflow: auto; }
+    .err { color: #d6336c; }
+    .explain { margin-top: 2.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+  </style>
+
+  <script is:inline>
+    (() => {
+      const form = document.getElementById('tool-form');
+      const out = document.getElementById('out');
+      const badge = document.getElementById('badge');
+      const result = document.getElementById('result');
+
+      const el = (tag, text, cls) => {
+        const node = document.createElement(tag);
+        if (text !== undefined && text !== null) node.textContent = text;
+        if (cls) node.className = cls;
+        return node;
+      };
+      const row = (dl, term, value) => {
+        if (value === undefined || value === null || value === '') return;
+        dl.append(el('dt', term), typeof value === 'string' ? el('dd', value) : value);
+      };
+      const pre = (text) => {
+        const dd = el('dd');
+        const p = el('pre');
+        p.append(el('code', text));
+        dd.append(p);
+        return dd;
+      };
+
+      const setBadge = (verification) => {
+        if (!verification || !verification.attempted) {
+          badge.textContent = 'decoded';
+          badge.className = 'skip';
+        } else if (verification.verified) {
+          badge.textContent = 'signature verified';
+          badge.className = 'ok';
+        } else {
+          badge.textContent = 'verification failed';
+          badge.className = 'fail';
+        }
+      };
+
+      const render = (r) => {
+        const dl = el('dl');
+        row(dl, 'payloadType', r.payloadType);
+        if (r.payload.json !== undefined) row(dl, 'payload', pre(JSON.stringify(r.payload.json, null, 2)));
+        else if (r.payload.text !== undefined) row(dl, 'payload', pre(r.payload.text));
+        else row(dl, 'payload (base64)', pre(r.payload.base64));
+        row(dl, 'payload size', r.payload.size + ' bytes');
+        r.signatures.forEach((s, i) => {
+          row(dl, 'signature #' + (i + 1), s.sig + (s.keyid ? ' (keyid ' + s.keyid + ')' : ''));
+        });
+        row(dl, 'PAE preimage', pre(r.pae.preview + (r.pae.truncated ? ' …' : '')));
+        if (r.computedKeyId) {
+          row(dl, 'computed key ID', r.computedKeyId.value
+            + (r.computedKeyId.matchesEnvelopeKeyid ? ' — matches the envelope keyid' : ' — no keyid match'));
+        }
+        if (r.verification && r.verification.reason) row(dl, 'note', r.verification.reason);
+        result.replaceChildren(dl);
+      };
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const button = form.querySelector('button');
+        button.disabled = true;
+        out.hidden = false;
+        result.replaceChildren(el('p', 'Inspecting…'));
+
+        const body = { envelope: form.envelope.value };
+        if (form.publicKeyPem.value.trim()) body.publicKeyPem = form.publicKeyPem.value;
+        else if (form.publicKeyJwk.value.trim()) {
+          try { body.publicKeyJwk = JSON.parse(form.publicKeyJwk.value); }
+          catch { badge.className = 'fail'; badge.textContent = 'error'; result.replaceChildren(el('p', 'The JWK is not valid JSON.', 'err')); button.disabled = false; return; }
+        }
+
+        try {
+          const res = await fetch('/api/v1/dsse/inspect', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          if (!data.ok) {
+            badge.className = 'fail';
+            badge.textContent = 'error';
+            result.replaceChildren(el('p', data.error.message + ' (' + data.error.code + ')', 'err'));
+          } else {
+            setBadge(data.result.verification);
+            render(data.result);
+          }
+        } catch {
+          badge.className = 'fail';
+          badge.textContent = 'error';
+          result.replaceChildren(el('p', 'The tools API is unreachable — try again shortly.', 'err'));
+        } finally {
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+</Base>
