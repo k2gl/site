@@ -1,0 +1,21 @@
+---
+import Base from '../layouts/Base.astro';
+---
+
+<Base title="Page not found — k2gl" description="This page does not exist.">
+  <section class="nf">
+    <h1>404 — page not found</h1>
+    <p>This page doesn't exist, or it moved. A few places to go instead:</p>
+    <ul>
+      <li><a href="/packages">Packages</a> — the full family, grouped by type</li>
+      <li><a href="/guides">Guides</a> — task-oriented walkthroughs</li>
+      <li><a href="/search">Search</a> — find anything on the site</li>
+    </ul>
+  </section>
+
+  <style>
+    .nf h1 { font-size: 2rem; }
+    .nf p { color: var(--muted); }
+    .nf li { margin: 0.4rem 0; }
+  </style>
+</Base>
