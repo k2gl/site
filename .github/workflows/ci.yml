@@ -45,7 +45,11 @@ jobs:
             dist/packages/sigstore-verify.json \
             dist/llms.txt \
             dist/llms-full.txt \
-            dist/sitemap-index.xml
+            dist/sitemap-index.xml \
+            dist/404.html \
+            dist/robots.txt \
+            dist/og.png \
+            dist/.well-known/security.txt
           do
             test -s "$f" || { echo "MISSING: $f"; exit 1; }
           done

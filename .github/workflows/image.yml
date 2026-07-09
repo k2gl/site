@@ -140,8 +140,13 @@ jobs:
       - name: Smoke the live site
         run: |
           set -e
-          for p in / /llms.txt /packages/sigstore-verify.md /packages/array-reader.json; do
+          for p in / /llms.txt /packages/sigstore-verify.md /packages/array-reader.json \
+                   /robots.txt /.well-known/security.txt /og.png; do
             code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "https://k2gl.com$p")
             echo "$p -> $code"
             [ "$code" = 200 ] || { echo "smoke failed on $p"; exit 1; }
           done
+          # Misses must return the branded 404 page with a 404 status.
+          code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "https://k2gl.com/definitely-missing-page")
+          echo "/definitely-missing-page -> $code"
+          [ "$code" = 404 ] || { echo "expected 404, got $code"; exit 1; }
