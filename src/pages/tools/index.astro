@@ -1,0 +1,79 @@
+---
+import Base from '../../layouts/Base.astro';
+import ToolPrivacy from '../../components/ToolPrivacy.astro';
+
+const tools = [
+  {
+    href: '/tools/sigstore-bundle',
+    name: 'Sigstore bundle inspector',
+    blurb: 'Decode a .sigstore.json bundle — certificate, Fulcio extensions, transparency log — and verify it for real.',
+    live: true,
+  },
+  {
+    href: '/tools/dsse',
+    name: 'DSSE envelope debugger',
+    blurb: 'Decode a DSSE envelope, preview its PAE, and check a signature against your public key.',
+    live: true,
+  },
+  {
+    href: '/tools/sd-jwt',
+    name: 'SD-JWT debugger',
+    blurb: 'Decode an SD-JWT or SD-JWT VC: disclosures, recomputed digests, recreated claims, signature.',
+    live: false,
+  },
+  {
+    href: '/tools/composer-attestations',
+    name: 'Composer attestation checker',
+    blurb: 'Does a Packagist package publish verifiable build provenance? Check any vendor/package.',
+    live: false,
+  },
+];
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: Astro.site!.href },
+    { '@type': 'ListItem', position: 2, name: 'Tools' },
+  ],
+};
+---
+
+<Base
+  title="Online tools — inspect DSSE, Sigstore bundles, SD-JWT"
+  description="Free online tools for supply-chain formats: decode and verify Sigstore bundles, DSSE envelopes and SD-JWTs — powered by the k2gl PHP packages."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  </Fragment>
+
+  <h1>Tools</h1>
+  <p class="lead">
+    Paste a signature artifact, get it decoded and verified. Every tool runs on the same
+    open-source PHP packages this site documents — the tool output <em>is</em> the package output.
+  </p>
+  <ToolPrivacy />
+
+  <div class="grid">
+    {tools.map((t) => (
+      t.live
+        ? <a class="card" href={t.href}><strong>{t.name}</strong><span>{t.blurb}</span></a>
+        : <div class="card soon"><strong>{t.name}</strong><span>{t.blurb}</span><em>coming soon</em></div>
+    ))}
+  </div>
+
+  <style>
+    .lead { color: var(--muted); font-size: 1.05rem; }
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; margin-top: 1.5rem; }
+    .card {
+      display: flex; flex-direction: column; gap: 0.5rem;
+      padding: 1.25rem; border: 1px solid var(--border); border-radius: 12px;
+      text-decoration: none; color: inherit; transition: border-color 0.15s;
+    }
+    a.card:hover { border-color: var(--accent); }
+    .card strong { color: var(--accent); }
+    .card span { color: var(--muted); font-size: 0.95rem; }
+    .card.soon { opacity: 0.65; }
+    .card.soon em { font-size: 0.8rem; color: var(--muted); }
+  </style>
+</Base>
