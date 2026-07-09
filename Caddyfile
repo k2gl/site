@@ -36,6 +36,15 @@
 		file_server
 	}
 
+	# The tools API — a FrankenPHP container on the compose network. Bodies are
+	# capped here so oversized payloads die at the edge.
+	handle /api/* {
+		request_body {
+			max_size 1MB
+		}
+		reverse_proxy api:8080
+	}
+
 	# Everything else: the static site.
 	handle {
 		root * /srv
