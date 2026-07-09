@@ -7,20 +7,16 @@ namespace App;
 use App\Http\HttpProblem;
 
 /**
- * Per-IP token bucket in APCu. Without the extension (local dev) it lets
- * everything through — throttling is a production concern.
+ * Per-IP token bucket on the file cache — one container, modest traffic, so a
+ * filesystem bucket beats carrying a PECL extension just for counters.
  */
 final class RateLimiter
 {
     public static function guard(string $bucket, int $capacity, float $refillPerMinute): void
     {
-        if (! extension_loaded('apcu') || ! apcu_enabled()) {
-            return;
-        }
-
         $key = 'rl:' . $bucket . ':' . self::clientIp();
         $now = microtime(true);
-        $state = apcu_fetch($key);
+        $state = Cache::get($key);
 
         if (! is_array($state)) {
             $state = ['tokens' => (float) $capacity, 'at' => $now];
@@ -30,7 +26,7 @@ final class RateLimiter
         $state['at'] = $now;
 
         if ($state['tokens'] < 1.0) {
-            apcu_store($key, $state, 600);
+            Cache::set(key: $key, value: $state, ttlSeconds: 600);
 
             $retryAfter = (int) ceil((1.0 - $state['tokens']) * 60.0 / $refillPerMinute);
 
@@ -43,7 +39,7 @@ final class RateLimiter
         }
 
         $state['tokens'] -= 1.0;
-        apcu_store($key, $state, 600);
+        Cache::set(key: $key, value: $state, ttlSeconds: 600);
     }
 
     private static function clientIp(): string
@@ -55,7 +51,7 @@ final class RateLimiter
         if ($forwarded !== '') {
             $hops = explode(',', $forwarded);
 
-            return trim(end($hops));
+            return trim((string) end($hops));
         }
 
         return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
