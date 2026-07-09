@@ -49,7 +49,10 @@ jobs:
             dist/404.html \
             dist/robots.txt \
             dist/og.png \
-            dist/.well-known/security.txt
+            dist/.well-known/security.txt \
+            dist/tools.html \
+            dist/tools/dsse.html \
+            dist/tools/sigstore-bundle.html
           do
             test -s "$f" || { echo "MISSING: $f"; exit 1; }
           done
@@ -61,3 +64,36 @@ jobs:
           name: site-dist
           path: dist
           if-no-files-found: error
+
+  api:
+    name: Test the tools API
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - name: Setup PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.4'
+
+      - name: Validate composer.json
+        run: composer validate --strict
+
+      - name: Install
+        run: composer install --prefer-dist --no-interaction --no-progress
+
+      - name: Tests
+        run: vendor/bin/phpunit
+
+      - name: Enforce fluent test assertions
+        run: |
+          if grep -rnE '(self::|static::|\$this->|Assert::)assert[A-Za-z]*\(|->expectException' tests 2>/dev/null; then
+            echo "::error::Tests must use fluent fact()/throws(), not native PHPUnit assertions."
+            exit 1
+          fi
