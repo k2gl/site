@@ -27,8 +27,8 @@ jobs:
         run: |
           mkdir -p /tmp/packages
           for p in sigstore-verify sigstore-sign sigstore-bundle rekor-client dsse \
-                   in-toto-attestation slsa-provenance tuf sshsig signed-note \
-                   composer-attest composer-license-gate array-reader enum \
+                   in-toto-attestation slsa-provenance tuf sshsig sd-jwt sd-jwt-vc \
+                   signed-note composer-attest composer-license-gate array-reader enum \
                    entity-exist phpunit-fluent-assertions app-env; do
             git clone --depth 1 "https://github.com/k2gl/$p" "/tmp/packages/$p" || echo "skip $p"
           done
@@ -37,8 +37,8 @@ jobs:
         run: |
           php tools/gen-api.php /tmp/packages \
             sigstore-verify sigstore-sign sigstore-bundle rekor-client dsse \
-            in-toto-attestation slsa-provenance tuf sshsig signed-note \
-            composer-attest composer-license-gate array-reader enum \
+            in-toto-attestation slsa-provenance tuf sshsig sd-jwt sd-jwt-vc \
+            signed-note composer-attest composer-license-gate array-reader enum \
             entity-exist phpunit-fluent-assertions app-env
 
       - name: Commit if changed
