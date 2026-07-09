@@ -84,15 +84,22 @@ async function readApi(slug: string): Promise<ApiClass[]> {
 }
 
 async function readSource(slug: string, file: string): Promise<string> {
-  const local = resolve(process.cwd(), '..', slug, file);
-  try {
-    return await readFile(local, 'utf-8');
-  } catch {
-    const url = `https://raw.githubusercontent.com/k2gl/${slug}/main/${file}`;
-    const res = await fetch(url);
-    if (!res.ok) {
-      throw new Error(`Could not read ${file} for ${slug}: local miss and ${url} -> ${res.status}`);
+  // Local checkouts live either right next to the site or under a packages/ dir.
+  for (const local of [
+    resolve(process.cwd(), '..', slug, file),
+    resolve(process.cwd(), '..', 'packages', slug, file),
+  ]) {
+    try {
+      return await readFile(local, 'utf-8');
+    } catch {
+      // fall through
     }
-    return await res.text();
   }
+
+  const url = `https://raw.githubusercontent.com/k2gl/${slug}/main/${file}`;
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(`Could not read ${file} for ${slug}: local miss and ${url} -> ${res.status}`);
+  }
+  return await res.text();
 }
