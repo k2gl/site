@@ -101,20 +101,10 @@
 
 # The Umami dashboard. Off by default: STATS_DOMAIN's .localhost fallback keeps
 # Caddy on an internal cert (no ACME attempts) until the real subdomain has a DNS
-# record and .env sets it. Basic auth mirrors /_stats — same throwaway default.
+# record and .env sets it. No edge auth: Umami's client swaps the Authorization
+# header for its own Bearer token, so basic-auth can never pass — the app's own
+# login (strong password, no default creds) is the lock.
 {$STATS_DOMAIN:stats.localhost} {
 	header X-Robots-Tag "noindex"
-
-	# Browsers fetch the web manifest WITHOUT credentials (spec), so a 401 here
-	# traps Chrome in an endless auth prompt. The manifest is harmless — serve it.
-	handle /site.webmanifest {
-		reverse_proxy umami:3000
-	}
-
-	handle {
-		basic_auth {
-			{$STATS_USER:k2gl} {$STATS_HASH:$2a$14$YewCzl48OP2I67jFNNDfx.YpVgZ4cvZ8lXfJtyYIjh8SwcGuLFdoy}
-		}
-		reverse_proxy umami:3000
-	}
+	reverse_proxy umami:3000
 }
