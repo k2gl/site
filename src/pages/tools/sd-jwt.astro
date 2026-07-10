@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ToolPrivacy from '../../components/ToolPrivacy.astro';
+import ToolSwitcher from '../../components/ToolSwitcher.astro';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -42,7 +43,7 @@ $claims = new SdJwtVerifier()
   </Fragment>
 
   <article>
-    <p class="crumb"><a href="/tools">Tools</a></p>
+    <ToolSwitcher current="sd-jwt" />
     <h1>SD-JWT debugger</h1>
     <p class="lead">
       Decode a Selective Disclosure JWT (<a href="https://www.rfc-editor.org/rfc/rfc9901">RFC 9901</a>)

@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ToolPrivacy from '../../components/ToolPrivacy.astro';
+import ToolSwitcher from '../../components/ToolSwitcher.astro';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -41,7 +42,7 @@ $payload = Envelope::fromJson($envelopeJson)
   </Fragment>
 
   <article>
-    <p class="crumb"><a href="/tools">Tools</a></p>
+    <ToolSwitcher current="dsse" />
     <h1>DSSE envelope debugger</h1>
     <p class="lead">
       Decode a <a href="https://github.com/secure-systems-lab/dsse">DSSE</a> envelope — payload,

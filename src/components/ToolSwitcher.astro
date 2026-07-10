@@ -1,0 +1,23 @@
+---
+import { TOOLS } from '../data/tools';
+
+interface Props {
+  current: string;
+}
+
+const { current } = Astro.props;
+---
+
+<nav class="tool-switcher" aria-label="Tools" data-pagefind-ignore>
+  <a href="/tools">Tools</a>
+  {TOOLS.filter((t) => t.live).map((t) => (
+    <a href={`/tools/${t.slug}`} aria-current={t.slug === current ? 'page' : undefined}>{t.short}</a>
+  ))}
+</nav>
+
+<style>
+  .tool-switcher { display: flex; flex-wrap: wrap; gap: 0.35rem 1rem; font-size: 0.9rem; }
+  .tool-switcher a { color: var(--muted); text-decoration: none; }
+  .tool-switcher a:hover { color: var(--accent); }
+  .tool-switcher a[aria-current='page'] { color: var(--fg); font-weight: 600; }
+</style>

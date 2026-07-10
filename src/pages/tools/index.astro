@@ -1,33 +1,9 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ToolPrivacy from '../../components/ToolPrivacy.astro';
+import { TOOLS } from '../../data/tools';
 
-const tools = [
-  {
-    href: '/tools/sigstore-bundle',
-    name: 'Sigstore bundle inspector',
-    blurb: 'Decode a .sigstore.json bundle — certificate, Fulcio extensions, transparency log — and verify it for real.',
-    live: true,
-  },
-  {
-    href: '/tools/dsse',
-    name: 'DSSE envelope debugger',
-    blurb: 'Decode a DSSE envelope, preview its PAE, and check a signature against your public key.',
-    live: true,
-  },
-  {
-    href: '/tools/sd-jwt',
-    name: 'SD-JWT debugger',
-    blurb: 'Decode an SD-JWT or SD-JWT VC: disclosures, recomputed digests, recreated claims, signature.',
-    live: true,
-  },
-  {
-    href: '/tools/composer-attestations',
-    name: 'Composer attestation checker',
-    blurb: 'Does a Packagist package publish verifiable build provenance? Check any vendor/package.',
-    live: true,
-  },
-];
+const tools = TOOLS.map((t) => ({ ...t, href: `/tools/${t.slug}` }));
 
 const breadcrumbLd = {
   '@context': 'https://schema.org',
