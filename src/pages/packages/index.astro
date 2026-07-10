@@ -1,44 +1,79 @@
 ---
 import { getCollection } from 'astro:content';
-import { CATEGORIES } from '../../data/enrichment';
+import { CATEGORIES, FAMILIES } from '../../data/enrichment';
+import { PACKAGES } from '../../content.config';
 import Base from '../../layouts/Base.astro';
 
 const pkgs = (await getCollection('packages')).map((p) => p.data);
-const groups = CATEGORIES.map((c) => ({
-  ...c,
-  items: pkgs.filter((p) => p.category === c.key).sort((a, b) => a.name.localeCompare(b.name)),
-})).filter((g) => g.items.length > 0);
+const byMasterOrder = (a: { slug: string }, b: { slug: string }) =>
+  PACKAGES.indexOf(a.slug) - PACKAGES.indexOf(b.slug);
+
+// Three product lines; categories nest inside supply-chain. Single-category
+// families render their grid right under the family heading.
+const families = FAMILIES.map((f) => ({
+  ...f,
+  categories: CATEGORIES.filter((c) => c.family === f.key).map((c) => ({
+    ...c,
+    items: pkgs.filter((p) => p.category === c.key).sort(byMasterOrder),
+  })).filter((c) => c.items.length > 0),
+}));
 ---
 
 <Base
   title="Packages — k2gl"
-  description="All k2gl PHP packages, grouped by type: Composer plugins, Sigstore & signing, attestation formats, and developer utilities."
+  description="All k2gl PHP packages in three product lines: supply-chain security (Sigstore, attestations, Composer plugins), digital identity credentials (SD-JWT), and developer utilities."
 >
   <h1>Packages</h1>
-  <p class="lead">{pkgs.length} packages, grouped by type.</p>
+  <p class="lead">{pkgs.length} packages in three product lines.</p>
 
-  {groups.map((g) => (
-    <section class="group">
-      <div class="group-head">
-        <h2>{g.label} <span class="count">{g.items.length}</span></h2>
-        <p class="blurb">{g.blurb}</p>
-      </div>
-      <div class="grid">
-        {g.items.map((p) => (
-          <a class="card" href={`/packages/${p.slug}`}>
-            <strong>{p.name}</strong>
-            <span class="tag">{p.tagline}</span>
-            <code>{p.install}</code>
-          </a>
-        ))}
-      </div>
+  <nav class="subnav" aria-label="Package categories" data-pagefind-ignore>
+    {CATEGORIES.map((c) => <a href={`#${c.key}`}>{c.short}</a>)}
+  </nav>
+
+  {families.map((f) => (
+    <section class="family" id={f.key}>
+      <h2>{f.label}</h2>
+      <p class="blurb">
+        {f.blurb}
+        {!f.landing.startsWith('/packages') && <> <a href={f.landing}>Overview →</a></>}
+      </p>
+      {f.categories.map((c) => (
+        <div class="group" id={c.key === f.key ? undefined : c.key}>
+          {c.key !== f.key && (
+            <div class="group-head">
+              <h3>{c.label} <span class="count">{c.items.length}</span></h3>
+              <p class="blurb">{c.blurb}</p>
+            </div>
+          )}
+          <div class="grid">
+            {c.items.map((p) => (
+              <a class="card" href={`/packages/${p.slug}`}>
+                <strong>{p.name}</strong>
+                <span class="tag">{p.tagline}</span>
+                <code>{p.install}</code>
+              </a>
+            ))}
+          </div>
+        </div>
+      ))}
     </section>
   ))}
 
   <style>
     .lead { color: var(--muted); font-size: 1.1rem; }
-    .group { margin: 2.5rem 0; }
-    .group-head h2 { margin-bottom: 0.2rem; }
+    .subnav {
+      position: sticky; top: 0; z-index: 1;
+      display: flex; flex-wrap: wrap; gap: 0.25rem 1.1rem;
+      padding: 0.6rem 0; margin: 0 0 1rem;
+      background: var(--bg); border-bottom: 1px solid var(--border);
+      font-size: 0.92rem;
+    }
+    .subnav a { color: var(--muted); text-decoration: none; }
+    .subnav a:hover { color: var(--accent); }
+    .family { margin: 2.5rem 0; scroll-margin-top: 3.2rem; }
+    .family > h2 { margin-bottom: 0.2rem; }
+    .group { margin: 1.6rem 0; scroll-margin-top: 3.2rem; }
+    .group-head h3 { margin-bottom: 0.2rem; }
     .count {
       font-size: 0.8rem; font-weight: 600; color: var(--muted);
       background: var(--code-bg); padding: 0.1em 0.5em; border-radius: 999px; vertical-align: middle;
