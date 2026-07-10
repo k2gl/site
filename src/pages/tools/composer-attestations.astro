@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import ToolPrivacy from '../../components/ToolPrivacy.astro';
+import ToolSwitcher from '../../components/ToolSwitcher.astro';
 
 const jsonLd = {
   '@context': 'https://schema.org',
@@ -33,7 +34,7 @@ const breadcrumbLd = {
   </Fragment>
 
   <article>
-    <p class="crumb"><a href="/tools">Tools</a></p>
+    <ToolSwitcher current="composer-attestations" />
     <h1>Composer attestation checker</h1>
     <p class="lead">
       Does a Packagist package publish verifiable build provenance? This resolves the release,
