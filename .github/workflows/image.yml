@@ -186,7 +186,8 @@ jobs:
         run: |
           set -e
           for p in / /llms.txt /packages/sigstore-verify.md /packages/array-reader.json \
-                   /identity /robots.txt /.well-known/security.txt /og.png /u/script.js; do
+                   /identity /robots.txt /.well-known/security.txt /og.png /u/script.js \
+                   /googled483968c86cd37a9.html; do
             code=$(curl -s -o /dev/null -w "%{http_code}" --max-time 20 "https://k2gl.com$p")
             echo "$p -> $code"
             [ "$code" = 200 ] || { echo "smoke failed on $p"; exit 1; }
