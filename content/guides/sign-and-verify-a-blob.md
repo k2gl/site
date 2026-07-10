@@ -22,16 +22,18 @@ Keyless signing exchanges an OIDC identity token for a short-lived Fulcio
 certificate, signs, and records the entry in Rekor — producing a bundle:
 
 ```php
+use K2gl\SigstoreSign\FulcioSigningKey;
 use K2gl\SigstoreSign\SigstoreSigner;
 
-$signer = SigstoreSigner::keyless($fulcioClient, $rekorClient, $tsaClient);
-$bundle = $signer->signArtifact($blob, $oidcToken);
+$key = FulcioSigningKey::create($fulcioClient, $oidcToken);
+$bundle = new SigstoreSigner($rekorClient)->signArtifact($blob, $key);
 
 file_put_contents('blob.sigstore.json', $bundle->toJson());
 ```
 
-In CI you rarely construct the token by hand — `k2gl/composer-attest-action`
-wraps all of this for release artifacts.
+In CI you rarely construct the token by hand — see
+[keyless signing in GitHub Actions](/guides/keyless-signing-in-actions), or let
+`k2gl/composer-attest-action` wrap all of this for release artifacts.
 
 ## Verify
 
