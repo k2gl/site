@@ -11,12 +11,28 @@ const link = (slug: string) => {
 const withDeps = pkgs
   .filter((p) => p.family === 'supply-chain' && p.requires.length > 0)
   .sort((a, b) => a.requires.length - b.requires.length);
+
+const questions = (await getCollection('compare'))
+  .sort((a, b) => a.data.title.localeCompare(b.data.title));
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: Astro.site!.href },
+    { '@type': 'ListItem', position: 2, name: 'Supply-chain security' },
+  ],
+};
 ---
 
 <Base
   title="PHP supply-chain security: Sigstore, provenance & attestations"
   description="How to verify and produce build provenance for PHP packages — a pure-PHP Sigstore verifier and signer, the attestation formats underneath, and Composer plugins."
 >
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  </Fragment>
+
   <h1>Software supply-chain security for PHP</h1>
 
   <p>
@@ -44,6 +60,11 @@ const withDeps = pkgs
     <li><strong>Attestation formats</strong> — <Fragment set:html={link('dsse')} />, <Fragment set:html={link('in-toto-attestation')} />, <Fragment set:html={link('slsa-provenance')} />, <Fragment set:html={link('tuf')} />.</li>
     <li><strong>Signatures &amp; notes</strong> — <Fragment set:html={link('sshsig')} />, <Fragment set:html={link('signed-note')} />.</li>
   </ul>
+  <p>
+    No code needed to see it in action: the
+    <a href="/tools/sigstore-bundle">bundle inspector</a> decodes and verifies a
+    <code>.sigstore.json</code> right in the browser, running on these packages.
+  </p>
 
   <h2>At install time</h2>
   <p>
@@ -52,6 +73,11 @@ const withDeps = pkgs
     each dependency was really built by its repository's CI.
     <Fragment set:html={link('composer-license-gate')} /> gates dependency licenses
     against an allow/deny policy in the same install step.
+  </p>
+  <p>
+    <a href="/guides/verify-provenance-at-install">Guide: verify provenance at install →</a> ·
+    <a href="/guides/gate-dependency-licenses">Guide: gate licenses →</a> ·
+    <a href="/tools/composer-attestations">Check any Packagist package online →</a>
   </p>
 
   <h2>How they build on each other</h2>
@@ -70,12 +96,14 @@ const withDeps = pkgs
     ))}
   </ul>
 
-  <h2>Conformance</h2>
+  <h2>Common questions</h2>
+  <ul>
+    {questions.map((q) => (
+      <li><a href={`/compare/${q.id}`}>{q.data.title}</a></li>
+    ))}
+  </ul>
 
-  <style>
-    .deps { line-height: 2; }
-    .deps li { margin: 0.15rem 0; }
-  </style>
+  <h2>Conformance</h2>
   <p>
     The verifier and signer pass the official
     <a href="https://github.com/sigstore/sigstore-conformance">sigstore-conformance</a>
@@ -83,4 +111,9 @@ const withDeps = pkgs
     <a href="/blog/verify-composer-provenance">walkthrough</a> for the full loop on
     real packages.
   </p>
+
+  <style>
+    .deps { line-height: 2; }
+    .deps li { margin: 0.15rem 0; }
+  </style>
 </Base>
