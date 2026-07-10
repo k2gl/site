@@ -5,8 +5,11 @@ declare(strict_types=1);
 use App\Endpoint\ComposerAttestations;
 use App\Endpoint\DsseInspect;
 use App\Endpoint\Health;
+use App\Endpoint\ProvenanceInspect;
 use App\Endpoint\SdJwtInspect;
+use App\Endpoint\SdJwtIssue;
 use App\Endpoint\SigstoreInspect;
+use App\Endpoint\SshsigVerify;
 use App\Http\Input;
 use App\Http\JsonResponse;
 use App\RateLimiter;
@@ -30,6 +33,24 @@ return [
         RateLimiter::guard(bucket: 'inspect', capacity: 20, refillPerMinute: 10.0);
 
         return JsonResponse::ok(new SdJwtInspect()->handle(Input::json()));
+    },
+
+    'POST /api/v1/sshsig/verify' => static function (): JsonResponse {
+        RateLimiter::guard(bucket: 'inspect', capacity: 20, refillPerMinute: 10.0);
+
+        return JsonResponse::ok(new SshsigVerify()->handle(Input::json()));
+    },
+
+    'POST /api/v1/sd-jwt/issue' => static function (): JsonResponse {
+        RateLimiter::guard(bucket: 'inspect', capacity: 20, refillPerMinute: 10.0);
+
+        return JsonResponse::ok(new SdJwtIssue()->handle(Input::json()));
+    },
+
+    'POST /api/v1/provenance/inspect' => static function (): JsonResponse {
+        RateLimiter::guard(bucket: 'inspect', capacity: 20, refillPerMinute: 10.0);
+
+        return JsonResponse::ok(new ProvenanceInspect()->handle(Input::json()));
     },
 
     // Downloads the dist zip and talks to GitHub — the strictest bucket.
