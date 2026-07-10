@@ -213,4 +213,8 @@ jobs:
           # verdict is acceptable (rate limits), but the endpoint must answer.
           curl -fsS --max-time 60 'https://k2gl.com/api/v1/composer/attestations?package=k2gl/dsse' \
             | grep -q '"ok":true'
+          # SSHSIG: a real ed25519 signature verifies against its allowed_signers.
+          curl -fsS --max-time 30 -X POST https://k2gl.com/api/v1/sshsig/verify \
+            -H 'content-type: application/json' \
+            --data @.github/smoke/sshsig-verify.json | grep -q '"verified":true'
           echo "tools API smoke passed"

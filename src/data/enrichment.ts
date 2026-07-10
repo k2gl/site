@@ -208,7 +208,7 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You want to sign the statement — wrap it in DSSE (dsse) or a Sigstore bundle.',
     ],
     related: {
-      tool: 'dsse',
+      tool: 'provenance',
       compare: ['in-toto-php'],
     },
   },
@@ -224,6 +224,7 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You need the Statement wrapper around the predicate — use in-toto-attestation.',
     ],
     related: {
+      tool: 'provenance',
       compare: ['slsa-provenance-php'],
     },
   },
@@ -255,6 +256,9 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     whenNotToUse: [
       'You want Sigstore/transparency-log-backed signing — use sigstore-sign / sigstore-verify.',
     ],
+    related: {
+      tool: 'sshsig',
+    },
   },
   'signed-note': {
     tagline: 'Read and write signed notes (Go sumdb / Rekor checkpoint format).',

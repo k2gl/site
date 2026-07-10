@@ -58,7 +58,11 @@ jobs:
             dist/tools/dsse.html \
             dist/tools/sigstore-bundle.html \
             dist/tools/sd-jwt.html \
-            dist/tools/composer-attestations.html
+            dist/tools/composer-attestations.html \
+            dist/tools/sshsig.html \
+            dist/tools/sd-jwt-issue.html \
+            dist/tools/provenance.html \
+            dist/tools/pem-jwk.html
           do
             test -s "$f" || { echo "MISSING: $f"; exit 1; }
           done
