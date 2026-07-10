@@ -1,0 +1,90 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+const pkgs = (await getCollection('packages'))
+  .map((p) => p.data)
+  .filter((p) => p.family === 'identity');
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: Astro.site!.href },
+    { '@type': 'ListItem', position: 2, name: 'Digital identity' },
+  ],
+};
+---
+
+<Base
+  title="SD-JWT & verifiable credentials for PHP"
+  description="Issue and verify SD-JWT and SD-JWT VC credentials (RFC 9901) in PHP — selective disclosure, key binding, and the dc+sd-jwt rules used by OpenID4VC and the EU Digital Identity Wallet."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  </Fragment>
+
+  <h1>Digital identity credentials for PHP</h1>
+
+  <p>
+    An <strong>SD-JWT</strong> (<a href="https://www.rfc-editor.org/rfc/rfc9901">RFC 9901</a>)
+    is a JWT where the issuer signs <em>digests</em> of claims instead of the claims themselves.
+    The holder keeps the actual values as separate disclosures and reveals only the ones a
+    verifier needs — a birth date without the address, a name without the document number.
+    <strong>SD-JWT VC</strong> (<code>dc+sd-jwt</code>) layers credential semantics on top:
+    a credential type (<code>vct</code>), protected claims, and rules for discovering the
+    issuer's keys.
+  </p>
+
+  <p>
+    This is the credential format underneath <strong>OpenID4VC</strong> and the
+    <strong>EU Digital Identity Wallet</strong>. If your PHP service accepts wallet
+    presentations — as a relying party — these packages do the verification: signature,
+    disclosure digests, key binding, and the VC rules.
+  </p>
+
+  <h2>The packages</h2>
+  <div class="grid">
+    {pkgs.map((p) => (
+      <a class="card" href={`/packages/${p.slug}`}>
+        <strong>{p.name}</strong>
+        <span>{p.tagline}</span>
+        <code>{p.install}</code>
+      </a>
+    ))}
+  </div>
+  <p class="note">
+    Signature verification reuses <a href="/packages/dsse">k2gl/dsse</a>'s key handling —
+    the same primitives as the supply-chain family, so a PEM or JWK issuer key plugs
+    straight in.
+  </p>
+
+  <h2>Inspect one in the browser</h2>
+  <p>
+    Paste any SD-JWT into the <a href="/tools/sd-jwt">SD-JWT debugger</a> to see its
+    disclosures, recomputed digests, and recreated claims — and verify the issuer
+    signature against a key. It runs on these packages.
+  </p>
+
+  <h2>Specs</h2>
+  <ul>
+    <li><a href="https://www.rfc-editor.org/rfc/rfc9901">RFC 9901 — Selective Disclosure for JWTs</a></li>
+    <li><a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/">SD-JWT-based Verifiable Credentials (IETF draft)</a></li>
+    <li><a href="https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html">OpenID for Verifiable Credential Issuance</a></li>
+    <li><a href="https://github.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework">EUDI Wallet Architecture and Reference Framework</a></li>
+  </ul>
+
+  <style>
+    .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1rem; }
+    .card {
+      display: flex; flex-direction: column; gap: 0.5rem;
+      padding: 1.25rem; border: 1px solid var(--border); border-radius: 12px;
+      text-decoration: none; color: inherit; transition: border-color 0.15s;
+    }
+    .card:hover { border-color: var(--accent); }
+    .card strong { color: var(--accent); }
+    .card span { color: var(--muted); font-size: 0.95rem; }
+    .card code { font-size: 0.82rem; background: var(--code-bg); padding: 0.3em 0.5em; border-radius: 6px; }
+    .note { color: var(--muted); font-size: 0.95rem; }
+  </style>
+</Base>
