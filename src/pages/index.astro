@@ -1,13 +1,28 @@
 ---
 import { getCollection } from 'astro:content';
-import { CATEGORIES } from '../data/enrichment';
+import { FAMILIES } from '../data/enrichment';
+import { TOOLS } from '../data/tools';
 import Base from '../layouts/Base.astro';
 
 const pkgs = (await getCollection('packages')).map((p) => p.data);
-const count = (c: string) => pkgs.filter((p) => p.category === c).length;
-const flagship = ['sigstore-verify', 'composer-attest']
-  .map((s) => pkgs.find((p) => p.slug === s))
-  .filter((p): p is NonNullable<typeof p> => Boolean(p));
+
+// Two or three representative packages per line — hand-picked, not the newest.
+const REPRESENTATIVE: Record<string, string[]> = {
+  'supply-chain': ['sigstore-verify', 'composer-attest', 'dsse'],
+  'identity': ['sd-jwt', 'sd-jwt-vc'],
+  'utilities': ['array-reader', 'enum'],
+};
+
+const lines = FAMILIES.map((f) => ({
+  ...f,
+  count: pkgs.filter((p) => p.family === f.key).length,
+  picks: (REPRESENTATIVE[f.key] ?? [])
+    .map((s) => pkgs.find((p) => p.slug === s))
+    .filter((p): p is NonNullable<typeof p> => Boolean(p)),
+}));
+
+const latestPost = (await getCollection('blog'))
+  .sort((a, b) => b.data.date.getTime() - a.data.date.getTime())[0];
 
 const site = Astro.site!.href;
 const jsonLd = {
@@ -18,7 +33,7 @@ const jsonLd = {
       '@id': `${site}#website`,
       url: site,
       name: 'k2gl',
-      description: 'Supply-chain security & developer utilities for PHP.',
+      description: 'Open-source PHP libraries: supply-chain security, digital identity credentials, and everyday developer utilities.',
       publisher: { '@id': `${site}#org` },
     },
     {
@@ -34,82 +49,103 @@ const jsonLd = {
 ---
 
 <Base
-  title="k2gl — supply-chain security & developer utilities for PHP"
-  description="A family of PHP libraries: a conformance-passing pure-PHP Sigstore verifier, Composer plugins that check build provenance at install, and small everyday utilities."
+  title="k2gl — open-source PHP libraries"
+  description="Focused PHP libraries in three lines: software supply-chain security (Sigstore, provenance, Composer plugins), digital identity credentials (SD-JWT, RFC 9901), and everyday developer utilities."
 >
   <Fragment slot="head">
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
   </Fragment>
+
   <section class="hero">
-    <h1>Software supply-chain security for PHP.</h1>
+    <h1>Open-source PHP libraries.</h1>
     <p>
-      A pure-PHP <strong>Sigstore</strong> verifier that passes the official conformance suite, the
-      attestation formats it builds on (DSSE, in-toto, SLSA, TUF), <strong>Composer plugins</strong>
-      that check provenance and licenses at install, and a few general-purpose utilities.
+      {pkgs.length} focused packages in three lines: <strong>supply-chain security</strong> —
+      verify and produce build provenance, Sigstore in pure PHP; <strong>digital identity</strong> —
+      SD-JWT credentials the EUDI way; and small <strong>developer utilities</strong> for everyday
+      work. Typed, tested, MIT.
     </p>
-    <p><a href="/supply-chain">How it fits together →</a></p>
+    <p class="cta">
+      <a href="/packages">Browse the packages →</a>
+      <a href="/tools">Try the online tools →</a>
+    </p>
+  </section>
+
+  <section class="lines">
+    {lines.map((f) => (
+      <div class="line">
+        <h2><a href={f.landing}>{f.label}</a> <span class="count">{f.count}</span></h2>
+        <p>{f.blurb}</p>
+        <p class="picks">
+          {f.picks.map((p, i) => (
+            <>{i > 0 ? ' · ' : ''}<a href={`/packages/${p.slug}`}>{p.name}</a></>
+          ))}
+          {' · '}<a href={f.landing} class="more">all →</a>
+        </p>
+      </div>
+    ))}
   </section>
 
   <section>
-    <div class="flagship">
-      {flagship.map((p) => (
-        <a class="fcard" href={`/packages/${p.slug}`}>
-          <strong>{p.name}</strong>
-          <span class="tag">{p.tagline}</span>
-          <span class="hook">{p.hook}</span>
-          <code>{p.install}</code>
+    <h2>Try it in your browser</h2>
+    <p class="muted">
+      Online tools that run on these packages — the tool output is the package output.
+    </p>
+    <div class="tools">
+      {TOOLS.filter((t) => t.live).map((t) => (
+        <a class="tool" href={`/tools/${t.slug}`}>
+          <strong>{t.name}</strong>
+          <span>{t.blurb}</span>
         </a>
       ))}
     </div>
   </section>
 
-  <section>
-    <h2>By type</h2>
-    <div class="cats">
-      {CATEGORIES.map((c) => (
-        <a class="cat" href="/packages">
-          <strong>{c.label} <span class="count">{count(c.key)}</span></strong>
-          <span>{c.blurb}</span>
-        </a>
-      ))}
-    </div>
-  </section>
-
-  <section class="agents">
-    <h2>Machine-readable docs</h2>
+  <section class="rows">
     <p>
-      Every package has a markdown twin and a <a href="/llms.txt">/llms.txt</a> index, so an AI
-      agent can learn to use any of these without reading the source.
+      <strong>New here?</strong> <a href="/start">Start</a> routes you by task — verify your
+      dependencies, sign a release, debug a token, or grab a single library.
+    </p>
+    {latestPost && (
+      <p>
+        <strong>From the blog:</strong>{' '}
+        <a href={`/blog/${latestPost.id}`}>{latestPost.data.title}</a> ·{' '}
+        <a href="/guides">all guides →</a>
+      </p>
+    )}
+    <p class="agents">
+      <strong>Reading with an agent?</strong> Every package has a markdown twin and a{' '}
+      <a href="/llms.txt">/llms.txt</a> index — usable without reading the source.
     </p>
   </section>
 
   <style>
     .hero h1 { font-size: 2.1rem; line-height: 1.2; }
     .hero p { font-size: 1.12rem; color: var(--muted); }
-    .flagship { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1rem; }
-    .fcard {
-      display: flex; flex-direction: column; gap: 0.5rem;
+    .hero .cta { display: flex; gap: 1.5rem; flex-wrap: wrap; font-size: 1.05rem; }
+    .lines { display: grid; gap: 1rem; margin-top: 2rem; }
+    .line {
       padding: 1.25rem; border: 1px solid var(--border); border-radius: 12px;
-      text-decoration: none; color: inherit; transition: border-color 0.15s;
     }
-    .fcard:hover { border-color: var(--accent); }
-    .fcard strong { color: var(--accent); font-size: 1.15rem; }
-    .fcard .tag { color: var(--fg); }
-    .fcard .hook { color: var(--muted); font-size: 0.95rem; }
-    .fcard code { font-size: 0.82rem; background: var(--code-bg); padding: 0.3em 0.5em; border-radius: 6px; }
-    .cats { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.85rem; }
-    .cat {
-      display: flex; flex-direction: column; gap: 0.3rem;
-      padding: 0.9rem 1.1rem; border: 1px solid var(--border); border-radius: 10px;
-      text-decoration: none; color: inherit;
-    }
-    .cat:hover { border-color: var(--accent); }
-    .cat span { color: var(--muted); font-size: 0.9rem; }
+    .line h2 { margin: 0 0 0.3rem; font-size: 1.2rem; }
+    .line h2 a { text-decoration: none; }
+    .line p { margin: 0.3rem 0; color: var(--muted); font-size: 0.97rem; }
+    .line .picks { color: var(--fg); }
+    .line .more { color: var(--muted); }
     .count {
       font-size: 0.75rem; color: var(--muted); background: var(--code-bg);
-      padding: 0.1em 0.5em; border-radius: 999px;
+      padding: 0.1em 0.5em; border-radius: 999px; vertical-align: middle;
     }
-    .agents { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
-    .agents p { color: var(--muted); }
+    .muted { color: var(--muted); margin-top: 0; }
+    .tools { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 0.85rem; }
+    .tool {
+      display: flex; flex-direction: column; gap: 0.3rem;
+      padding: 0.9rem 1.1rem; border: 1px solid var(--border); border-radius: 10px;
+      text-decoration: none; color: inherit; transition: border-color 0.15s;
+    }
+    .tool:hover { border-color: var(--accent); }
+    .tool strong { color: var(--accent); font-size: 0.98rem; }
+    .tool span { color: var(--muted); font-size: 0.88rem; }
+    .rows { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); }
+    .rows p { color: var(--muted); }
   </style>
 </Base>
