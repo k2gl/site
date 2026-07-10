@@ -194,6 +194,7 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     ],
     related: {
       tool: 'dsse',
+      compare: ['dsse-php'],
     },
   },
   'in-toto-attestation': {
@@ -208,6 +209,7 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You want to sign the statement — wrap it in DSSE (dsse) or a Sigstore bundle.',
     ],
     related: {
+      guide: 'in-toto-to-slsa-bundle',
       tool: 'provenance',
       compare: ['in-toto-php'],
     },
@@ -224,6 +226,7 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You need the Statement wrapper around the predicate — use in-toto-attestation.',
     ],
     related: {
+      guide: 'in-toto-to-slsa-bundle',
       tool: 'provenance',
       compare: ['slsa-provenance-php'],
     },
@@ -258,6 +261,7 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     ],
     related: {
       tool: 'sshsig',
+      compare: ['verify-ssh-signatures-php'],
     },
   },
   'signed-note': {
@@ -287,6 +291,7 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     ],
     related: {
       tool: 'sd-jwt',
+      compare: ['sd-jwt-php'],
     },
   },
   'sd-jwt-vc': {
@@ -301,7 +306,9 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You need the raw SD-JWT format without the credential rules — use sd-jwt directly.',
     ],
     related: {
+      guide: 'verify-sd-jwt-vc-presentation',
       tool: 'sd-jwt',
+      compare: ['eudi-relying-party-php'],
     },
   },
 
@@ -318,6 +325,9 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You want full schema validation — reach for a validator.',
       'You’d rather map into typed objects — use a serializer/DTO layer.',
     ],
+    related: {
+      guide: 'typed-array-access',
+    },
   },
   'enum': {
     tagline: 'Ergonomic helpers for PHP native enums — labels, values, and lookups.',
