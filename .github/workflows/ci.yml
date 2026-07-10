@@ -41,6 +41,10 @@ jobs:
             dist/blog.html \
             dist/blog/verify-composer-provenance.html \
             dist/guides.html \
+            dist/identity.html \
+            dist/supply-chain.html \
+            dist/start.html \
+            dist/compare.html \
             dist/packages/sigstore-verify.md \
             dist/packages/sigstore-verify.json \
             dist/llms.txt \
