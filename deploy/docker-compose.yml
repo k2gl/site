@@ -14,6 +14,10 @@ services:
       # the VPS; double every '$' in the bcrypt hash -> '$$' (compose interpolation).
       STATS_USER: ${STATS_USER:-}
       STATS_HASH: ${STATS_HASH:-}
+      # Set to stats.k2gl.com (once its DNS A record exists) to serve the Umami
+      # dashboard publicly behind the same basic-auth; the .localhost default
+      # keeps Caddy away from ACME until then.
+      STATS_DOMAIN: ${STATS_DOMAIN:-stats.localhost}
     volumes:
       - caddy_data:/data # persisted TLS certs — keep this to avoid LE rate limits
       - caddy_config:/config
@@ -38,6 +42,44 @@ services:
       GITHUB_TOKEN: ${GITHUB_TOKEN:-}
     healthcheck:
       test: ["CMD", "php", "-r", "exit(str_contains((string) @file_get_contents('http://127.0.0.1:8080/api/health'), '\"ok\":true') ? 0 : 1);"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+  # First-party analytics (k2gl.com/u/script.js -> /u/api/send). Cookieless, so no
+  # consent banner; data stays on this VPS. Dashboard: `ssh -L 3000:127.0.0.1:3000`,
+  # or set STATS_DOMAIN once stats.k2gl.com has a DNS record.
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-latest
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgresql://umami:${UMAMI_DB_PASSWORD:?set UMAMI_DB_PASSWORD in .env}@umami-db:5432/umami
+      DATABASE_TYPE: postgresql
+      APP_SECRET: ${UMAMI_APP_SECRET:?set UMAMI_APP_SECRET in .env}
+    ports:
+      - "127.0.0.1:3000:3000"
+    depends_on:
+      umami-db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/heartbeat').then((r) => process.exit(r.ok ? 0 : 1)).catch(() => process.exit(1))"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 45s
+
+  umami-db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: umami
+      POSTGRES_USER: umami
+      POSTGRES_PASSWORD: ${UMAMI_DB_PASSWORD:?set UMAMI_DB_PASSWORD in .env}
+    volumes:
+      - umami_db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U umami -d umami"]
       interval: 30s
       timeout: 5s
       retries: 3
@@ -88,6 +130,9 @@ services:
     volumes:
       - caddy_data:/data/caddy:ro
       - caddy_logs:/data/caddy-logs:ro # raw access logs -> GoAccess history survives host loss
+      # Crash-consistent copy of live pgdata — fine for analytics; a restore may
+      # need postgres crash recovery on first start.
+      - umami_db:/data/umami-db:ro
       - /opt/k2gl/backups:/backups
 
 volumes:
@@ -95,3 +140,4 @@ volumes:
   caddy_config:
   caddy_logs:
   stats_report:
+  umami_db:
