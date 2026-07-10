@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "e097fba2a523d56b6911252602be095a",
+    "content-hash": "6c9ddfbf60b52669fcd846aa8958a921",
     "packages": [
         {
             "name": "k2gl/composer-attest",
@@ -495,6 +495,72 @@
                 "source": "https://github.com/k2gl/slsa-provenance"
             },
             "time": "2026-07-05T04:54:13+00:00"
+        },
+        {
+            "name": "k2gl/sshsig",
+            "version": "1.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/k2gl/sshsig.git",
+                "reference": "8c75908c015de68a3d54cb34c518fab8c00a1828"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/k2gl/sshsig/zipball/8c75908c015de68a3d54cb34c518fab8c00a1828",
+                "reference": "8c75908c015de68a3d54cb34c518fab8c00a1828",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=8.1"
+            },
+            "require-dev": {
+                "k2gl/phpunit-fluent-assertions": "^12",
+                "laravel/pint": "~1.20.0",
+                "phpstan/phpstan": "^2.1",
+                "phpunit/phpunit": "^10|^11|^12"
+            },
+            "suggest": {
+                "ext-openssl": "Required to verify rsa-sha2-256/512 and ecdsa-sha2-nistp256/384/521 signatures.",
+                "ext-sodium": "Required to verify ssh-ed25519 signatures."
+            },
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "K2gl\\Sshsig\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Nick Harin",
+                    "email": "l0gic@ya.ru"
+                }
+            ],
+            "description": "Pure-PHP SSHSIG signing and verification, compatible with ssh-keygen -Y.",
+            "homepage": "https://github.com/k2gl/sshsig",
+            "keywords": [
+                "ECDSA",
+                "Ed25519",
+                "allowed-signers",
+                "commit-signing",
+                "git",
+                "openssh",
+                "rsa",
+                "signature",
+                "ssh",
+                "ssh-keygen",
+                "sshsig",
+                "supply-chain",
+                "verify"
+            ],
+            "support": {
+                "issues": "https://github.com/k2gl/sshsig/issues",
+                "source": "https://github.com/k2gl/sshsig"
+            },
+            "time": "2026-07-05T04:54:52+00:00"
         },
         {
             "name": "k2gl/tuf",

@@ -19,7 +19,8 @@
         "k2gl/sd-jwt": "^1.0",
         "k2gl/sd-jwt-vc": "^1.0",
         "k2gl/sigstore-verify": "^1.4",
-        "k2gl/slsa-provenance": "^1.2"
+        "k2gl/slsa-provenance": "^1.2",
+        "k2gl/sshsig": "^1.1"
     },
     "require-dev": {
         "k2gl/phpunit-fluent-assertions": "^12.10",

@@ -21,6 +21,7 @@ $prefixes = [
     'K2gl\\SdJwtVc\\' => [$packagesDir . '/sd-jwt-vc/src/'],
     'K2gl\\Sigstore\\' => [$packagesDir . '/sigstore-verify/src/'],
     'K2gl\\Slsa\\' => [$packagesDir . '/slsa-provenance/src/'],
+    'K2gl\\Sshsig\\' => [$packagesDir . '/sshsig/src/'],
     'K2gl\\Tuf\\' => [$packagesDir . '/tuf/src/'],
 ];
 
