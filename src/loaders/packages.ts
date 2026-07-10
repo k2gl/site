@@ -40,6 +40,7 @@ export function packagesLoader(slugs: string[]): Loader {
           hook: enrichment.hook,
           whenToUse: enrichment.whenToUse ?? [],
           whenNotToUse: enrichment.whenNotToUse ?? [],
+          related: enrichment.related ?? {},
           keywords: composer.keywords ?? [],
           php: String(composer.require?.php ?? ''),
           requires,

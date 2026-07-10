@@ -1,8 +1,18 @@
 // Human-authored enrichment layer — additive, lives in THIS repo, never touches
 // the canonical package READMEs.
 
-export type Family = 'supply-chain' | 'utilities';
-export type Category = 'plugins' | 'sigstore' | 'attestation' | 'signatures' | 'utilities';
+export type Family = 'supply-chain' | 'identity' | 'utilities';
+export type Category = 'plugins' | 'sigstore' | 'attestation' | 'signatures' | 'identity' | 'utilities';
+
+/** Cross-links from a package to the site surfaces that feature it. */
+export interface RelatedLinks {
+  /** Slug in content/guides. */
+  guide?: string;
+  /** Tool slug — /tools/<slug>. */
+  tool?: string;
+  /** Slugs in content/compare (a package can answer several questions). */
+  compare?: string[];
+}
 
 export interface Enrichment {
   /** One liftable sentence — the SEO/LLM tagline. */
@@ -14,19 +24,53 @@ export interface Enrichment {
   whenToUse?: string[];
   /** Look elsewhere when… (optional sidecar). */
   whenNotToUse?: string[];
+  /** Guide / online tool / Q&A pages about this package. */
+  related?: RelatedLinks;
 }
 
+/**
+ * The three product lines — canonical order and labels for the home page,
+ * /packages, the footer and llms.txt.
+ */
+export const FAMILIES: { key: Family; label: string; blurb: string; landing: string }[] = [
+  {
+    key: 'supply-chain',
+    label: 'Supply-chain security',
+    blurb: 'Verify and produce provenance: Sigstore in pure PHP, the attestation formats underneath, and Composer plugins that check dependencies at install.',
+    landing: '/supply-chain',
+  },
+  {
+    key: 'identity',
+    label: 'Digital identity & credentials',
+    blurb: 'SD-JWT and SD-JWT VC (RFC 9901) — the selective-disclosure credential formats behind OpenID4VC and the EU Digital Identity Wallet.',
+    landing: '/identity',
+  },
+  {
+    key: 'utilities',
+    label: 'Developer utilities',
+    blurb: 'Small, focused PHP libraries for everyday work.',
+    landing: '/packages#utilities',
+  },
+];
+
 /** Display order + labels for grouping packages by type. */
-export const CATEGORIES: { key: Category; label: string; blurb: string }[] = [
-  { key: 'plugins', label: 'Composer plugins', blurb: 'Plugins that check dependencies as Composer installs them.' },
-  { key: 'sigstore', label: 'Sigstore & signing', blurb: 'Verify and produce Sigstore signatures and bundles in pure PHP.' },
-  { key: 'attestation', label: 'Attestation formats', blurb: 'The formats underneath — DSSE, in-toto, SLSA, TUF — as typed PHP.' },
-  { key: 'signatures', label: 'Signatures & notes', blurb: 'SSH signatures and signed-note formats used by transparency logs.' },
-  { key: 'utilities', label: 'Developer utilities', blurb: 'General-purpose PHP libraries.' },
+export const CATEGORIES: { key: Category; family: Family; label: string; short: string; blurb: string }[] = [
+  { key: 'plugins', family: 'supply-chain', label: 'Composer plugins', short: 'Plugins', blurb: 'Plugins that check dependencies as Composer installs them.' },
+  { key: 'sigstore', family: 'supply-chain', label: 'Sigstore & signing', short: 'Sigstore', blurb: 'Verify and produce Sigstore signatures and bundles in pure PHP.' },
+  { key: 'attestation', family: 'supply-chain', label: 'Attestation formats', short: 'Attestation', blurb: 'The formats underneath — DSSE, in-toto, SLSA, TUF — as typed PHP.' },
+  { key: 'signatures', family: 'supply-chain', label: 'Signatures & notes', short: 'Signatures', blurb: 'SSH signatures and signed-note formats used by transparency logs.' },
+  { key: 'identity', family: 'identity', label: 'Digital identity & credentials', short: 'Identity', blurb: 'SD-JWT and SD-JWT VC: selective-disclosure credentials, issued and verified in PHP.' },
+  { key: 'utilities', family: 'utilities', label: 'Developer utilities', short: 'Utilities', blurb: 'General-purpose PHP libraries.' },
 ];
 
 export function familyOf(category: Category): Family {
-  return category === 'utilities' ? 'utilities' : 'supply-chain';
+  // Derived from CATEGORIES so a new category can never silently land in the
+  // wrong product line.
+  const entry = CATEGORIES.find((c) => c.key === category);
+
+  if (!entry) throw new Error(`Unknown category: ${category}`);
+
+  return entry.family;
 }
 
 export const ENRICHMENT: Record<string, Enrichment> = {
@@ -44,6 +88,11 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'Your dependencies don’t attest their dist yet — you’ll mostly see "no attestation" (most of the ecosystem, today).',
       'You need signature verification of arbitrary blobs — use sigstore-verify directly.',
     ],
+    related: {
+      guide: 'verify-provenance-at-install',
+      tool: 'composer-attestations',
+      compare: ['verify-github-attestations-php'],
+    },
   },
   'composer-license-gate': {
     tagline: 'Composer plugin: gate dependency licenses against an allow/deny policy.',
@@ -57,6 +106,9 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You only want a one-off report — a CLI license checker run in CI may be simpler.',
       'You’re checking provenance, not licenses — use composer-attest.',
     ],
+    related: {
+      guide: 'gate-dependency-licenses',
+    },
   },
 
   // ── Sigstore & signing ───────────────────────────────────────────────
@@ -73,6 +125,11 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You only need to verify dependencies at install — use composer-attest, which builds on this.',
       'You’re not in PHP — cosign or the other language clients may fit better.',
     ],
+    related: {
+      guide: 'sign-and-verify-a-blob',
+      tool: 'sigstore-bundle',
+      compare: ['php-sigstore-client', 'cosign-alternative-php'],
+    },
   },
   'sigstore-sign': {
     tagline: 'Produce Sigstore signatures and bundles from PHP — keyful or keyless (Fulcio/OIDC).',
@@ -86,6 +143,10 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You only need to verify — use sigstore-verify.',
       'You’re signing release artifacts in GitHub Actions — composer-attest-action wraps this.',
     ],
+    related: {
+      guide: 'sign-and-verify-a-blob',
+      tool: 'sigstore-bundle',
+    },
   },
   'sigstore-bundle': {
     tagline: 'Build and read Sigstore bundles (.sigstore.json) in PHP.',
@@ -98,6 +159,9 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     whenNotToUse: [
       'You want the full sign or verify flow — sigstore-sign / sigstore-verify use this for you.',
     ],
+    related: {
+      tool: 'sigstore-bundle',
+    },
   },
   'rekor-client': {
     tagline: 'A PSR-18 client for the Rekor transparency log (v2 / rekor-tiles).',
@@ -111,6 +175,9 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You want the full signing flow — sigstore-sign submits to Rekor for you.',
       'You need the legacy Rekor v1 REST API (this targets v2).',
     ],
+    related: {
+      tool: 'sigstore-bundle',
+    },
   },
 
   // ── Attestation formats ──────────────────────────────────────────────
@@ -125,6 +192,9 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     whenNotToUse: [
       'You want a full Sigstore bundle with cert + log entry — sigstore-sign / sigstore-verify build on this.',
     ],
+    related: {
+      tool: 'dsse',
+    },
   },
   'in-toto-attestation': {
     tagline: 'Build and parse in-toto attestation Statements in PHP.',
@@ -137,6 +207,10 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     whenNotToUse: [
       'You want to sign the statement — wrap it in DSSE (dsse) or a Sigstore bundle.',
     ],
+    related: {
+      tool: 'dsse',
+      compare: ['in-toto-php'],
+    },
   },
   'slsa-provenance': {
     tagline: 'Model SLSA provenance predicates in PHP.',
@@ -149,6 +223,9 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     whenNotToUse: [
       'You need the Statement wrapper around the predicate — use in-toto-attestation.',
     ],
+    related: {
+      compare: ['slsa-provenance-php'],
+    },
   },
   'tuf': {
     tagline: 'A pure-PHP client for The Update Framework (TUF).',
@@ -161,6 +238,9 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     whenNotToUse: [
       'You only want Sigstore’s trust root — sigstore-verify pulls it via TUF for you.',
     ],
+    related: {
+      compare: ['tuf-client-php'],
+    },
   },
 
   // ── Signatures & notes ───────────────────────────────────────────────
@@ -176,30 +256,6 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       'You want Sigstore/transparency-log-backed signing — use sigstore-sign / sigstore-verify.',
     ],
   },
-  'sd-jwt': {
-    tagline: 'Selective Disclosure for JWTs (RFC 9901): issue, present, verify.',
-    category: 'signatures',
-    hook: 'Issue and verify SD-JWTs — the credential format behind OpenID4VC and the EU Digital Identity Wallet.',
-    whenToUse: [
-      'You issue credentials where the holder decides which claims to reveal (SD-JWT, RFC 9901).',
-      'You verify SD-JWT presentations, with or without Key Binding, e.g. as an EUDI relying party.',
-    ],
-    whenNotToUse: [
-      'You want plain JWTs with all claims visible — any JWT library covers that.',
-    ],
-  },
-  'sd-jwt-vc': {
-    tagline: 'SD-JWT Verifiable Credentials (dc+sd-jwt): issue and verify.',
-    category: 'signatures',
-    hook: 'The credential layer over SD-JWT — vct rules and issuer key discovery for EUDI-style relying parties.',
-    whenToUse: [
-      'You verify dc+sd-jwt credentials as a relying party (issuer metadata, x5c, or pinned keys).',
-      'You issue SD-JWT VCs and want the vct/protected-claims rules enforced.',
-    ],
-    whenNotToUse: [
-      'You need the raw SD-JWT format without the credential rules — use sd-jwt directly.',
-    ],
-  },
   'signed-note': {
     tagline: 'Read and write signed notes (Go sumdb / Rekor checkpoint format).',
     category: 'signatures',
@@ -211,6 +267,38 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     whenNotToUse: [
       'You want a general Sigstore bundle — use sigstore-bundle.',
     ],
+  },
+
+  // ── Digital identity & credentials ───────────────────────────────────
+  'sd-jwt': {
+    tagline: 'Selective Disclosure for JWTs (RFC 9901): issue, present, verify.',
+    category: 'identity',
+    hook: 'Issue and verify SD-JWTs — the credential format behind OpenID4VC and the EU Digital Identity Wallet.',
+    whenToUse: [
+      'You issue credentials where the holder decides which claims to reveal (SD-JWT, RFC 9901).',
+      'You verify SD-JWT presentations, with or without Key Binding, e.g. as an EUDI relying party.',
+    ],
+    whenNotToUse: [
+      'You want plain JWTs with all claims visible — any JWT library covers that.',
+    ],
+    related: {
+      tool: 'sd-jwt',
+    },
+  },
+  'sd-jwt-vc': {
+    tagline: 'SD-JWT Verifiable Credentials (dc+sd-jwt): issue and verify.',
+    category: 'identity',
+    hook: 'The credential layer over SD-JWT — vct rules and issuer key discovery for EUDI-style relying parties.',
+    whenToUse: [
+      'You verify dc+sd-jwt credentials as a relying party (issuer metadata, x5c, or pinned keys).',
+      'You issue SD-JWT VCs and want the vct/protected-claims rules enforced.',
+    ],
+    whenNotToUse: [
+      'You need the raw SD-JWT format without the credential rules — use sd-jwt directly.',
+    ],
+    related: {
+      tool: 'sd-jwt',
+    },
   },
 
   // ── Developer utilities ──────────────────────────────────────────────
