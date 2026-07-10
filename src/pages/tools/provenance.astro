@@ -1,0 +1,225 @@
+---
+import Base from '../../layouts/Base.astro';
+import ToolPrivacy from '../../components/ToolPrivacy.astro';
+import ToolSwitcher from '../../components/ToolSwitcher.astro';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'WebApplication',
+  name: 'Provenance viewer',
+  url: new URL('/tools/provenance', Astro.site).href,
+  applicationCategory: 'DeveloperApplication',
+  operatingSystem: 'Web',
+  offers: { '@type': 'Offer', price: '0' },
+};
+
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Home', item: Astro.site!.href },
+    { '@type': 'ListItem', position: 2, name: 'Tools', item: new URL('/tools', Astro.site).href },
+    { '@type': 'ListItem', position: 3, name: 'Provenance viewer' },
+  ],
+};
+
+const phpSnippet = `use K2gl\\Dsse\\Envelope;
+use K2gl\\InToto\\Statement;
+use K2gl\\Slsa\\Provenance;
+
+$statement = Statement::fromEnvelope(Envelope::fromJson($envelopeJson));
+$provenance = Provenance::fromStatement($statement);   // SLSA v1, typed
+
+echo $provenance->runDetails->builder->id;`;
+---
+
+<Base
+  title="SLSA provenance viewer — render in-toto statements online"
+  description="Paste an in-toto statement or a DSSE envelope to see the provenance decoded: subjects and digests, SLSA builder, build type, resolved dependencies — v1 and v0.2."
+>
+  <Fragment slot="head">
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+    <script type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />
+  </Fragment>
+
+  <article>
+    <ToolSwitcher current="provenance" />
+    <h1>Provenance viewer</h1>
+    <p class="lead">
+      Render an <a href="https://github.com/in-toto/attestation">in-toto</a> statement — bare JSON
+      or inside a DSSE envelope — with its <a href="https://slsa.dev">SLSA</a> provenance decoded:
+      who built the artifact, from what, and how.
+    </p>
+    <ToolPrivacy />
+
+    <form id="tool-form">
+      <label>
+        Statement or DSSE envelope (JSON — detected automatically)
+        <textarea name="doc" rows="10" required spellcheck="false"
+          placeholder='&#123;"_type":"https://in-toto.io/Statement/v1","subject":[...],"predicateType":"https://slsa.dev/provenance/v1",...&#125;'></textarea>
+      </label>
+      <details>
+        <summary>Public key (optional — verifies the envelope's signature)</summary>
+        <label>
+          PEM (SPKI)
+          <textarea name="publicKeyPem" rows="4" spellcheck="false" placeholder="-----BEGIN PUBLIC KEY-----"></textarea>
+        </label>
+      </details>
+      <button type="submit">Inspect</button>
+    </form>
+
+    <section id="out" hidden>
+      <h2>Result <span id="badge"></span></h2>
+      <div id="result"></div>
+    </section>
+
+    <section class="explain">
+      <h2>Statement, predicate, envelope</h2>
+      <p>
+        An in-toto <em>statement</em> binds subjects (artifacts, by digest) to a typed
+        <em>predicate</em> — for build provenance that's SLSA, which records the builder, the build
+        type, external parameters and resolved dependencies. Signed, the statement travels inside a
+        DSSE envelope; that's exactly what GitHub artifact attestations carry. For a full Sigstore
+        bundle (certificate + transparency log), use the
+        <a href="/tools/sigstore-bundle">bundle inspector</a> instead.
+      </p>
+
+      <h2>Do it in PHP</h2>
+      <pre><code class="language-php">{phpSnippet}</code></pre>
+      <p>
+        Powered by <a href="/packages/in-toto-attestation">k2gl/in-toto-attestation</a> and
+        <a href="/packages/slsa-provenance">k2gl/slsa-provenance</a>, with
+        <a href="/packages/dsse">k2gl/dsse</a> for the envelope.
+      </p>
+    </section>
+  </article>
+
+  <style>
+    .lead { color: var(--muted); font-size: 1.05rem; }
+    form { display: grid; gap: 1rem; margin: 1.5rem 0; }
+    label { display: grid; gap: 0.35rem; font-weight: 600; font-size: 0.92rem; }
+    textarea {
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.85rem;
+      width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 8px;
+      background: var(--code-bg); color: var(--fg); resize: vertical;
+    }
+    details { border: 1px solid var(--border); border-radius: 8px; padding: 0.6rem 0.9rem; }
+    details[open] { display: grid; gap: 1rem; }
+    summary { cursor: pointer; color: var(--muted); font-size: 0.92rem; }
+    button {
+      justify-self: start; padding: 0.5em 1.4em; border: none; border-radius: 8px;
+      background: var(--accent); color: #fff; font-size: 1rem; cursor: pointer;
+    }
+    button:disabled { opacity: 0.6; cursor: wait; }
+    #badge { font-size: 0.7em; padding: 0.25em 0.7em; border-radius: 999px; vertical-align: middle; }
+    #badge.ok { background: #2f9e44; color: #fff; }
+    #badge.fail { background: #d6336c; color: #fff; }
+    #badge.skip { background: var(--code-bg); color: var(--muted); }
+    #result h3 { margin: 1.4rem 0 0.5rem; font-size: 1.02rem; }
+    #result dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.3rem 1rem; }
+    #result dt { font-weight: 600; color: var(--muted); }
+    #result dd { margin: 0; overflow-wrap: anywhere; }
+    #result pre { max-height: 22rem; overflow: auto; }
+    .err { color: #d6336c; }
+    .explain { margin-top: 2.5rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
+  </style>
+
+  <script is:inline>
+    (() => {
+      const form = document.getElementById('tool-form');
+      const out = document.getElementById('out');
+      const badge = document.getElementById('badge');
+      const result = document.getElementById('result');
+
+      const el = (tag, text, cls) => {
+        const node = document.createElement(tag);
+        if (text !== undefined && text !== null) node.textContent = text;
+        if (cls) node.className = cls;
+        return node;
+      };
+      const row = (dl, term, value) => {
+        if (value === undefined || value === null || value === '') return;
+        dl.append(el('dt', term), typeof value === 'string' ? el('dd', value) : value);
+      };
+      const jsonDd = (value) => {
+        const dd = el('dd');
+        const pre = el('pre');
+        pre.append(el('code', JSON.stringify(value, null, 2)));
+        dd.append(pre);
+        return dd;
+      };
+      const section = (title) => {
+        result.append(el('h3', title));
+        const dl = el('dl');
+        result.append(dl);
+        return dl;
+      };
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const button = form.querySelector('button');
+        button.disabled = true;
+        out.hidden = false;
+        result.replaceChildren(el('p', 'Inspecting…'));
+
+        let doc;
+        try { doc = JSON.parse(form.doc.value); }
+        catch { badge.className = 'fail'; badge.textContent = 'error'; result.replaceChildren(el('p', 'The input is not valid JSON.', 'err')); button.disabled = false; return; }
+
+        const isEnvelope = doc && typeof doc === 'object' && 'payload' in doc && 'payloadType' in doc;
+        const body = isEnvelope ? { envelope: doc } : { statement: doc };
+        if (isEnvelope && form.publicKeyPem.value.trim()) body.publicKeyPem = form.publicKeyPem.value;
+
+        try {
+          const res = await fetch('/api/v1/provenance/inspect', {
+            method: 'POST',
+            headers: { 'content-type': 'application/json' },
+            body: JSON.stringify(body),
+          });
+          const data = await res.json();
+          if (!data.ok) {
+            badge.className = 'fail';
+            badge.textContent = 'error';
+            result.replaceChildren(el('p', data.error.message + ' (' + data.error.code + ')', 'err'));
+          } else {
+            const r = data.result;
+            const v = r.verification;
+            if (!v) { badge.textContent = 'decoded'; badge.className = 'skip'; }
+            else if (!v.attempted) { badge.textContent = 'decoded, unauthenticated'; badge.className = 'skip'; }
+            else if (v.verified) { badge.textContent = 'signature verified'; badge.className = 'ok'; }
+            else { badge.textContent = 'verification failed'; badge.className = 'fail'; }
+
+            result.replaceChildren();
+            const sdl = section('Statement');
+            row(sdl, 'predicateType', r.predicateType);
+            r.subjects.forEach((s) => {
+              row(sdl, 'subject', s.name + ' — ' + Object.entries(s.digest).map(([a, d]) => a + ':' + d).join(', '));
+            });
+            if (v && (v.reason || v.verified !== undefined)) row(sdl, 'signature', v.verified === true ? 'verified' : (v.reason || ''));
+
+            if (r.slsa) {
+              const pdl = section('SLSA provenance (' + r.slsa.version + ')');
+              row(pdl, 'builder', r.slsa.builderId);
+              row(pdl, 'buildType', r.slsa.buildType);
+              if (r.slsa.externalParameters) row(pdl, 'externalParameters', jsonDd(r.slsa.externalParameters));
+              if (r.slsa.resolvedDependencies && r.slsa.resolvedDependencies.length) row(pdl, 'resolvedDependencies', jsonDd(r.slsa.resolvedDependencies));
+              if (r.slsa.configSource) row(pdl, 'configSource', jsonDd(r.slsa.configSource));
+              if (r.slsa.materials && r.slsa.materials.length) row(pdl, 'materials', jsonDd(r.slsa.materials));
+              row(pdl, 'invocationId', r.slsa.invocationId);
+              row(pdl, 'startedOn', r.slsa.startedOn);
+            } else if (r.predicate) {
+              const pdl = section('Predicate (raw)');
+              row(pdl, 'predicate', jsonDd(r.predicate));
+            }
+          }
+        } catch {
+          badge.className = 'fail';
+          badge.textContent = 'error';
+          result.replaceChildren(el('p', 'The tools API is unreachable — try again shortly.', 'err'));
+        } finally {
+          button.disabled = false;
+        }
+      });
+    })();
+  </script>
+</Base>
