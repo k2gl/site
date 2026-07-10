@@ -48,6 +48,15 @@ const ogImageURL = new URL(ogImage, Astro.site).href;
     <link rel="alternate" type="application/rss+xml" title="k2gl blog" href="/rss.xml" />
     <link rel="stylesheet" href="/hljs/github.min.css" media="(prefers-color-scheme: light)" />
     <link rel="stylesheet" href="/hljs/github-dark.min.css" media="(prefers-color-scheme: dark)" />
+    <!-- Self-hosted, cookieless analytics (Umami on our own VPS) — no consent
+         banner needed; data-domains keeps local builds out of the numbers. -->
+    <script
+      defer
+      src="/u/script.js"
+      data-website-id="3c199330-18eb-4bbd-aa2f-0ae81c1384f1"
+      data-host-url="https://k2gl.com/u"
+      data-domains="k2gl.com"
+    ></script>
     <slot name="head" />
   </head>
   <body>

@@ -45,6 +45,18 @@
 		reverse_proxy api:8080
 	}
 
+	# First-party Umami tracker: only the script and its beacon are exposed — the
+	# dashboard and login live on the (basic-auth'd) stats host below.
+	handle /u/script.js {
+		rewrite * /script.js
+		reverse_proxy umami:3000
+	}
+	handle /u/api/send {
+		rewrite * /api/send
+		log_skip
+		reverse_proxy umami:3000
+	}
+
 	# Everything else: the static site.
 	handle {
 		root * /srv
@@ -85,4 +97,15 @@
 			file_server
 		}
 	}
+}
+
+# The Umami dashboard. Off by default: STATS_DOMAIN's .localhost fallback keeps
+# Caddy on an internal cert (no ACME attempts) until the real subdomain has a DNS
+# record and .env sets it. Basic auth mirrors /_stats — same throwaway default.
+{$STATS_DOMAIN:stats.localhost} {
+	basic_auth {
+		{$STATS_USER:k2gl} {$STATS_HASH:$2a$14$YewCzl48OP2I67jFNNDfx.YpVgZ4cvZ8lXfJtyYIjh8SwcGuLFdoy}
+	}
+	header X-Robots-Tag "noindex"
+	reverse_proxy umami:3000
 }
