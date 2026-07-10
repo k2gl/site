@@ -1,14 +1,47 @@
 ---
 import { getCollection } from 'astro:content';
 import { marked } from 'marked';
+import { FAMILIES } from '../../data/enrichment';
+import { TOOLS } from '../../data/tools';
+import { PACKAGES } from '../../content.config';
 import Base from '../../layouts/Base.astro';
 
 export async function getStaticPaths() {
   const pkgs = await getCollection('packages');
-  return pkgs.map((p) => ({ params: { name: p.data.slug }, props: { pkg: p.data } }));
+  const guides = new Map((await getCollection('guides')).map((g) => [g.id, g.data.title]));
+  const compares = new Map((await getCollection('compare')).map((c) => [c.id, c.data.title]));
+
+  // Related slugs in enrichment.ts are plain strings — resolve them here so a
+  // typo fails the build instead of shipping a dead link.
+  const must = (kind: string, slug: string, title: string | undefined) => {
+    if (title === undefined) throw new Error(`Unresolved related ${kind}: "${slug}"`);
+
+    return { slug, title };
+  };
+
+  return pkgs.map((p) => {
+    const rel = p.data.related;
+    const tool = rel.tool ? TOOLS.find((t) => t.slug === rel.tool) : undefined;
+
+    if (rel.tool && !tool) throw new Error(`Unresolved related tool: "${rel.tool}" on ${p.data.slug}`);
+
+    const related = {
+      guide: rel.guide ? must('guide', rel.guide, guides.get(rel.guide)) : null,
+      tool: tool ? { slug: tool.slug, title: tool.name } : null,
+      compare: (rel.compare ?? []).map((c) => must('compare Q&A', c, compares.get(c))),
+    };
+
+    const siblings = pkgs
+      .filter((x) => x.data.category === p.data.category && x.data.slug !== p.data.slug)
+      .sort((a, b) => PACKAGES.indexOf(a.data.slug) - PACKAGES.indexOf(b.data.slug))
+      .map((x) => ({ slug: x.data.slug, name: x.data.name }));
+
+    return { params: { name: p.data.slug }, props: { pkg: p.data, related, siblings } };
+  });
 }
 
-const { pkg } = Astro.props;
+const { pkg, related, siblings } = Astro.props;
+const familyLabel = FAMILIES.find((f) => f.key === pkg.family)?.label ?? pkg.family;
 
 // READMEs often lead with their own shields/poser badges; the page already shows a
 // consistent set, so strip badge images (and now-empty wrappers) to avoid duplicates.
@@ -50,7 +83,7 @@ const breadcrumbLd = {
   </Fragment>
 
   <article>
-    <p class="crumb"><a href="/packages">Packages</a> · {pkg.family}</p>
+    <p class="crumb"><a href="/packages">Packages</a> · {familyLabel}</p>
     <h1>{pkg.name}</h1>
     <p class="tagline">{pkg.tagline}</p>
     {pkg.hook && <p class="hook">{pkg.hook}</p>}
@@ -100,6 +133,31 @@ const breadcrumbLd = {
       </section>
     )}
 
+    {(related.guide || related.tool || related.compare.length > 0 || siblings.length > 0) && (
+      <section class="related">
+        {(related.guide || related.tool || related.compare.length > 0) && (
+          <div class="rel-col">
+            <h3>Use it</h3>
+            <ul>
+              {related.guide && <li>Guide: <a href={`/guides/${related.guide.slug}`}>{related.guide.title}</a></li>}
+              {related.tool && <li>Online tool: <a href={`/tools/${related.tool.slug}`}>{related.tool.title}</a></li>}
+              {related.compare.map((c) => <li>Q&amp;A: <a href={`/compare/${c.slug}`}>{c.title}</a></li>)}
+            </ul>
+          </div>
+        )}
+        {siblings.length > 0 && (
+          <div class="rel-col">
+            <h3>Same category</h3>
+            <p class="siblings">
+              {siblings.map((s, i) => (
+                <>{i > 0 ? ' · ' : ''}<a href={`/packages/${s.slug}`}>{s.name}</a></>
+              ))}
+            </p>
+          </div>
+        )}
+      </section>
+    )}
+
     <div class="readme" set:html={readmeHtml} />
 
     {pkg.api.length > 0 && (
@@ -139,6 +197,15 @@ const breadcrumbLd = {
     .meta { display: grid; grid-template-columns: max-content 1fr; gap: 0.25rem 1rem; }
     .meta dt { font-weight: 600; color: var(--muted); }
     .meta dd { margin: 0; }
+    .related {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem;
+      margin: 1.5rem 0; padding: 1.25rem; border: 1px solid var(--border); border-radius: 10px;
+    }
+    @media (max-width: 600px) { .related { grid-template-columns: 1fr; } }
+    .rel-col h3 { margin: 0 0 0.4rem; font-size: 1rem; }
+    .rel-col ul { padding-left: 1.1rem; margin: 0; }
+    .rel-col li { margin: 0.3rem 0; }
+    .siblings { margin: 0; }
     .readme { margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
     .links { margin-top: 2rem; color: var(--muted); }
     .api { margin-top: 2rem; border-top: 1px solid var(--border); padding-top: 1.5rem; }
