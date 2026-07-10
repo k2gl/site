@@ -59,11 +59,19 @@ const breadcrumbLd = {
     straight in.
   </p>
 
-  <h2>Inspect one in the browser</h2>
+  <h2>Try it in the browser</h2>
   <p>
-    Paste any SD-JWT into the <a href="/tools/sd-jwt">SD-JWT debugger</a> to see its
-    disclosures, recomputed digests, and recreated claims — and verify the issuer
-    signature against a key. It runs on these packages.
+    <a href="/tools/sd-jwt-issue">Generate a demo SD-JWT</a> with the claims you choose
+    disclosable, then paste it into the <a href="/tools/sd-jwt">debugger</a> to see its
+    disclosures, recomputed digests, and recreated claims. Both tools run on these packages.
+  </p>
+
+  <h2>Accepting presentations?</h2>
+  <p>
+    The relying-party flow — issuer signature, disclosures, key binding — is walked through in
+    <a href="/guides/verify-sd-jwt-vc-presentation">Verify an SD-JWT VC presentation</a>;
+    the short answer lives at <a href="/compare/eudi-relying-party-php">EUDI wallet relying
+    party in PHP?</a>
   </p>
 
   <h2>Specs</h2>
