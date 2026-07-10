@@ -126,8 +126,10 @@ support — if Packagist hosts attestations directly, client-side verification
 becomes the default for the whole registry, and these tools verify it with no
 changes.
 
-## Links
+## Links & next steps
 
-- Sign your package: [`k2gl/composer-attest-action`](https://github.com/k2gl/composer-attest-action)
-- Verify what you install: [`k2gl/composer-attest`](https://github.com/k2gl/composer-attest)
-- The verifier underneath: [`k2gl/sigstore-verify`](https://github.com/k2gl/sigstore-verify)
+- Sign your package: [`k2gl/composer-attest-action`](https://github.com/k2gl/composer-attest-action) — [guide](/guides/attest-your-package)
+- Verify what you install: [`k2gl/composer-attest`](/packages/composer-attest) — [guide](/guides/verify-provenance-at-install)
+- Check any Packagist package for attestations, right now: [online checker](/tools/composer-attestations)
+- The verifier underneath: [`k2gl/sigstore-verify`](/packages/sigstore-verify)
+- How the whole stack fits together: [supply-chain security for PHP](/supply-chain)
