@@ -8,7 +8,9 @@ export const PACKAGES = [
   // supply-chain
   'sigstore-verify', 'sigstore-sign', 'sigstore-bundle', 'rekor-client',
   'dsse', 'in-toto-attestation', 'slsa-provenance', 'tuf',
-  'sshsig', 'signed-note', 'sd-jwt', 'sd-jwt-vc', 'composer-attest', 'composer-license-gate',
+  'sshsig', 'signed-note', 'composer-attest', 'composer-license-gate',
+  // identity
+  'sd-jwt', 'sd-jwt-vc',
   // utilities
   'array-reader', 'enum', 'entity-exist', 'phpunit-fluent-assertions', 'app-env',
 ];
@@ -20,11 +22,16 @@ const packages = defineCollection({
     name: z.string(),
     description: z.string(),
     tagline: z.string(),
-    family: z.enum(['supply-chain', 'utilities']),
-    category: z.enum(['plugins', 'sigstore', 'attestation', 'signatures', 'utilities']),
+    family: z.enum(['supply-chain', 'identity', 'utilities']),
+    category: z.enum(['plugins', 'sigstore', 'attestation', 'signatures', 'identity', 'utilities']),
     hook: z.string(),
     whenToUse: z.array(z.string()),
     whenNotToUse: z.array(z.string()),
+    related: z.object({
+      guide: z.string().optional(),
+      tool: z.string().optional(),
+      compare: z.array(z.string()).optional(),
+    }).default({}),
     keywords: z.array(z.string()),
     php: z.string(),
     requires: z.array(z.object({ name: z.string(), constraint: z.string() })),

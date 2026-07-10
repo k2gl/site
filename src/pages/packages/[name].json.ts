@@ -17,6 +17,7 @@ export const GET: APIRoute = ({ props }) => {
     slug: pkg.slug,
     tagline: pkg.tagline,
     family: pkg.family,
+    category: pkg.category,
     description: pkg.description,
     php: pkg.php,
     requires: pkg.requires,
