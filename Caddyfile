@@ -103,9 +103,18 @@
 # Caddy on an internal cert (no ACME attempts) until the real subdomain has a DNS
 # record and .env sets it. Basic auth mirrors /_stats — same throwaway default.
 {$STATS_DOMAIN:stats.localhost} {
-	basic_auth {
-		{$STATS_USER:k2gl} {$STATS_HASH:$2a$14$YewCzl48OP2I67jFNNDfx.YpVgZ4cvZ8lXfJtyYIjh8SwcGuLFdoy}
-	}
 	header X-Robots-Tag "noindex"
-	reverse_proxy umami:3000
+
+	# Browsers fetch the web manifest WITHOUT credentials (spec), so a 401 here
+	# traps Chrome in an endless auth prompt. The manifest is harmless — serve it.
+	handle /site.webmanifest {
+		reverse_proxy umami:3000
+	}
+
+	handle {
+		basic_auth {
+			{$STATS_USER:k2gl} {$STATS_HASH:$2a$14$YewCzl48OP2I67jFNNDfx.YpVgZ4cvZ8lXfJtyYIjh8SwcGuLFdoy}
+		}
+		reverse_proxy umami:3000
+	}
 }
