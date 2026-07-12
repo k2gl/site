@@ -231,6 +231,22 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       compare: ['slsa-provenance-php'],
     },
   },
+  'openvex': {
+    tagline: 'Read, write and canonicalize OpenVEX documents in PHP.',
+    category: 'attestation',
+    hook: 'Say a CVE in your SBOM doesn’t affect the shipped artifact — with a machine-readable justification and a stable, content-addressable document id.',
+    whenToUse: [
+      'You produce or consume OpenVEX (not_affected / affected / fixed) statements.',
+      'You want the canonical @id, byte-compatible with the go-vex reference.',
+    ],
+    whenNotToUse: [
+      'You want to sign the VEX — wrap Document::toArray() in an in-toto Statement (in-toto-attestation) and a DSSE envelope (dsse).',
+    ],
+    related: {
+      guide: 'vex-in-php',
+      compare: ['openvex-php'],
+    },
+  },
   'tuf': {
     tagline: 'A pure-PHP client for The Update Framework (TUF).',
     category: 'attestation',
