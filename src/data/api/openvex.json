@@ -1,0 +1,121 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\OpenVex\\Component",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $id = '', public readonly array $hashes = [], public readonly array $identifiers = [], public readonly string $supplier = '', )",
+                "of(string $id): self",
+                "fromArray(array $data): self",
+                "toArray(): array",
+                "canonicalFragment(): string",
+                "matchesIdentifier(string $identifier): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\OpenVex\\DecodesJson",
+            "kind": "trait",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\OpenVex\\Document",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $author, public readonly DateTimeImmutable $timestamp, public readonly array $statements, public readonly int $version = 1, public readonly string $id = '', public readonly string $context = self::CONTEXT, public readonly string $role = '', public readonly ?DateTimeImmutable $lastUpdated = null, public readonly string $tooling = '', public readonly string $supplier = '', )",
+                "fromJson(string $json): self",
+                "fromArray(array $data): self",
+                "toArray(): array",
+                "toJson(int $flags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE): string",
+                "canonicalHash(): string",
+                "generateId(): string",
+                "withCanonicalId(): self",
+                "statementsFor(string $identifier): array",
+                "(Statement $statement) use ($identifier): bool",
+                "(Statement $a, Statement $b): int"
+            ]
+        },
+        {
+            "name": "K2gl\\OpenVex\\Exception\\InvalidDocumentException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\OpenVex\\Exception\\InvalidStatementException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\OpenVex\\Exception\\OpenVexException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\OpenVex\\Justification",
+            "kind": "enum",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\OpenVex\\OpenVex",
+            "kind": "class",
+            "methods": [
+                "create( string $author, ?DateTimeImmutable $timestamp = null, int $version = 1, string $role = '', string $tooling = '', string $supplier = '', ): self",
+                "statement( string|Vulnerability $vulnerability, Status $status, array $products = [], ?Justification $justification = null, string $impactStatement = '', string $actionStatement = '', string $statusNotes = '', ): self",
+                "build(): Document",
+                "toJson(int $flags = JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE): string"
+            ]
+        },
+        {
+            "name": "K2gl\\OpenVex\\Product",
+            "kind": "class",
+            "methods": [
+                "__construct( string $id = '', array $subcomponents = [], array $hashes = [], array $identifiers = [], string $supplier = '', )",
+                "of(string $id): self",
+                "fromArray(array $data): self",
+                "toArray(): array",
+                "canonicalFragment(): string",
+                "matchesIdentifier(string $identifier): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\OpenVex\\Statement",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly Vulnerability $vulnerability, public readonly Status $status, public readonly array $products = [], public readonly ?Justification $justification = null, public readonly string $impactStatement = '', public readonly string $actionStatement = '', public readonly string $statusNotes = '', public readonly string $id = '', public readonly ?DateTimeImmutable $timestamp = null, public readonly ?DateTimeImmutable $lastUpdated = null, public readonly ?DateTimeImmutable $actionStatementTimestamp = null, )",
+                "fromArray(array $data): self",
+                "toArray(): array",
+                "effectiveTimestamp(DateTimeImmutable $documentTimestamp): DateTimeImmutable"
+            ]
+        },
+        {
+            "name": "K2gl\\OpenVex\\Status",
+            "kind": "enum",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\OpenVex\\Subcomponent",
+            "kind": "class",
+            "methods": [
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\OpenVex\\Timestamp",
+            "kind": "class",
+            "methods": [
+                "parse(string $value): DateTimeImmutable",
+                "format(DateTimeImmutable $value): string"
+            ]
+        },
+        {
+            "name": "K2gl\\OpenVex\\Vulnerability",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $name, public readonly string $id = '', public readonly string $description = '', public readonly array $aliases = [], )",
+                "of(string $name): self",
+                "fromArray(array $data): self",
+                "toArray(): array",
+                "canonicalFragment(): string"
+            ]
+        }
+    ]
+}
