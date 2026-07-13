@@ -44,7 +44,7 @@
             "name": "K2gl\\ComposerAttest\\Policy",
             "kind": "class",
             "methods": [
-                "__construct( public readonly string $mode = self::MODE_WARN, public readonly bool $requireAttestation = false, public readonly string $issuer = 'https://token.actions.githubusercontent.com', )",
+                "__construct( public readonly string $mode = self::MODE_WARN, public readonly bool $requireAttestation = false, public readonly string $issuer = self::DEFAULT_ISSUER, public readonly bool $emitVsa = false, public readonly string $vsaDir = self::DEFAULT_VSA_DIR, public readonly ?string $vsaSignKey = null, )",
                 "fromExtra(array $extra): self",
                 "isOff(): bool",
                 "isEnforcing(): bool"
@@ -54,12 +54,30 @@
             "name": "K2gl\\ComposerAttest\\VerificationResult",
             "kind": "class",
             "methods": [
-                "verified(string $identity): self",
+                "verified(string $identity, string $digest): self",
                 "noAttestation(): self",
                 "failed(string $message): self",
                 "isVerified(): bool",
                 "hasAttestation(): bool",
                 "isFailure(): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\ComposerAttest\\VsaEmitter",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly Policy $policy)",
+                "statement(string $packageName, string $version, string $artifactName, string $digest, string $timeVerified): Statement",
+                "json(string $packageName, string $version, string $artifactName, string $digest, string $timeVerified): string",
+                "write(string $packageName, string $version, string $artifactName, string $digest, string $timeVerified): ?string"
+            ]
+        },
+        {
+            "name": "K2gl\\ComposerAttest\\VsaSigner",
+            "kind": "class",
+            "methods": [
+                "fromPrivateKeyPem(string $pem): self",
+                "sign(Statement $statement): Envelope"
             ]
         }
     ]

@@ -140,6 +140,7 @@
                 "isInt(string $message = ''): self",
                 "isString(string $message = ''): self",
                 "hasProperty(string $property, string $message = ''): self",
+                "notHasProperty(string $property, string $message = ''): self",
                 "hasMethod(string $method, string $message = ''): self",
                 "isFloat(string $message = ''): self",
                 "isBool(string $message = ''): self",

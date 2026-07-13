@@ -121,6 +121,32 @@
                 "fromStatement(Statement $statement): self",
                 "fromArray(array $data): self"
             ]
+        },
+        {
+            "name": "K2gl\\Slsa\\VerificationResult",
+            "kind": "enum",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\Slsa\\VerificationSummary",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly Verifier $verifier, public readonly string $timeVerified, public readonly string $resourceUri, public readonly ResourceDescriptor $policy, public readonly VerificationResult $verificationResult, public readonly array $verifiedLevels, public readonly string $slsaVersion, public readonly array $inputAttestations = [], public readonly ?array $dependencyLevels = null, )",
+                "predicateType(): string",
+                "toArray(): array",
+                "toStatement(array $subject, StatementVersion $statementVersion = StatementVersion::V1): Statement",
+                "fromStatement(Statement $statement): self",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\Slsa\\Verifier",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $id, public readonly ?array $version = null, )",
+                "toArray(): array",
+                "fromArray(array $data): self"
+            ]
         }
     ]
 }
