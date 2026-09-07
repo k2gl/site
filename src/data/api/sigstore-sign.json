@@ -14,6 +14,11 @@
             "methods": []
         },
         {
+            "name": "K2gl\\SigstoreSign\\Exception\\InvalidSigningConfigException",
+            "kind": "class",
+            "methods": []
+        },
+        {
             "name": "K2gl\\SigstoreSign\\Exception\\SigningException",
             "kind": "class",
             "methods": []
@@ -41,6 +46,34 @@
             "kind": "class",
             "methods": [
                 "create(FulcioClient $fulcio, string $oidcToken): SigningKey"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\Service",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $url, public readonly int $majorApiVersion, public readonly string $operator, public readonly ?DateTimeImmutable $validFrom = null, public readonly ?DateTimeImmutable $validUntil = null, )",
+                "isValidAt(DateTimeImmutable $moment): bool",
+                "fromArray(array $data): self"
+            ]
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\ServiceSelector",
+            "kind": "enum",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SigstoreSign\\SigningConfig",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly array $certificateAuthorities, private readonly array $oidcProviders, private readonly array $rekorLogs, private readonly array $timestampAuthorities, private readonly ServiceSelector $rekorSelector = ServiceSelector::Any, private readonly int $rekorCount = 0, private readonly ServiceSelector $timestampSelector = ServiceSelector::Any, private readonly int $timestampCount = 0, )",
+                "certificateAuthority(?DateTimeImmutable $at = null, array $supportedApiVersions = [1]): Service",
+                "oidcProvider(?DateTimeImmutable $at = null, array $supportedApiVersions = [1]): Service",
+                "rekorLog(?DateTimeImmutable $at = null, array $supportedApiVersions = [1, 2]): Service",
+                "rekorLogs(?DateTimeImmutable $at = null, array $supportedApiVersions = [1, 2]): array",
+                "timestampAuthorities(?DateTimeImmutable $at = null, array $supportedApiVersions = [1]): array",
+                "fromJson(string $json): self",
+                "fromArray(array $data): self"
             ]
         },
         {

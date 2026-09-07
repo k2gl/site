@@ -46,6 +46,7 @@
                 "__construct( public readonly array $subject, public readonly string $predicateType, public readonly array $predicate = [], public readonly StatementVersion $version = StatementVersion::V1, )",
                 "sign(Signer ...$signers): Envelope",
                 "predicate(?PredicateRegistry $registry = null): Predicate|array",
+                "isPayloadType(string $payloadType): bool",
                 "fromEnvelope(Envelope $envelope): self",
                 "toArray(): array",
                 "toJson(): string",

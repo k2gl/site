@@ -28,10 +28,15 @@
             "methods": []
         },
         {
+            "name": "K2gl\\RekorClient\\RekorApiVersion",
+            "kind": "enum",
+            "methods": []
+        },
+        {
             "name": "K2gl\\RekorClient\\RekorClient",
             "kind": "class",
             "methods": [
-                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly StreamFactoryInterface $streamFactory, string $baseUrl, )",
+                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly StreamFactoryInterface $streamFactory, string $baseUrl, private readonly RekorApiVersion $apiVersion = RekorApiVersion::V2, )",
                 "submitHashedRekord(string $digest, string $signature, Verifier $verifier): TransparencyLogEntry"
             ]
         },
@@ -41,7 +46,8 @@
             "methods": [
                 "publicKey(string $der, KeyDetails $keyDetails): self",
                 "certificate(string $der, KeyDetails $keyDetails): self",
-                "toArray(): array"
+                "toArray(): array",
+                "pem(): string"
             ]
         }
     ]
