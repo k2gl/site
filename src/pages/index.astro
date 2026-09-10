@@ -9,7 +9,7 @@ const pkgs = (await getCollection('packages')).map((p) => p.data);
 // Two or three representative packages per line — hand-picked, not the newest.
 const REPRESENTATIVE: Record<string, string[]> = {
   'supply-chain': ['sigstore-verify', 'composer-attest', 'dsse'],
-  'identity': ['sd-jwt', 'sd-jwt-vc'],
+  'identity': ['sd-jwt', 'sd-jwt-vc', 'token-status-list'],
   'utilities': ['array-reader', 'enum'],
 };
 

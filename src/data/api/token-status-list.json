@@ -1,0 +1,120 @@
+{
+    "classes": [
+        {
+            "name": "K2gl\\TokenStatusList\\Exception\\InvalidStatusListException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\Exception\\InvalidStatusListTokenException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\Exception\\StatusListFetchFailed",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\Exception\\TokenStatusListException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\KeyResolver",
+            "kind": "interface",
+            "methods": [
+                "resolve(stdClass $header, stdClass $payload): Verifier"
+            ]
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\Status",
+            "kind": "class",
+            "methods": [
+                "of(int $value): self",
+                "valid(): self",
+                "invalid(): self",
+                "suspended(): self",
+                "isValid(): bool",
+                "isInvalid(): bool",
+                "isSuspended(): bool",
+                "isApplicationSpecific(): bool",
+                "name(): ?string",
+                "equals(self $other): bool"
+            ]
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\StatusList",
+            "kind": "class",
+            "methods": [
+                "create(int $size, int $bits = 1, ?string $aggregationUri = null): self",
+                "fromBytes(string $bytes, int $bits, ?string $aggregationUri = null): self",
+                "decode( string $lst, int $bits, ?string $aggregationUri = null, int $maxBytes = self::DEFAULT_MAX_BYTES, ): self",
+                "fromArray(array|stdClass $statusList, int $maxBytes = self::DEFAULT_MAX_BYTES): self",
+                "bits(): int",
+                "count(): int",
+                "aggregationUri(): ?string",
+                "get(int $index): Status",
+                "set(int $index, Status|int $status): void",
+                "bytes(): string",
+                "encode(): string",
+                "toArray(): array",
+                "withAggregationUri(?string $aggregationUri): self"
+            ]
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\StatusListResolver",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly Verifier|KeyResolver $key, private readonly StatusListTokenVerifier $verifier = new StatusListTokenVerifier, private readonly ?CacheInterface $cache = null, private readonly int $maxRedirects = 3, )",
+                "check(StatusReference $reference): Status",
+                "fetch(string $uri, ?int $at = null): StatusListToken"
+            ]
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\StatusListToken",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly string $compact, private readonly stdClass $header, private readonly stdClass $payload, private readonly string $subject, private readonly int $issuedAt, private readonly ?int $expiresAt, private readonly ?int $ttl, private readonly StatusList $statusList, )",
+                "toCompact(): string",
+                "subject(): string",
+                "issuedAt(): int",
+                "expiresAt(): ?int",
+                "ttl(): ?int",
+                "statusList(): StatusList",
+                "header(): stdClass",
+                "payload(): stdClass",
+                "claim(string $name): mixed",
+                "freshUntil(int $fetchedAt): ?int",
+                "status(StatusReference $reference): Status"
+            ]
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\StatusListTokenIssuer",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly Signer $signer, ?string $algorithm = null)",
+                "issue( string $uri, StatusList $statusList, ?int $issuedAt = null, ?int $expiresAt = null, ?int $ttl = null, array $claims = [], array $header = [], ): string",
+                "algorithm(): string"
+            ]
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\StatusListTokenVerifier",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly array $allowedAlgorithms = self::DEFAULT_ALGORITHMS, private readonly ?int $clock = null, private readonly int $clockLeewaySeconds = 0, private readonly int $maxListBytes = StatusList::DEFAULT_MAX_BYTES, )",
+                "verify(string $compact, Verifier|KeyResolver $key, ?string $expectedUri = null): StatusListToken",
+                "now(): int"
+            ]
+        },
+        {
+            "name": "K2gl\\TokenStatusList\\StatusReference",
+            "kind": "class",
+            "methods": [
+                "__construct( public readonly string $uri, public readonly int $index, )",
+                "fromClaim(array|stdClass $status): self",
+                "toClaim(): array"
+            ]
+        }
+    ]
+}

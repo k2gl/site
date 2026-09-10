@@ -42,7 +42,7 @@ export const FAMILIES: { key: Family; label: string; blurb: string; landing: str
   {
     key: 'identity',
     label: 'Digital identity & credentials',
-    blurb: 'SD-JWT and SD-JWT VC (RFC 9901) — the selective-disclosure credential formats behind OpenID4VC and the EU Digital Identity Wallet.',
+    blurb: 'SD-JWT and SD-JWT VC (RFC 9901) — the selective-disclosure credential formats behind OpenID4VC and the EU Digital Identity Wallet — plus Token Status List for revocation.',
     landing: '/identity',
   },
   {
@@ -59,7 +59,7 @@ export const CATEGORIES: { key: Category; family: Family; label: string; short: 
   { key: 'sigstore', family: 'supply-chain', label: 'Sigstore & signing', short: 'Sigstore', blurb: 'Verify and produce Sigstore signatures and bundles in pure PHP.' },
   { key: 'attestation', family: 'supply-chain', label: 'Attestation formats', short: 'Attestation', blurb: 'The formats underneath — DSSE, in-toto, SLSA, TUF — as typed PHP.' },
   { key: 'signatures', family: 'supply-chain', label: 'Signatures & notes', short: 'Signatures', blurb: 'SSH signatures and signed-note formats used by transparency logs.' },
-  { key: 'identity', family: 'identity', label: 'Digital identity & credentials', short: 'Identity', blurb: 'SD-JWT and SD-JWT VC: selective-disclosure credentials, issued and verified in PHP.' },
+  { key: 'identity', family: 'identity', label: 'Digital identity & credentials', short: 'Identity', blurb: 'SD-JWT, SD-JWT VC and Token Status List: selective-disclosure credentials, issued, verified and revoked in PHP.' },
   { key: 'utilities', family: 'utilities', label: 'Developer utilities', short: 'Utilities', blurb: 'General-purpose PHP libraries.' },
 ];
 
@@ -326,6 +326,19 @@ export const ENRICHMENT: Record<string, Enrichment> = {
       tool: 'sd-jwt',
       compare: ['eudi-relying-party-php'],
     },
+  },
+
+  'token-status-list': {
+    tagline: 'Token Status List: publish and check revocation for JWTs and SD-JWT VCs.',
+    category: 'identity',
+    hook: 'The revocation mechanism behind SD-JWT VC — one signed bit array per issuer, a couple of bits per token.',
+    whenToUse: [
+      'You verify SD-JWT VCs or JWTs that carry a status claim and need to know whether they were revoked or suspended.',
+      'You issue credentials and want to publish their status as a Status List Token (draft-ietf-oauth-status-list).',
+    ],
+    whenNotToUse: [
+      'Your tokens are short-lived enough that expiry alone is your revocation story.',
+    ],
   },
 
   // ── Developer utilities ──────────────────────────────────────────────
