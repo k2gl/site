@@ -43,6 +43,14 @@ const breadcrumbLd = {
     disclosure digests, key binding, and the VC rules.
   </p>
 
+  <p>
+    A credential that verifies can still have been revoked. <strong>Token Status List</strong>
+    is the mechanism SD-JWT VC uses for that: the issuer publishes one signed, compressed bit
+    array, each credential carries an index into it, and a relying party fetches the list and
+    reads a couple of bits. <a href="/packages/token-status-list">k2gl/token-status-list</a>
+    covers both ends — publishing the list and checking a credential's <code>status</code> claim.
+  </p>
+
   <h2>The packages</h2>
   <div class="grid">
     {pkgs.map((p) => (
@@ -78,6 +86,7 @@ const breadcrumbLd = {
   <ul>
     <li><a href="https://www.rfc-editor.org/rfc/rfc9901">RFC 9901 — Selective Disclosure for JWTs</a></li>
     <li><a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-sd-jwt-vc/">SD-JWT-based Verifiable Credentials (IETF draft)</a></li>
+    <li><a href="https://datatracker.ietf.org/doc/draft-ietf-oauth-status-list/">Token Status List (IETF draft)</a></li>
     <li><a href="https://openid.net/specs/openid-4-verifiable-credential-issuance-1_0.html">OpenID for Verifiable Credential Issuance</a></li>
     <li><a href="https://github.com/eu-digital-identity-wallet/eudi-doc-architecture-and-reference-framework">EUDI Wallet Architecture and Reference Framework</a></li>
   </ul>

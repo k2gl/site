@@ -10,7 +10,7 @@ export const PACKAGES = [
   'dsse', 'in-toto-attestation', 'slsa-provenance', 'tuf', 'openvex',
   'sshsig', 'signed-note', 'composer-attest', 'composer-license-gate',
   // identity
-  'sd-jwt', 'sd-jwt-vc',
+  'sd-jwt', 'sd-jwt-vc', 'token-status-list',
   // utilities
   'array-reader', 'enum', 'entity-exist', 'phpunit-fluent-assertions', 'app-env',
 ];
