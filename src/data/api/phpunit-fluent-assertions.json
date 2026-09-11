@@ -27,6 +27,13 @@
             "methods": []
         },
         {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Support\\SubsetMatcher",
+            "kind": "class",
+            "methods": [
+                "matches(array $document, array $subset): bool"
+            ]
+        },
+        {
             "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\ArrayAssertions",
             "kind": "trait",
             "methods": [
@@ -86,7 +93,23 @@
             "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\ExceptionAssertions",
             "kind": "trait",
             "methods": [
-                "throws(string $exception, string $message = ''): self"
+                "throws(string $exception, string $message = '', ?callable $inspect = null): self",
+                "doesNotThrow(string $message = ''): self"
+            ]
+        },
+        {
+            "name": "K2gl\\PHPUnitFluentAssertions\\Traits\\JsonAssertions",
+            "kind": "trait",
+            "methods": [
+                "isJson(string $message = ''): self",
+                "matchesJson(string|array|object $expected, string $message = ''): self",
+                "notMatchesJson(string|array|object $expected, string $message = ''): self",
+                "matchesJsonFile(string $path, string $message = ''): self",
+                "containsJson(string|array|object $expected, string $message = ''): self",
+                "notContainsJson(string|array|object $expected, string $message = ''): self",
+                "jsonPath(string $path, mixed $expected, string $message = ''): self",
+                "hasJsonPath(string $path, string $message = ''): self",
+                "notHasJsonPath(string $path, string $message = ''): self"
             ]
         },
         {
@@ -103,10 +126,17 @@
             "methods": [
                 "isLowerThan(int|float $expected, string $message = ''): self",
                 "isGreaterThan(int|float $expected, string $message = ''): self",
+                "isGreaterThanOrEqual(int|float $expected, string $message = ''): self",
+                "isLowerThanOrEqual(int|float $expected, string $message = ''): self",
+                "isCloseTo(int|float $expected, float $delta = PHP_FLOAT_EPSILON, string $message = ''): self",
+                "notCloseTo(int|float $expected, float $delta = PHP_FLOAT_EPSILON, string $message = ''): self",
                 "isPositive(string $message = ''): self",
                 "isNegative(string $message = ''): self",
                 "isZero(string $message = ''): self",
-                "isBetween(int|float $min, int|float $max, string $message = ''): self"
+                "isBetween(int|float $min, int|float $max, string $message = ''): self",
+                "isNotZero(string $message = ''): self",
+                "isFinite(string $message = ''): self",
+                "isNan(string $message = ''): self"
             ]
         },
         {
@@ -124,9 +154,6 @@
                 "hasLength(int $length, string $message = ''): self",
                 "isEmptyString(string $message = ''): self",
                 "isNotEmptyString(string $message = ''): self",
-                "isJson(string $message = ''): self",
-                "matchesJson(string $expectedJson, string $message = ''): self",
-                "notMatchesJson(string $expectedJson, string $message = ''): self",
                 "isValidEmail(string $message = ''): self",
                 "ulid(): self"
             ]

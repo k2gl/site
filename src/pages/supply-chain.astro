@@ -80,6 +80,23 @@ const breadcrumbLd = {
     <a href="/tools/composer-attestations">Check any Packagist package online →</a>
   </p>
 
+  <h2>At release time</h2>
+  <p>
+    The other half of the loop is publishing provenance for your own packages.
+    <a href="https://github.com/k2gl/composer-attest-action">composer-attest-action</a>
+    does it in one workflow line — it builds and attests the release tarball and the
+    exact dist zipball Composer installs, so <code>composer-attest</code> on the
+    consumer's side finds something to verify. Signing outside GitHub Actions goes
+    through <Fragment set:html={link('sigstore-sign')} /> directly.
+  </p>
+  <p>
+    <a href="/guides/attest-your-package">Guide: attest your package →</a> ·
+    <a href="/guides/keyless-signing-in-actions">Guide: keyless signing in Actions →</a> ·
+    <a href="/guides/sign-and-verify-a-blob">Guide: sign and verify a blob →</a> ·
+    <a href="/guides/in-toto-to-slsa-bundle">Guide: from in-toto statement to SLSA bundle →</a> ·
+    <a href="/guides/vex-in-php">Guide: VEX in PHP →</a>
+  </p>
+
   <h2>How they build on each other</h2>
   <p>
     Each package depends only on the layers it needs — nothing pulls in the whole

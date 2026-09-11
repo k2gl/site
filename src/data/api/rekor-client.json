@@ -36,7 +36,7 @@
             "name": "K2gl\\RekorClient\\RekorClient",
             "kind": "class",
             "methods": [
-                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly StreamFactoryInterface $streamFactory, string $baseUrl, private readonly RekorApiVersion $apiVersion = RekorApiVersion::V2, )",
+                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly StreamFactoryInterface $streamFactory, string $baseUrl, private readonly RekorApiVersion $apiVersion = RekorApiVersion::V2, private readonly int $retries = self::DEFAULT_RETRIES, ?Closure $sleeper = null, )",
                 "submitHashedRekord(string $digest, string $signature, Verifier $verifier): TransparencyLogEntry"
             ]
         },

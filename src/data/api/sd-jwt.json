@@ -70,6 +70,7 @@
                 "discloseAll(): self",
                 "toSdJwt(): SdJwt",
                 "toCompact(): string",
+                "toJson(): string",
                 "withKeyBinding( JwsSigner $signer, string $audience, string $nonce, ?int $issuedAt = null, ): string"
             ]
         },
@@ -85,13 +86,16 @@
             "name": "K2gl\\SdJwt\\SdJwt",
             "kind": "class",
             "methods": [
-                "parse(string $compact): self",
+                "parse(string $serialized): self",
+                "fromJson(string|array $json): self",
                 "create(string $issuerSignedJwt, array $disclosures, ?string $keyBindingJwt = null): self",
                 "hasKeyBinding(): bool",
                 "withoutKeyBinding(): self",
                 "header(): stdClass",
                 "payload(): stdClass",
-                "toCompact(): string"
+                "toCompact(): string",
+                "toJson(?bool $general = null): string",
+                "toJsonArray(?bool $general = null): array"
             ]
         },
         {
@@ -115,9 +119,10 @@
             "name": "K2gl\\SdJwt\\VerifiedSdJwt",
             "kind": "class",
             "methods": [
-                "__construct( private readonly stdClass $payload, private readonly ?stdClass $keyBindingPayload, )",
+                "__construct( private readonly stdClass $payload, private readonly ?stdClass $keyBindingPayload, private readonly array $disclosedPaths = [], )",
                 "payload(): stdClass",
                 "claims(): array",
+                "disclosedPaths(): array",
                 "keyBindingPayload(): ?stdClass"
             ]
         }

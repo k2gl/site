@@ -291,6 +291,9 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     whenNotToUse: [
       'You want a general Sigstore bundle — use sigstore-bundle.',
     ],
+    related: {
+      compare: ['php-sigstore-client'],
+    },
   },
 
   // ── Digital identity & credentials ───────────────────────────────────
@@ -324,7 +327,7 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     related: {
       guide: 'verify-sd-jwt-vc-presentation',
       tool: 'sd-jwt',
-      compare: ['eudi-relying-party-php'],
+      compare: ['eudi-relying-party-php', 'credential-revocation-php'],
     },
   },
 
@@ -339,6 +342,10 @@ export const ENRICHMENT: Record<string, Enrichment> = {
     whenNotToUse: [
       'Your tokens are short-lived enough that expiry alone is your revocation story.',
     ],
+    related: {
+      guide: 'check-credential-revocation',
+      compare: ['credential-revocation-php'],
+    },
   },
 
   // ── Developer utilities ──────────────────────────────────────────────
