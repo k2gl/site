@@ -35,6 +35,12 @@ The content loader reads local sibling clones (`../{package}/README.md`) when
 present, and falls back to `raw.githubusercontent.com` — so it builds hermetically
 in CI without checking out the package repos.
 
+The reflected API surface (`src/data/api/*.json`, what the package pages and their
+machine twins list as classes and methods) is generated, not hand-written:
+`php tools/gen-api.php /path/to/packages [slug ...]` reads the packages' `src/`
+with PHP's tokenizer. `.github/workflows/api.yml` re-runs it weekly (and on
+demand) over fresh clones of every slug in `PACKAGES` and commits the result.
+
 ## Stack
 
 Astro 5 (static) · Pagefind search · Caddy 2 (serving) · portable Docker image.

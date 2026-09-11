@@ -26,6 +26,9 @@ It's a library — bring your own PSR-18 HTTP client:
 composer require k2gl/sigstore-verify
 ```
 
+Certificate handling uses phpseclib, and both major versions are supported
+(`^3.0 || ^4.0`), so a project already on phpseclib 4 is not blocked.
+
 If what you actually want is to verify your dependencies' provenance at install
 time, [`k2gl/composer-attest`](/packages/composer-attest) is a Composer plugin that
 does exactly that. See the [supply-chain overview](/supply-chain).

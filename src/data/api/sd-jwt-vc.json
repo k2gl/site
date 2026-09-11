@@ -26,7 +26,7 @@
             "name": "K2gl\\SdJwtVc\\JwtVcIssuerMetadata",
             "kind": "class",
             "methods": [
-                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, )",
+                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly UrlPolicy $urlPolicy = new UrlPolicy, private readonly int $maxRedirects = 3, private readonly int $maxBytes = 1024 * 1024, )",
                 "resolve(?string $issuer, stdClass $header): Verifier",
                 "wellKnownUrl(string $issuer): string"
             ]
@@ -43,9 +43,10 @@
             "name": "K2gl\\SdJwtVc\\SdJwtVcVerifier",
             "kind": "class",
             "methods": [
-                "__construct( array $allowedAlgorithms = SdJwtVerifier::DEFAULT_ALGORITHMS, array $allowedHashAlgorithms = SdJwtVerifier::DEFAULT_HASH_ALGORITHMS, ?int $clock = null, int $clockLeewaySeconds = 0, private readonly bool $acceptLegacyType = true, )",
+                "__construct( array $allowedAlgorithms = SdJwtVerifier::DEFAULT_ALGORITHMS, array $allowedHashAlgorithms = SdJwtVerifier::DEFAULT_HASH_ALGORITHMS, ?int $clock = null, int $clockLeewaySeconds = 0, private readonly bool $acceptLegacyType = false, )",
                 "verify(SdJwt|string $sdJwtVc, IssuerKeyResolver|Verifier $issuerKeys): VerifiedSdJwtVc",
-                "verifyPresentation( SdJwt|string $presentation, IssuerKeyResolver|Verifier $issuerKeys, KeyBinding $keyBinding, ): VerifiedSdJwtVc"
+                "verifyPresentation( SdJwt|string $presentation, IssuerKeyResolver|Verifier $issuerKeys, KeyBinding $keyBinding, ): VerifiedSdJwtVc",
+                "assertTypeList(mixed $value): void"
             ]
         },
         {
@@ -58,11 +59,20 @@
             ]
         },
         {
+            "name": "K2gl\\SdJwtVc\\UrlPolicy",
+            "kind": "class",
+            "methods": [
+                "__construct(private readonly bool $resolveHosts = true)",
+                "assertAllowed(string $url): void"
+            ]
+        },
+        {
             "name": "K2gl\\SdJwtVc\\VerifiedSdJwtVc",
             "kind": "class",
             "methods": [
                 "__construct(private readonly VerifiedSdJwt $inner)",
                 "vct(): string",
+                "alsoKnownAsTypes(): array",
                 "issuer(): ?string",
                 "status(): ?stdClass",
                 "payload(): stdClass",

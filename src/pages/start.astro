@@ -1,5 +1,8 @@
 ---
+import { getCollection } from 'astro:content';
 import Base from '../layouts/Base.astro';
+
+const count = (await getCollection('packages')).length;
 ---
 
 <Base
@@ -8,7 +11,7 @@ import Base from '../layouts/Base.astro';
 >
   <h1>Start here</h1>
   <p>
-    Twenty-one focused PHP packages in three product lines — supply-chain security,
+    {count} focused PHP packages in three product lines — supply-chain security,
     digital identity credentials, and everyday utilities. Pick the path that matches
     what you're trying to do.
   </p>

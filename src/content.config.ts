@@ -2,7 +2,7 @@ import { defineCollection, z } from 'astro:content';
 import { glob } from 'astro/loaders';
 import { packagesLoader } from './loaders/packages';
 
-// All 20 published Composer packages (composer-attest-action is a GitHub Action,
+// All published Composer packages (composer-attest-action is a GitHub Action,
 // not a Composer package, so it is not in the catalog).
 export const PACKAGES = [
   // supply-chain
