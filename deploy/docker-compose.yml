@@ -114,19 +114,38 @@ services:
       retries: 3
       start_period: 180s
 
-  # Daily restic backup of the TLS certs and access logs. Local repo by default
-  # (guards against volume/container mistakes); point RESTIC_REPOSITORY at S3/B2
-  # for true offsite. Password lives in .env (never in git).
+  # Ночной restic: сертификаты, логи доступа и база Umami.
+  #
+  # По умолчанию репозиторий ЛОКАЛЬНЫЙ (`/backups`) — это защита от опечатки в
+  # адресе, а не бэкап: он лежит на том же диске, с которого снимается, и от
+  # потери машины не спасает никак. Настоящая копия включается тремя строками в
+  # `.env` (см. `.env.example`): адрес S3 и пара ключей.
+  #
+  # Ключи — ОТДЕЛЬНЫЕ от homelab, с доступом только к своему бакету. Общие давать
+  # нельзя: взлом одной машины не должен открывать архивы всего
+  # хозяйства (правило записано в карте, раздел «Данные и бэкап»).
+  #
+  # Об успехе прогон оставляет отметку в `/state/last-success` — её читает
+  # `watch.sh` и по возрасту поднимает тревогу. Без неё молчание неотличимо от
+  # спокойствия: 24.08.2026 контейнер двадцать минут крутился в цикле
+  # «Access Denied», и заметить это можно было только заглянув в его логи руками.
   backup:
     image: mazzolino/restic:1.6.0
     restart: unless-stopped
     environment:
-      RESTIC_REPOSITORY: /backups
+      RESTIC_REPOSITORY: ${RESTIC_REPOSITORY:-/backups}
       RESTIC_PASSWORD: ${RESTIC_PASSWORD:?set RESTIC_PASSWORD in .env}
+      # Пусто — restic просто не пойдёт в S3 и останется на локальном репозитории.
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       BACKUP_CRON: "0 4 * * *"
       RESTIC_BACKUP_SOURCES: /data
       RESTIC_BACKUP_ARGS: --tag k2gl --host k2gl
       RESTIC_FORGET_ARGS: --keep-daily 7 --keep-weekly 4 --prune
+      # Отметка пишется ТОЛЬКО при успехе: у образа есть и POST_COMMANDS_FAILURE,
+      # но тревогу поднимает не он. Отказ, о котором некому сообщить (сеть легла,
+      # контейнер не стартовал вовсе), ловится ровно тем, что отметка стареет.
+      POST_COMMANDS_SUCCESS: date -u +%s > /state/last-success
     volumes:
       - caddy_data:/data/caddy:ro
       - caddy_logs:/data/caddy-logs:ro # raw access logs -> GoAccess history survives host loss
@@ -134,6 +153,8 @@ services:
       # need postgres crash recovery on first start.
       - umami_db:/data/umami-db:ro
       - /opt/k2gl/backups:/backups
+      # Отметка об успехе — рядом с состоянием сторожа, он её и читает.
+      - /var/lib/k2gl-watch:/state
 
 volumes:
   caddy_data:

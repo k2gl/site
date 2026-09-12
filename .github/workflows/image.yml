@@ -159,22 +159,16 @@ jobs:
     needs: [build, goaccess, api]
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Ship compose & restart on the VPS over SSH
+      - name: Pull fresh images & restart on the VPS over SSH
         env:
           SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
           VPS_HOST: ${{ secrets.VPS_HOST }}
         run: |
           install -m 600 /dev/stdin deploy_key <<< "$SSH_KEY"
-          # Copy the compose straight from the runner. The VPS fetching it from
-          # raw.githubusercontent was flaky (curl TLS eof) and, with no set -e,
-          # silently left a stale file while the deploy still went green.
-          scp -i deploy_key -o StrictHostKeyChecking=accept-new \
-            deploy/docker-compose.yml "root@${VPS_HOST}:/opt/k2gl/docker-compose.yml"
+          # The compose file on the VPS is owned by the infrastructure repo and
+          # rolled out from there; this job only pulls images and restarts.
+          # Shipping deploy/docker-compose.yml from here overwrote a newer file
+          # on the host and silently downgraded the backup service (2026-09-10).
           ssh -i deploy_key -o StrictHostKeyChecking=accept-new "root@${VPS_HOST}" 'set -e
             cd /opt/k2gl
             docker compose pull
