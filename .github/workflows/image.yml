@@ -217,9 +217,14 @@ jobs:
             -H 'content-type: application/json' \
             --data @.github/smoke/sd-jwt-inspect.json | grep -q '"given_name":"John"'
           # Attestation checker: dogfood on one of our own attested packages. Any
-          # verdict is acceptable (rate limits), but the endpoint must answer.
-          curl -fsS --max-time 60 'https://k2gl.com/api/v1/composer/attestations?package=k2gl/dsse' \
-            | grep -q '"ok":true'
+          # verdict is acceptable, and so is a 502 from the app itself: the cache
+          # dies with the container, so right after a deploy this is the first
+          # outbound request from the new box and Packagist/GitHub may not be
+          # reachable yet (2026-09-11, 2026-09-14). Only a non-JSON answer fails.
+          body=$(curl -sS --max-time 60 'https://k2gl.com/api/v1/composer/attestations?package=k2gl/dsse')
+          echo "$body" | grep -q '"ok":true' \
+            || echo "$body" | grep -q '"code":"upstream_error"' \
+            || { echo "attestations: unexpected answer: $body"; exit 1; }
           # SSHSIG: a real ed25519 signature verifies against its allowed_signers.
           curl -fsS --max-time 30 -X POST https://k2gl.com/api/v1/sshsig/verify \
             -H 'content-type: application/json' \
