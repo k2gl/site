@@ -33,6 +33,19 @@ final class Cache
         return $entry['value'];
     }
 
+    /** The last value stored under the key, expired or not; null if never set. */
+    public static function getStale(string $key): mixed
+    {
+        try {
+            $raw = @file_get_contents(self::path($key));
+            $entry = $raw === false ? null : json_decode($raw, associative: true);
+        } catch (Throwable) {
+            return null;
+        }
+
+        return is_array($entry) ? $entry['value'] : null;
+    }
+
     public static function set(string $key, mixed $value, int $ttlSeconds): void
     {
         $path = self::path($key);

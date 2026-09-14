@@ -66,6 +66,29 @@ final class ComposerAttestationsTest extends ApiTestCase
         fact($second['result']['attestation']['status'])->is('no_attestation');
     }
 
+    public function testExpiredVerdictIsServedWhenUpstreamIsDown(): void
+    {
+        // arrange: a verdict that has already expired, and Packagist answering 502
+        Cache::set('attestations:acme/widget@latest', ['package' => 'acme/widget', 'version' => '1.1.0'], ttlSeconds: -1);
+        $endpoint = new ComposerAttestations($this->fakeHttp(attestationsStatus: 404, packagistStatus: 502));
+
+        // act
+        $response = $endpoint->handle(['package' => 'acme/widget']);
+
+        // assert
+        fact($response['result']['cached'])->true();
+        fact($response['result']['stale'])->true();
+        fact($response['result']['version'])->is('1.1.0');
+    }
+
+    public function testUpstreamErrorWithNothingCachedIsA502(): void
+    {
+        $endpoint = new ComposerAttestations($this->fakeHttp(attestationsStatus: 404, packagistStatus: 502));
+
+        fact(static fn (): array => $endpoint->handle(['package' => 'acme/widget']))
+            ->throws(HttpProblem::class, 'Packagist responded');
+    }
+
     public function testNonGithubDistIsUnsupported(): void
     {
         // arrange

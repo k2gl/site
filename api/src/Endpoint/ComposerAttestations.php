@@ -49,12 +49,25 @@ final class ComposerAttestations
             return ['result' => ['cached' => true] + $cached];
         }
 
-        $release = Metadata::pick(
-            expanded: Metadata::fetch($this->http, $package),
-            requested: $requestedVersion,
-        );
+        try {
+            $release = Metadata::pick(
+                expanded: Metadata::fetch($this->http, $package),
+                requested: $requestedVersion,
+            );
 
-        $result = $this->check(package: $package, release: $release);
+            $result = $this->check(package: $package, release: $release);
+        } catch (HttpProblem $problem) {
+            // Packagist is reachable from this box only most of the time; an
+            // expired verdict beats a 502 for a package we have already checked.
+            $stale = $problem->status === 502 ? Cache::getStale($cacheKey) : null;
+
+            if (! is_array($stale)) {
+                throw $problem;
+            }
+
+            return ['result' => ['cached' => true, 'stale' => true] + $stale];
+        }
+
         Cache::set(key: $cacheKey, value: $result, ttlSeconds: self::CACHE_TTL);
 
         return ['result' => ['cached' => false] + $result, 'meta' => ['trustedRoot' => TrustedRootProvider::source()]];

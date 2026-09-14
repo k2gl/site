@@ -175,7 +175,8 @@ const breadcrumbLd = {
               row(dl, 'predicate', r.provenance.predicateType);
               row(dl, 'builder', r.provenance.builderId);
             }
-            if (r.cached) row(dl, 'freshness', 'cached (≤15 min)');
+            if (r.stale) row(dl, 'freshness', 'stale — Packagist unreachable, showing the last verdict');
+            else if (r.cached) row(dl, 'freshness', 'cached (≤15 min)');
             result.replaceChildren(dl);
           }
         } catch {
