@@ -72,7 +72,8 @@ const breadcrumbLd = {
       </p>
       <p>
         Checks run against the release dist zip (capped at 64&nbsp;MiB) and are cached for
-        15&nbsp;minutes.
+        an hour. If Packagist can't be reached, the last verdict for the package is shown
+        and marked as stale.
       </p>
 
       <h2>Check it at install time instead</h2>
@@ -175,8 +176,9 @@ const breadcrumbLd = {
               row(dl, 'predicate', r.provenance.predicateType);
               row(dl, 'builder', r.provenance.builderId);
             }
+            if (r.metadataSource === 'mirror') row(dl, 'release metadata', 'Packagist unreachable — release picked via a mirror, artifact still from GitHub');
             if (r.stale) row(dl, 'freshness', 'stale — Packagist unreachable, showing the last verdict');
-            else if (r.cached) row(dl, 'freshness', 'cached (≤15 min)');
+            else if (r.cached) row(dl, 'freshness', 'cached (≤1 h)');
             result.replaceChildren(dl);
           }
         } catch {

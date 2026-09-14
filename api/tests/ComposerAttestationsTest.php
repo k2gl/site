@@ -81,6 +81,30 @@ final class ComposerAttestationsTest extends ApiTestCase
         fact($response['result']['version'])->is('1.1.0');
     }
 
+    public function testMirrorStandsInWhenPackagistIsDown(): void
+    {
+        // arrange: Packagist 502, the mirror answers with its rewritten dist URLs
+        $endpoint = new ComposerAttestations($this->fakeHttp(attestationsStatus: 404, packagistStatus: 502, mirrorStatus: 200));
+
+        // act
+        $response = $endpoint->handle(['package' => 'acme/widget']);
+
+        // assert: the verdict comes from the GitHub artifact, and says the mirror chose the release
+        $result = $response['result'];
+        fact($result['metadataSource'])->is('mirror');
+        fact($result['version'])->is('1.2.0');
+        fact($result['source'])->is(['owner' => 'acme', 'repo' => 'widget']);
+        fact($result['dist']['url'])->is('https://api.github.com/repos/acme/widget/zipball/abc123');
+        fact($result['attestation']['status'])->is('no_attestation');
+    }
+
+    public function testMirrorIsNotConsultedWhenPackagistAnswers(): void
+    {
+        $endpoint = new ComposerAttestations($this->fakeHttp(attestationsStatus: 404, mirrorStatus: 200));
+
+        fact($endpoint->handle(['package' => 'acme/widget'])['result'])->arrayNotHasKey('metadataSource');
+    }
+
     public function testUpstreamErrorWithNothingCachedIsA502(): void
     {
         $endpoint = new ComposerAttestations($this->fakeHttp(attestationsStatus: 404, packagistStatus: 502));
@@ -127,6 +151,7 @@ final class ComposerAttestationsTest extends ApiTestCase
         string $distUrl = 'https://api.github.com/repos/acme/widget/zipball/abc123',
         string $sourceUrl = 'https://github.com/acme/widget.git',
         int $packagistStatus = 200,
+        int $mirrorStatus = 502,
     ): HttpClientInterface {
         $p2 = json_encode(['packages' => ['acme/widget' => [[
             'version' => '1.2.0',
@@ -135,10 +160,21 @@ final class ComposerAttestationsTest extends ApiTestCase
             'source' => ['url' => $sourceUrl],
         ]]]]);
 
-        return new class ($p2, $packagistStatus, $attestationsStatus) implements HttpClientInterface {
+        // What a mirror serves: no "source", dist pointing at its own storage,
+        // the commit reference and the repository link intact.
+        $mirrorP2 = json_encode(['packages' => ['acme/widget' => [[
+            'version' => '1.2.0',
+            'version_normalized' => '1.2.0.0',
+            'dist' => ['url' => 'https://mirror.example/acme/widget/1.2.0.zip', 'type' => 'zip', 'reference' => 'abc123'],
+            'support' => ['source' => 'https://github.com/acme/widget'],
+        ]]]]);
+
+        return new class ($p2, $mirrorP2, $packagistStatus, $mirrorStatus, $attestationsStatus) implements HttpClientInterface {
             public function __construct(
                 private readonly string $p2,
+                private readonly string $mirrorP2,
                 private readonly int $packagistStatus,
+                private readonly int $mirrorStatus,
                 private readonly int $attestationsStatus,
             ) {}
 
@@ -146,6 +182,10 @@ final class ComposerAttestationsTest extends ApiTestCase
             {
                 if (str_contains($url, 'repo.packagist.org/p2/')) {
                     return ['status' => $this->packagistStatus, 'body' => $this->p2];
+                }
+
+                if (str_contains($url, 'mirrors.cloud.tencent.com/composer/p2/')) {
+                    return ['status' => $this->mirrorStatus, 'body' => $this->mirrorP2];
                 }
 
                 if (str_contains($url, '/attestations/sha256:')) {

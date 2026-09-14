@@ -28,7 +28,7 @@ final class ComposerAttestations
 {
     private const int MAX_ARTIFACT_BYTES = 67_108_864;
 
-    private const int CACHE_TTL = 900;
+    private const int CACHE_TTL = 3600;
 
     public function __construct(private readonly HttpClientInterface $http = new HttpClient) {}
 
@@ -50,12 +50,14 @@ final class ComposerAttestations
         }
 
         try {
-            $release = Metadata::pick(
-                expanded: Metadata::fetch($this->http, $package),
-                requested: $requestedVersion,
-            );
+            $metadata = Metadata::fetch($this->http, $package);
+            $release = Metadata::pick(expanded: $metadata['versions'], requested: $requestedVersion);
 
             $result = $this->check(package: $package, release: $release);
+
+            if ($metadata['source'] !== Metadata::SOURCE_PACKAGIST) {
+                $result['metadataSource'] = $metadata['source'];
+            }
         } catch (HttpProblem $problem) {
             // Packagist is reachable from this box only most of the time; an
             // expired verdict beats a 502 for a package we have already checked.

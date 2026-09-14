@@ -75,4 +75,23 @@ final class MetadataTest extends TestCase
         fact(static fn (): array => Metadata::pick($expanded, '9.9.9'))
             ->throws(HttpProblem::class, 'No such version');
     }
+
+    public function testMirrorEntryGetsItsGithubUrlsBack(): void
+    {
+        $restored = Metadata::restoreGithubUrls([
+            'version' => '1.3.3',
+            'dist' => ['url' => 'https://mirrors.cloud.tencent.com/repository/composer/k2gl/dsse/1.3.3/k2gl-dsse-1.3.3.zip', 'type' => 'zip', 'reference' => 'feefabf'],
+            'support' => ['source' => 'https://github.com/k2gl/dsse'],
+        ]);
+
+        fact($restored['dist']['url'])->is('https://api.github.com/repos/k2gl/dsse/zipball/feefabf');
+        fact($restored['source'])->is(['url' => 'https://github.com/k2gl/dsse.git', 'type' => 'git', 'reference' => 'feefabf']);
+    }
+
+    public function testMirrorEntryWithoutAGithubLinkIsLeftAlone(): void
+    {
+        $entry = ['version' => '1.0.0', 'dist' => ['url' => 'https://mirror.example/x.zip', 'reference' => 'abc'], 'homepage' => 'https://gitlab.com/x/y'];
+
+        fact(Metadata::restoreGithubUrls($entry))->is($entry);
+    }
 }
