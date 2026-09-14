@@ -200,7 +200,14 @@ jobs:
       - name: Smoke the tools API
         run: |
           set -e
-          curl -fsS --max-time 20 https://k2gl.com/api/health | grep -q '"ok":true'
+          # The api container is recreated on every deploy and FrankenPHP takes
+          # longer to come up than the site smoke above; until then Caddy answers
+          # 502 for /api/*. Wait for health instead of racing the restart.
+          for i in $(seq 1 18); do
+            curl -fsS --max-time 20 https://k2gl.com/api/health | grep -q '"ok":true' && break
+            [ "$i" = 18 ] && { echo "api never became healthy"; exit 1; }
+            sleep 5
+          done
           # One real inspection end to end: decode + verify a signed DSSE fixture.
           curl -fsS --max-time 30 -X POST https://k2gl.com/api/v1/dsse/inspect \
             -H 'content-type: application/json' \
