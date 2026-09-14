@@ -8,12 +8,21 @@ namespace App\Http;
  * Outbound HTTP over the stream wrapper (this box's curl_multi is unreliable):
  * short timeouts, an honest User-Agent, and the GitHub token attached only when
  * talking to api.github.com.
+ *
+ * Connecting is retried: from the VPS roughly one SYN in six towards the CDN77
+ * edges serving repo.packagist.org gets no answer (ICMP and other hosts are
+ * clean, so it is the path, not us). Each attempt uses a fresh source port,
+ * and three of them bring a 15% failure rate down to well under 1%.
  */
 final class HttpClient implements HttpClientInterface
 {
     private const string USER_AGENT = 'k2gl.com-tools (+https://k2gl.com/tools)';
 
     private const int MAX_BODY_BYTES = 10_485_760;
+
+    private const int CONNECT_ATTEMPTS = 3;
+
+    private const int CONNECT_TIMEOUT_SECONDS = 4;
 
     /** @var list<string> */
     private array $lastHeaders = [];
@@ -106,16 +115,22 @@ final class HttpClient implements HttpClientInterface
             $lines[] = $name . ': ' . $value;
         }
 
+        // The context timeout covers the connect and the response headers; the
+        // body read gets the full budget via stream_set_timeout below.
         $context = stream_context_create(['http' => [
             'method' => 'GET',
             'header' => implode("\r\n", $lines),
-            'timeout' => $this->timeoutSeconds,
+            'timeout' => self::CONNECT_TIMEOUT_SECONDS,
             'follow_location' => 1,
             'max_redirects' => 5,
             'ignore_errors' => true,
         ]]);
 
-        $stream = @fopen($url, 'rb', false, $context);
+        $stream = false;
+
+        for ($attempt = 1; $attempt <= self::CONNECT_ATTEMPTS && $stream === false; $attempt++) {
+            $stream = @fopen($url, 'rb', false, $context);
+        }
 
         if ($stream === false) {
             throw new HttpProblem(status: 502, code: 'upstream_error', message: 'Upstream host is unreachable: ' . (string) $host);
