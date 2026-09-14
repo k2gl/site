@@ -159,6 +159,12 @@ jobs:
     needs: [build, goaccess, api]
     runs-on: ubuntu-latest
     steps:
+      # Only for the smoke fixtures under .github/smoke; nothing is shipped.
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
       - name: Pull fresh images & restart on the VPS over SSH
         env:
           SSH_KEY: ${{ secrets.VPS_SSH_KEY }}
