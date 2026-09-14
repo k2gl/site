@@ -14,6 +14,7 @@ RUN php -m | grep -qi openssl && php -m | grep -qi sodium
 
 WORKDIR /app
 COPY --from=deps /app/vendor vendor/
+COPY bin/ bin/
 COPY public/ public/
 COPY src/ src/
 COPY resources/ resources/

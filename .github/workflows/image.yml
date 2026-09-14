@@ -230,3 +230,16 @@ jobs:
             -H 'content-type: application/json' \
             --data @.github/smoke/sshsig-verify.json | grep -q '"verified":true'
           echo "tools API smoke passed"
+
+      - name: Warm the attestation cache
+        env:
+          VPS_HOST: ${{ secrets.VPS_HOST }}
+        run: |
+          # Every catalog package gets checked once now, inside the container and
+          # past the per-IP rate limit, so visitors hit the cache instead of a
+          # Packagist that this box cannot always reach. Detached: it takes a
+          # couple of minutes and a failure there is not a failed deploy.
+          packages=$(for s in $(scripts/package-slugs.sh); do printf 'k2gl/%s ' "$s"; done)
+          ssh -i deploy_key -o StrictHostKeyChecking=accept-new "root@${VPS_HOST}" \
+            "cd /opt/k2gl && docker compose exec -d api sh -c 'mkdir -p /tmp/k2gl-api && php bin/warm-cache.php $packages > /tmp/k2gl-api/warm.log 2>&1'"
+          echo "warming: $packages"
