@@ -4,7 +4,7 @@
             "name": "K2gl\\Dsse\\EcdsaP256Signer",
             "kind": "class",
             "methods": [
-                "fromPem(string $pem, ?string $keyId = null): self",
+                "fromPem(string $pem, ?string $keyId = null, SignatureEncoding $encoding = SignatureEncoding::Raw): self",
                 "sign(string $message): string",
                 "keyId(): ?string"
             ]
@@ -21,7 +21,7 @@
             "name": "K2gl\\Dsse\\EcdsaP384Signer",
             "kind": "class",
             "methods": [
-                "fromPem(string $pem, ?string $keyId = null): self",
+                "fromPem(string $pem, ?string $keyId = null, SignatureEncoding $encoding = SignatureEncoding::Raw): self",
                 "sign(string $message): string",
                 "keyId(): ?string"
             ]
@@ -38,7 +38,7 @@
             "name": "K2gl\\Dsse\\EcdsaP521Signer",
             "kind": "class",
             "methods": [
-                "fromPem(string $pem, ?string $keyId = null): self",
+                "fromPem(string $pem, ?string $keyId = null, SignatureEncoding $encoding = SignatureEncoding::Raw): self",
                 "sign(string $message): string",
                 "keyId(): ?string"
             ]
@@ -126,6 +126,23 @@
             ]
         },
         {
+            "name": "K2gl\\Dsse\\RsaPssSigner",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem, ?string $keyId = null, string $hashAlgorithm = 'sha256'): self",
+                "sign(string $message): string",
+                "keyId(): ?string"
+            ]
+        },
+        {
+            "name": "K2gl\\Dsse\\RsaPssVerifier",
+            "kind": "class",
+            "methods": [
+                "fromPem(string $pem, string $hashAlgorithm = 'sha256'): self",
+                "verify(string $message, string $signature): bool"
+            ]
+        },
+        {
             "name": "K2gl\\Dsse\\RsaSigner",
             "kind": "class",
             "methods": [
@@ -148,6 +165,11 @@
             "methods": [
                 "__construct( public readonly string $sig, public readonly ?string $keyId = null, )"
             ]
+        },
+        {
+            "name": "K2gl\\Dsse\\SignatureEncoding",
+            "kind": "enum",
+            "methods": []
         },
         {
             "name": "K2gl\\Dsse\\Signer",

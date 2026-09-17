@@ -28,6 +28,17 @@
             "methods": []
         },
         {
+            "name": "K2gl\\RekorClient\\LogReader",
+            "kind": "class",
+            "methods": [
+                "__construct( ClientInterface $httpClient, RequestFactoryInterface $requestFactory, string $baseUrl, private readonly string $origin, string $publicKeyDer, int $retries = Http::DEFAULT_RETRIES, ?Closure $sleeper = null, )",
+                "logId(): string",
+                "checkpoint(): Checkpoint",
+                "entry(int $logIndex): TransparencyLogEntry",
+                "entries(int $from, int $count): array"
+            ]
+        },
+        {
             "name": "K2gl\\RekorClient\\RekorApiVersion",
             "kind": "enum",
             "methods": []
@@ -36,7 +47,7 @@
             "name": "K2gl\\RekorClient\\RekorClient",
             "kind": "class",
             "methods": [
-                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly StreamFactoryInterface $streamFactory, string $baseUrl, private readonly RekorApiVersion $apiVersion = RekorApiVersion::V2, private readonly int $retries = self::DEFAULT_RETRIES, ?Closure $sleeper = null, )",
+                "__construct( ClientInterface $httpClient, RequestFactoryInterface $requestFactory, StreamFactoryInterface $streamFactory, string $baseUrl, private readonly RekorApiVersion $apiVersion = RekorApiVersion::V2, int $retries = self::DEFAULT_RETRIES, ?Closure $sleeper = null, )",
                 "submitHashedRekord(string $digest, string $signature, Verifier $verifier): TransparencyLogEntry"
             ]
         },
