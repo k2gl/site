@@ -1,6 +1,17 @@
 {
     "classes": [
         {
+            "name": "K2gl\\SdJwtVc\\ClaimMetadata",
+            "kind": "class",
+            "methods": [
+                "fromArray(array $object): self",
+                "sd(): string",
+                "mandatory(): bool",
+                "pathKey(): string",
+                "overriddenBy(self $child): self"
+            ]
+        },
+        {
             "name": "K2gl\\SdJwtVc\\Exception\\InvalidSdJwtVcException",
             "kind": "class",
             "methods": []
@@ -14,6 +25,19 @@
             "name": "K2gl\\SdJwtVc\\Exception\\SdJwtVcException",
             "kind": "class",
             "methods": []
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\Exception\\TypeMetadataException",
+            "kind": "class",
+            "methods": []
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\HttpTypeMetadata",
+            "kind": "class",
+            "methods": [
+                "__construct( private readonly ClientInterface $httpClient, private readonly RequestFactoryInterface $requestFactory, private readonly UrlPolicy $urlPolicy = new UrlPolicy, private readonly int $maxRedirects = 3, private readonly int $maxBytes = 1024 * 1024, )",
+                "resolve(string $vct, ?string $integrity): TypeMetadata"
+            ]
         },
         {
             "name": "K2gl\\SdJwtVc\\IssuerKeyResolver",
@@ -32,6 +56,18 @@
             ]
         },
         {
+            "name": "K2gl\\SdJwtVc\\ResolvedTypeMetadata",
+            "kind": "class",
+            "methods": [
+                "resolve(TypeMetadataResolver $resolver, string $vct, ?string $integrity): self",
+                "vct(): string",
+                "type(): TypeMetadata",
+                "chain(): array",
+                "claims(): array",
+                "display(): ?array"
+            ]
+        },
+        {
             "name": "K2gl\\SdJwtVc\\SdJwtVcIssuer",
             "kind": "class",
             "methods": [
@@ -43,7 +79,7 @@
             "name": "K2gl\\SdJwtVc\\SdJwtVcVerifier",
             "kind": "class",
             "methods": [
-                "__construct( array $allowedAlgorithms = SdJwtVerifier::DEFAULT_ALGORITHMS, array $allowedHashAlgorithms = SdJwtVerifier::DEFAULT_HASH_ALGORITHMS, ?int $clock = null, int $clockLeewaySeconds = 0, private readonly bool $acceptLegacyType = false, )",
+                "__construct( array $allowedAlgorithms = SdJwtVerifier::DEFAULT_ALGORITHMS, array $allowedHashAlgorithms = SdJwtVerifier::DEFAULT_HASH_ALGORITHMS, ?int $clock = null, int $clockLeewaySeconds = 0, private readonly bool $acceptLegacyType = false, private readonly ?TypeMetadataResolver $typeMetadata = null, )",
                 "verify(SdJwt|string $sdJwtVc, IssuerKeyResolver|Verifier $issuerKeys): VerifiedSdJwtVc",
                 "verifyPresentation( SdJwt|string $presentation, IssuerKeyResolver|Verifier $issuerKeys, KeyBinding $keyBinding, ): VerifiedSdJwtVc",
                 "assertTypeList(mixed $value): void"
@@ -59,6 +95,30 @@
             ]
         },
         {
+            "name": "K2gl\\SdJwtVc\\StaticTypeMetadata",
+            "kind": "class",
+            "methods": [
+                "add(string $vct, string $json): self",
+                "resolve(string $vct, ?string $integrity): TypeMetadata"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\TypeMetadata",
+            "kind": "class",
+            "methods": [
+                "fromJson(string $json): self",
+                "fromArray(array $document): self",
+                "raw(): array"
+            ]
+        },
+        {
+            "name": "K2gl\\SdJwtVc\\TypeMetadataResolver",
+            "kind": "interface",
+            "methods": [
+                "resolve(string $vct, ?string $integrity): TypeMetadata"
+            ]
+        },
+        {
             "name": "K2gl\\SdJwtVc\\UrlPolicy",
             "kind": "class",
             "methods": [
@@ -70,14 +130,17 @@
             "name": "K2gl\\SdJwtVc\\VerifiedSdJwtVc",
             "kind": "class",
             "methods": [
-                "__construct(private readonly VerifiedSdJwt $inner)",
+                "__construct( private readonly VerifiedSdJwt $inner, private readonly ?ResolvedTypeMetadata $typeMetadata = null, )",
+                "typeMetadata(): ?ResolvedTypeMetadata",
                 "vct(): string",
                 "alsoKnownAsTypes(): array",
                 "issuer(): ?string",
                 "status(): ?stdClass",
                 "payload(): stdClass",
                 "claims(): array",
-                "keyBindingPayload(): ?stdClass"
+                "keyBindingPayload(): ?stdClass",
+                "disclosedPaths(): array",
+                "undisclosedPaths(): array"
             ]
         },
         {

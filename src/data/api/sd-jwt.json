@@ -119,10 +119,11 @@
             "name": "K2gl\\SdJwt\\VerifiedSdJwt",
             "kind": "class",
             "methods": [
-                "__construct( private readonly stdClass $payload, private readonly ?stdClass $keyBindingPayload, private readonly array $disclosedPaths = [], )",
+                "__construct( private readonly stdClass $payload, private readonly ?stdClass $keyBindingPayload, private readonly array $disclosedPaths = [], private readonly array $undisclosedPaths = [], )",
                 "payload(): stdClass",
                 "claims(): array",
                 "disclosedPaths(): array",
+                "undisclosedPaths(): array",
                 "keyBindingPayload(): ?stdClass"
             ]
         }

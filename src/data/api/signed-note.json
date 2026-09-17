@@ -1,6 +1,16 @@
 {
     "classes": [
         {
+            "name": "K2gl\\SignedNote\\Checkpoint",
+            "kind": "class",
+            "methods": [
+                "parse(string $envelope): self",
+                "fromNote(Note $note): self",
+                "verify(NoteVerifier $verifier): array",
+                "__toString(): string"
+            ]
+        },
+        {
             "name": "K2gl\\SignedNote\\Exception\\InvalidNoteException",
             "kind": "class",
             "methods": []
